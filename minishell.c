@@ -10,64 +10,117 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include"minishell.h"
-/*
-void detect_command(char* command)
-{
-	if(!ft_strncmp(command, "pwd",4))
-	{
-		result = getcwd();
-	}
-	printf(%s);
-}*/
-void	init_mini_shell();
 
 int ex;
 
-void	handler(int sig, siginfo_t *info, void *n)
+void creat_lexic(s_lexic *lex)
 {
-	char* command;
-	if(sig == 2)
+	lex->l_cmd = (char **)malloc(8 * sizeof(char *));
+	lex->l_cmd[0] = "cd";
+	lex->l_cmd[1] = "echo";
+	lex->l_cmd[2] = "echo -n";
+	lex->l_cmd[3] = "pwd";
+	lex->l_cmd[4] = "export";
+	lex->l_cmd[5] = "unset";
+	lex->l_cmd[6] = "env";
+	lex->l_cmd[7] = "exit";
+	lex->l_symb = (char **)malloc(6 * sizeof(char *));
+	lex->l_symb[0] = "|";
+	lex->l_symb[1] = ">";
+	lex->l_symb[2] = ">>";
+	lex->l_symb[3] = "<";
+	lex->l_symb[4] = "<<";
+	lex->l_symb[5] = "$";
+}
+enum e_symbol :char {
+	pipe = 'l',
+	out = 'o',
+	Out_double = 'O',
+	in = 'i',
+	int_double = 'I'.
+	var = '$'
+};
+int	cmd_in_word(char **cmd, int len, char *word)
+{
+	int	i;
+	int	j;
+
+	j = -1;
+	while(++j < len)
 	{
-		printf("\n");
-		command = readline(">>> MiniShell $>");
-		if(*command)
+		i = -1;
+		while (word[++i])
 		{
-			add_history(command);
-			printf("%s\n", command);
+			if(cmd[i] == word[i])
+				i++;
+			if(cmd[i] == word[i])
+				i++;
 		}
-		free(command);
-	}
-	if(sig == 3)
-	{
-		ex = 1;
 	}
 }
 
-void	init_mini_shell()
+int	token_in_word(char **symb, char *word)
 {
+
+}
+
+void	lexer_words(char **words, int num_words)
+{
+	s_lexic lex;
+	int i;
+	int j;
+
+	creat_lexic(&lex);
+	i = 0;
+	j = 0;
+	while (i < num_words)
+	{
+		if(cmd_in_word(lex.l_cmd, num_words, words[i]))
+			printf("<cmd>");
+		else if(ft_strlen(words[i]) < 3 && token_in_word(lex.l_symb, words[i]))
+			printf("<sym>");
+		else
+			printf("ERROR");
+	}
+	printf("\n");
+}
+
+void	split_input(char *input)
+{
+	int i;
+	int count;
+	char **words;
+
+	i = 0;
+	count = 0;
+	while (input[++i])
+	{
+		if((input[i] == ' ' && input[i - 1] != ' ')
+		|| (input[i + 1] == '\0' && input[i] != ' '))
+			count++;
+	}
+	words = ft_split(input, ' ');
+	lexer_words(words, count);
+}
+//<cmd><|><exp>
+int	main()
+{
+	char* input;
+	char **l_cmd;
+	char **l_symb;
 
 	while(!ex)
 	{
-		char* command;
-		command = readline(">>> MiniShell $>");
-		if(*command)
+		input = readline(">>> MiniShell $>");
+		if(*input)
 		{
-			add_history(command);
-			printf("%s\n", command);
+			add_history(input);
+			split_input(input);
 		}
-		free(command);
+
+		free(input);
 	}
 	exit(0);
 }
-
-int	main()
-{
-	struct sigaction sign;
-
-	sign.sa_flags = SA_RESTART;
-	sign.sa_sigaction = &handler;
-	sigaction(SIGINT, &sign, NULL);//ctr-C
-	sigaction(SIGQUIT, &sign, NULL);//ctr-/
-	init_mini_shell();
-}
  //"e""c""h""o" hello need to work
+ // error file name too long.

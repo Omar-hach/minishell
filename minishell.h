@@ -30,17 +30,43 @@
 
 typedef struct t_command
 {
-    char *cmd;
-    char *flag;
-    char *arg;
-    char *in;
-    char *out;
+	char *cmd;
+	char *flag;
+	char *arg;
+	char *in;
+	char *out;
 } s_command;
 
-typedef struct input
+typedef struct t_input
 {
-    s_command *comand;
-    int token;
+	s_command *comand;
+	int token;
 }s_input;
+
+typedef struct t_token
+{
+	char *token;
+	s_command *cmd;
+	s_command *exp;
+}s_token;
+
+typedef struct t_lexic
+{
+	char **l_cmd;
+	char **l_symb;
+}s_lexic;
+
+/*
+lexixe{
+    pape | ::= priority lv.2 --> cmd | cmd
+    in derect > >> ::= priority lv.1 -->  cmd > file
+    out derect < ::= priority lv.0 --> cmd < file
+    $() ::= --> $cmd || $var
+    
+    << ? 
+}
+*/
+
+
 
 #endif
