@@ -14,7 +14,7 @@ NAME = minishell
 
 CC = gcc 
 
-CFLAGS = -Wall -Werror -Wextra -lreadline
+CFLAGS = -lreadline -Werror -Wall -Wextra 
 
 SRC = minishell.c 
 

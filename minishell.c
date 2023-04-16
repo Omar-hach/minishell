@@ -32,6 +32,7 @@ void creat_lexic(s_lexic *lex)
 	lex->l_symb[4] = "<<";
 	lex->l_symb[5] = "$";
 }
+/*
 enum e_symbol :char {
 	pipe = 'l',
 	out = 'o',
@@ -39,48 +40,52 @@ enum e_symbol :char {
 	in = 'i',
 	int_double = 'I'.
 	var = '$'
-};
-int	cmd_in_word(char **cmd, int len, char *word)
+};*/
+
+
+int	token_in_word(char **token, int len, char *word, int type)
 {
 	int	i;
 	int	j;
+	int	diff;
 
 	j = -1;
+	i = -1;
+	diff = 1;
 	while(++j < len)
 	{
 		i = -1;
-		while (word[++i])
-		{
-			if(cmd[i] == word[i])
-				i++;
-			if(cmd[i] == word[i])
-				i++;
-		}
+		while (token[++i] && diff)
+			diff = ft_strncmp(token[i], word, ft_strlen(token[i]));
+		if(!diff)
+			return(i + 1 + 10 * type);
 	}
-}
-
-int	token_in_word(char **symb, char *word)
-{
-
+	return(10 * type);
 }
 
 void	lexer_words(char **words, int num_words)
 {
-	s_lexic lex;
-	int i;
-	int j;
+	s_lexic	lex;
+	int	i;
+	//int	j;
+	int	*class;
 
 	creat_lexic(&lex);
-	i = 0;
-	j = 0;
-	while (i < num_words)
+	class = (int *) ft_calloc(num_words, sizeof(int));
+	i = -1;
+	//j = 0;
+	while (++i < num_words)
 	{
-		if(cmd_in_word(lex.l_cmd, num_words, words[i]))
-			printf("<cmd>");
-		else if(ft_strlen(words[i]) < 3 && token_in_word(lex.l_symb, words[i]))
-			printf("<sym>");
+		class[i] = token_in_word(lex.l_cmd, num_words, words[i], 2);
+		if(!class[i])
+			class[i] = token_in_word(lex.l_symb, num_words, words[i], 1);
+		if(!class[i])
+		{
+			printf("ERORR");
+			break ;
+		}
 		else
-			printf("ERROR");
+			printf("<%d>",class[i]);
 	}
 	printf("\n");
 }
@@ -106,8 +111,8 @@ void	split_input(char *input)
 int	main()
 {
 	char* input;
-	char **l_cmd;
-	char **l_symb;
+	//char **l_cmd;
+	//char **l_symb;
 
 	while(!ex)
 	{

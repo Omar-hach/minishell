@@ -12,6 +12,7 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+# include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/types.h> 
@@ -27,6 +28,7 @@
 # include <curses.h>
 # include <term.h>
 # include "libft/libft.h"
+# include "libft/print/ft_printf.h"
 
 typedef struct t_command
 {
@@ -67,6 +69,8 @@ lexixe{
 }
 */
 
+int     ft_strncmp(const char *s1, const char *s2, size_t n);
+int	ft_strlen(const char *s);
 
 
 #endif
