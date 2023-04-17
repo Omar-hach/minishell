@@ -30,14 +30,13 @@
 # include "libft/libft.h"
 # include "libft/print/ft_printf.h"
 
-typedef struct t_command
+typedef struct t_token
 {
-	char *cmd;
-	char *flag;
-	char *arg;
-	char *in;
-	char *out;
-} s_command;
+	int		type;
+	char	*arg;
+	char	*in;
+	char	*out;
+} s_token;
 
 typedef struct t_input
 {
@@ -45,17 +44,18 @@ typedef struct t_input
 	int token;
 }s_input;
 
-typedef struct t_token
+typedef struct t_tree
 {
-	char *token;
-	s_command *cmd;
-	s_command *exp;
-}s_token;
+	s_token	*token;
+	s_tree	*father;
+	s_tree	*left_son;
+	s_tree *right_son;
+}s_tree;
 
 typedef struct t_lexic
 {
-	char **l_cmd;
-	char **l_symb;
+	char	**l_cmd;
+	char	**l_symb;
 }s_lexic;
 
 /*
@@ -70,7 +70,7 @@ lexixe{
 */
 
 int     ft_strncmp(const char *s1, const char *s2, size_t n);
-int	ft_strlen(const char *s);
+int		ft_strlen(const char *s);
 
 
 #endif

@@ -16,15 +16,21 @@ int ex;
 void creat_lexic(s_lexic *lex)
 {
 	lex->l_cmd = (char **)malloc(8 * sizeof(char *));
-	lex->l_cmd[0] = "cd";
-	lex->l_cmd[1] = "echo";
-	lex->l_cmd[2] = "echo -n";
-	lex->l_cmd[3] = "pwd";
+	if(!lex->l_cmd)
+		exit(1);
+	lex->l_cmd[0] = "env";
+	lex->l_cmd[1] = "pwd";
+	lex->l_cmd[2] = "cd";
+	lex->l_cmd[3] = "exit";
 	lex->l_cmd[4] = "export";
 	lex->l_cmd[5] = "unset";
-	lex->l_cmd[6] = "env";
-	lex->l_cmd[7] = "exit";
+	lex->l_cmd[6] = "echo";
 	lex->l_symb = (char **)malloc(6 * sizeof(char *));
+	if(!lex->l_cmd)
+	{
+		free(lex->l_cmd);
+		exit(1);
+	}
 	lex->l_symb[0] = "|";
 	lex->l_symb[1] = ">";
 	lex->l_symb[2] = ">>";
@@ -63,29 +69,38 @@ int	token_in_word(char **token, int len, char *word, int type)
 	return(10 * type);
 }
 
+int detect_arg(int *cmd_type)
+{
+	if (*cmd_type / 10 != 2)
+		return (0);
+	if (*cmd_type % 10 > 1)
+		return (1);
+	if (*cmd_type % 10 > 3)
+		return (30);
+	if (*cmd_type % 10 > 5)
+		return (50/*join arg*/);
+	return (9);
+}
+
 void	lexer_words(char **words, int num_words)
 {
 	s_lexic	lex;
 	int	i;
-	//int	j;
 	int	*class;
+	//int error;
 
 	creat_lexic(&lex);
+	//error = 0;
+	i = 0;
 	class = (int *) ft_calloc(num_words, sizeof(int));
-	i = -1;
-	//j = 0;
 	while (++i < num_words)
 	{
 		class[i] = token_in_word(lex.l_cmd, num_words, words[i], 2);
-		if(!class[i])
+		if(!(class[i] % 10))
 			class[i] = token_in_word(lex.l_symb, num_words, words[i], 1);
-		if(!class[i])
-		{
-			printf("ERORR");
-			break ;
-		}
-		else
-			printf("<%d>",class[i]);
+		if (!(class[i] % 10) && i > 0)
+			class[i] = detect_arg(&class[i - 1]);
+		printf("<%d>",class[i]);
 	}
 	printf("\n");
 }
@@ -122,7 +137,6 @@ int	main()
 			add_history(input);
 			split_input(input);
 		}
-
 		free(input);
 	}
 	exit(0);

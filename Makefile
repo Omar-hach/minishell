@@ -26,7 +26,7 @@ all:$(NAME)
 
 $(NAME):$(OBJ)
 	make -C libft
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+	$(CC)  $(OBJ) $(LIBFT) -o $(NAME) $(CFLAGS)
 
 clean:
 	make -C libft clean
