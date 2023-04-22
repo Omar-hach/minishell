@@ -38,18 +38,12 @@ typedef struct t_token
 	char	*out;
 } s_token;
 
-typedef struct t_input
-{
-	s_command *comand;
-	int token;
-}s_input;
-
 typedef struct t_tree
 {
-	s_token	*token;
-	s_tree	*father;
-	s_tree	*left_son;
-	s_tree *right_son;
+	int indix;
+	struct t_tree	*father;
+	struct t_tree	*left_son;
+	struct t_tree	*right_son;
 }s_tree;
 
 typedef struct t_lexic
