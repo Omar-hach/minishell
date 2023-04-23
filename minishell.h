@@ -12,6 +12,7 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+# include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/types.h> 
@@ -26,27 +27,53 @@
 # include <termios.h>
 # include <curses.h>
 # include <term.h>
-# include<stdlib.h>
-# include<unistd.h>
-// # include "libft/libft.h"
+# include "libft/libft.h"
+# include "libft/print/ft_printf.h"
 
-typedef struct s_command
+typedef struct s_token
 {
-    char *cmd;
-    char *flag;
-    char *arg;
-    char *in;
-    char *out;
-} t_command;
+	int	type;
+	char	*arg;
+	int	in;
+	int	out;
+}t_token;
 
+/*
 typedef struct s_input
 {
-    t_command *command;
-    int *token;
-} t_input;
+	t_command *comand;
+	int token;
+}t_input;
+*/
 
-int ex;
+typedef struct s_tree
+{
+	int	token_index;
+	struct s_tree	*father;
+	struct s_tree	*left_son;
+	struct s_tree	*right_son;
+}t_tree;
 
-void    init_mini_shell();
+typedef struct s_lexic
+{
+	char	**l_cmd;
+	char	**l_symb;
+}t_lexic;
+
+/*
+lexixe{
+    pape | ::= priority lv.2 --> cmd | cmd
+    in derect > >> ::= priority lv.1 -->  cmd > file
+    out derect < ::= priority lv.0 --> cmd < file
+    $() ::= --> $cmd || $var
+    
+    << ? 
+}
+*/
+
+int     ft_strncmp(const char *s1, const char *s2, size_t n);
+int	ft_strlen(const char *s);
+char	*ft_strdup(const char *s);
+size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize); 
 
 #endif

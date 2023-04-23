@@ -3,130 +3,129 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yhachami <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ohachami <ohachami@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/30 22:30:09 by yhachami          #+#    #+#             */
-/*   Updated: 2023/03/30 22:38:40 by yhachami         ###   ########.fr       */
+/*   Created: 2023/03/26 23:14:18 by ohachami          #+#    #+#             */
+/*   Updated: 2023/03/26 23:14:59 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include"minishell.h"
 
-void	boom()
+int ex;
+
+void creat_lexic(s_lexic *lex)
 {
-	int x;
-
-	x = 4;
-	printf("explode in\n");
-	while(--x > 0)
-	{
-		printf("%d...\n",x);
-		sleep(1);
-	}
-	printf("BOOOM!!\n\n");
+	lex->l_cmd = (char **)malloc(8 * sizeof(char *));
+	lex->l_cmd[0] = "cd";
+	lex->l_cmd[1] = "echo";
+	lex->l_cmd[2] = "echo -n";
+	lex->l_cmd[3] = "pwd";
+	lex->l_cmd[4] = "export";
+	lex->l_cmd[5] = "unset";
+	lex->l_cmd[6] = "env";
+	lex->l_cmd[7] = "exit";
+	lex->l_symb = (char **)malloc(6 * sizeof(char *));
+	lex->l_symb[0] = "|";
+	lex->l_symb[1] = ">";
+	lex->l_symb[2] = ">>";
+	lex->l_symb[3] = "<";
+	lex->l_symb[4] = "<<";
+	lex->l_symb[5] = "$";
 }
-
-void	start_shell()
-{
-	char *sh = " \n\
-                    ++                        \n\
-                  ++  ++                      \n\
-                  ++    ++                    \n\
-                ++....  ++  ++    ++++++      \n\
-              ++++........++++++++    ++      \n\
-            ++  ++++++++++++++..    ++        \n\
-  ++++++++++++++++++++++++++....    ++++++    \n\
-  ++    ..++++++++  ++++++++++....++++++  ++  \n\
-    ++    ....++++    ..++++++++++++++....++  \n\
-    ++......++++++  ....++++++++++..      ..++\n\
-      ++..++++++++....++++++++++..      ..  ++\n\
-    ++++++++++++++++++++++++++      ..####  ++\n\
-    ++    ::::::::::::++++..      ########..++\n\
-    ++..::....      ..::      ..##########..++\n\
-    ++::..            ::  ..####::######++++  \n\
-    ::::::..        ::##########..++##++++++  \n\
-  ::..            ::##++::####++::..::++++    \n\
-  ::          ..::::..::++....::++++++++      \n\
-::..  ....::::::::++++::::++++++++++          \n\
-::::::::::      ++++++++++++++++              \n";
-// char sh = "     
-//            _.---._
-//        .'"".'/|\`.""'.
-//       :  .' / | \ `.  :
-//       '.'  /  |  \  `.'
-//        `. /   |   \ .'
-//   SHELL  `-.__|__.-'
-// "
-
-	printf("\033[H\033[J");
-	printf("%s\n**********************************************************\n",sh);
-	printf("\n**************\t Welcome to new shell \t**************\n\n");
-	boom();
-}
-
 /*
-void detect_command(char* command)
+enum e_symbol :char {
+	pipe = 'l',
+	out = 'o',
+	Out_double = 'O',
+	in = 'i',
+	int_double = 'I'.
+	var = '$'
+};*/
+
+
+int	token_in_word(char **token, int len, char *word, int type)
 {
-	if(!ft_strncmp(command, "pwd",4))
+	int	i;
+	int	j;
+	int	diff;
+
+	j = -1;
+	i = -1;
+	diff = 1;
+	while(++j < len)
 	{
-		result = getcwd();
+		i = -1;
+		while (token[++i] && diff)
+			diff = ft_strncmp(token[i], word, ft_strlen(token[i]));
+		if(!diff)
+			return(i + 1 + 10 * type);
 	}
-	printf(%s);
-}*/
-
-// get cammads and tokens
-
-void get_input(t_input in, char *input)
-{
-	in.command = (t_command *) malloc(3 * sizeof(t_command));
-
-	in.command[0].cmd = input;
+	return(10 * type);
 }
 
-void	init_mini_shell()
+void	lexer_words(char **words, int num_words)
 {
-	t_input in;
-	char *input;
+	s_lexic	lex;
+	int	i;
+	//int	j;
+	int	*class;
+
+	creat_lexic(&lex);
+	class = (int *) ft_calloc(num_words, sizeof(int));
+	i = -1;
+	//j = 0;
+	while (++i < num_words)
+	{
+		class[i] = token_in_word(lex.l_cmd, num_words, words[i], 2);
+		if(!class[i])
+			class[i] = token_in_word(lex.l_symb, num_words, words[i], 1);
+		if(!class[i])
+		{
+			printf("ERORR");
+			break ;
+		}
+		else
+			printf("<%d>",class[i]);
+	}
+	printf("\n");
+}
+
+void	split_input(char *input)
+{
+	int i;
+	int count;
+	char **words;
+
+	i = 0;
+	count = 0;
+	while (input[++i])
+	{
+		if((input[i] == ' ' && input[i - 1] != ' ')
+		|| (input[i + 1] == '\0' && input[i] != ' '))
+			count++;
+	}
+	words = ft_split(input, ' ');
+	lexer_words(words, count);
+}
+//<cmd><|><exp>
+int	main()
+{
+	char* input;
+	//char **l_cmd;
+	//char **l_symb;
 
 	while(!ex)
 	{
-		input = readline(">>> Shell $>");
-		get_input(in, input);
-		if(in.command[0].cmd)
+		input = readline(">>> MiniShell $>");
+		if(*input)
 		{
-			add_history(in.command[0].cmd);
-			printf("%s\n", in.command[0].cmd);
-			free(input);
+			add_history(input);
+			split_input(input);
 		}
+
+		free(input);
 	}
-}
-
-void	handler(int sig, siginfo_t *info, void *n)
-{
-	if(sig == 2)
-	{
-		init_mini_shell();
-	}
-	if(sig == SIGQUIT)
-	{
-		ex = 1;
-	}
-}
-
-void handle_signals()
-{
-	struct sigaction sign;
-
-	sign.sa_flags = SA_RESTART;
-	sign.sa_sigaction = &handler;
-	sigaction(SIGINT, &sign, NULL);//ctr-C
-	sigaction(SIGQUIT, &sign, NULL);//ctr-/
-}
-
-int	main()
-{
-	handle_signals();
-	start_shell();
-	init_mini_shell();
+	exit(0);
 }
  //"e""c""h""o" hello need to work
+ // error file name too long.
