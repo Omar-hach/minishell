@@ -13,7 +13,7 @@
 
 int ex;
 
-void creat_lexic(s_lexic *lex)
+void creat_lexic(t_lexic *lex)
 {
 	lex->l_cmd = (char **)malloc(8 * sizeof(char *));
 	lex->l_cmd[0] = "cd";
@@ -65,7 +65,7 @@ int	token_in_word(char **token, int len, char *word, int type)
 
 void	lexer_words(char **words, int num_words)
 {
-	s_lexic	lex;
+	t_lexic	lex;
 	int	i;
 	//int	j;
 	int	*class;
