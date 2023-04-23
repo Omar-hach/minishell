@@ -25,7 +25,7 @@ void creat_lexic(s_lexic *lex)
 	lex->l_cmd[4] = "export";
 	lex->l_cmd[5] = "unset";
 	lex->l_cmd[6] = "echo";
-	lex->l_cmd[6] = NULL;
+	lex->l_cmd[7] = NULL;
 	lex->l_symb = (char **)malloc(6 * sizeof(char *));
 	if (!lex->l_cmd)
 	{
@@ -89,16 +89,16 @@ int count_space(char *s)
 	return (i);
 }
 
-int ft_find(char *s, char **sym)
+int ft_find(char *s, char **token)
 {
 	int i;
 	int diff;
 
 	i = -1;
 	diff = 0;
-	while (sym[++i])
+	while (token[++i])
 	{
-		diff = ft_strncmp(sym[i], s, ft_strlen(sym[i]));
+		diff = ft_strncmp(token[i], s, ft_strlen(token[i]));
 		if (!diff)
 			return (i + 1);
 	}
@@ -253,18 +253,65 @@ char **expr_split(char *s, char **sym)
 	return (array);
 }
 
+char **cmd_split(char *word, char **cmd)
+{
+	int		i;
+	int j;
+	char	**array;
+
+	array = (char **)ft_calloc(3, sizeof(char *));
+	array[0] = (char *)ft_calloc(ft_strlen(word), sizeof(char));
+	array[1] = (char *)ft_calloc(ft_strlen(word), sizeof(char));
+	array[2] = NULL;
+	word += count_space(word);
+	i = 0;
+	j = 0;
+	while ((word[++i] != ' ' && word[i] != '\t')  && word[i])
+	{
+		while (word[i] == 34 || word[i] == 39)
+			i++;
+		array[0][j] = word[i];
+		if(word[i] == '/')
+			break;
+		ft_printf("word =%c\n", word[i]);
+		j++;
+	}
+	array[0][i] = '\0';
+	if (!ft_find(word, cmd) && (word[i] == ' ' || word[i] == '\t' || !word[i]))
+	{
+		ft_printf("bash: %s: command not found\n", array[0]);
+		free(array);
+		return (NULL);
+	}
+	word += i;
+	word += count_space(word);
+	i = -1;
+	while (word[++i])
+		array[1][i] = word[i];
+	array[1][i] = '\0';
+	ft_printf("part \n");
+	return (array);
+}
+//acess 
 void split_input(char *input)
 {
 	int i;
 	s_lexic lex;
-	char **words;
+	char **cmd;
+//	char **words;
 
 	creat_lexic(&lex);
-	words = expr_split(input, lex.l_symb);
+//	words = expr_split(input, lex.l_symb);
 	i = -1;
-	while (words && words[++i])
+/*	while (words && words[++i])
 		printf("<%s>", words[i]);
+	free(word);*/
 	// printf("\n");
+	cmd = cmd_split(input, lex.l_cmd);//should put words[i + 2], 0 , 2 , 4
+	ft_printf("input =%s\n",input);
+	while (cmd && cmd[++i])
+		printf("<%s>\n", cmd[i]);
+	free(cmd);
 	free(lex.l_cmd);
 	free(lex.l_symb);
 }
