@@ -30,27 +30,27 @@
 # include "libft/libft.h"
 # include "libft/print/ft_printf.h"
 
-typedef struct t_token
+typedef struct s_token
 {
 	int		type;
 	char	*arg;
 	char	*in;
 	char	*out;
-} s_token;
+}t_token;
 
-typedef struct t_tree
+typedef struct s_tree
 {
-	int indix;
-	struct t_tree	*father;
-	struct t_tree	*left_son;
-	struct t_tree	*right_son;
-}s_tree;
+	int				indix;
+	struct s_tree	*father;
+	struct s_tree	*left_son;
+	struct s_tree	*right_son;
+}t_tree;
 
-typedef struct t_lexic
+typedef struct s_lexic
 {
 	char	**l_cmd;
 	char	**l_symb;
-}s_lexic;
+}t_lexic;
 
 /*
 lexixe{
@@ -62,9 +62,10 @@ lexixe{
     << ? 
 }
 */
-
-int     ft_strncmp(const char *s1, const char *s2, size_t n);
-int		ft_strlen(const char *s);
-
+char	**expr_split(char *s, char **sym);
+void	creat_lexic(t_lexic *lex);
+int		count_space(char *s);
+int		ft_find(char *s, char **token);
+int		error_print(char *mes, char *prob, int n);
 
 #endif
