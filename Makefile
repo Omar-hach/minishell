@@ -14,8 +14,9 @@ NAME = minishell
 
 CC = gcc 
 
-CFLAGS = -lreadline -lcurses  -Wall -Wextra 
+CFLAGS = -Werror -Wall -Wextra 
 #-Werror -lreadline -lcurses problem ??? try fclean -> make
+FLAGS = -lreadline -lcurses -fsanitize=address
 SRC = 	ft_utils.c\
 		symbole_parcing.c\
 		minishell.c 
@@ -28,7 +29,7 @@ all:$(NAME)
 
 $(NAME):$(OBJ)
 	make -C libft
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
+	$(CC) $(FLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
 
 clean:
 	make -C libft clean

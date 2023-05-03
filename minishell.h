@@ -62,7 +62,7 @@ lexixe{
     << ? 
 }
 */
-char	**expr_split(char *s, char **sym);
+char	**expr_split(char *s, char **sym, int *part);
 void	creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);

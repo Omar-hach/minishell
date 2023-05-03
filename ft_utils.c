@@ -64,10 +64,10 @@ int	ft_find(char *s, char **token)
 	return (0);
 }
 
-int	error_print(char *mes, char *prob, int n)
+int	error_print(char *message, char *prob, int n)
 {
-	printf("%s '", mes);
-	while (n--)
+	printf("%s '", message);
+	while (*prob && n--)
 	{
 		printf("%c", *prob);
 		prob++;
