@@ -15,8 +15,9 @@ NAME = minishell
 CC = gcc 
 
 CFLAGS = -Werror -Wall -Wextra 
-#-Werror -lreadline -lcurses problem ??? try fclean -> make
+
 FLAGS = -lreadline -lcurses -fsanitize=address
+
 SRC = 	ft_utils.c\
 		symbole_parcing.c\
 		minishell.c 

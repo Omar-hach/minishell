@@ -32,7 +32,7 @@
 
 typedef struct s_token
 {
-	int		type;
+	int		token;
 	char	*arg;
 	char	*in;
 	char	*out;
