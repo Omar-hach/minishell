@@ -38,6 +38,8 @@ typedef struct s_token
 	char	*out;
 }t_token;
 
+// echo hey 26h2g61h | ls
+
 typedef struct s_tree
 {
 	int				indix;
@@ -62,7 +64,7 @@ lexixe{
     << ? 
 }
 */
-char	**expr_split(char *s, char **sym, int *part);
+char	**expr_split(char *s, char **sym, int part);
 void	creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);

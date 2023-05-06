@@ -26,7 +26,7 @@ int	last_char(char *s, int queot, int double_qu)
 			(double_qu % 2) * 39);
 		return (1);
 	}
-	if (*s == '>' || *s == '|' || *s == '<')
+	if (*s == '>' || *s == '|' || *s == '<')//need to fix this for << AND >>
 	{
 		printf("minshell: error unexpected token `%c'\n", *s);
 		return (1);
@@ -60,7 +60,6 @@ int	detect_sym_error(char *s, char **sym, int *part)
 			*part += 2;
 		}
 	}
-	ft_printf("part = %d\n",*part);
 	return (last_char(s - 1, queot, double_qu));
 }
 
@@ -73,7 +72,6 @@ int	get_symb_len(int sym_type, char *s, char **sym)
 	queot = 0;
 	double_qu = 0;
 	count = 0;
-	ft_printf("<%s> sym_type = %d\n", s, sym_type);
 	if (sym_type == 0)
 		return (1);
 	else if (sym_type == 1 || sym_type == 3)
@@ -105,7 +103,6 @@ int	get_token_len(char *s, char **sym)
 	{
 		queot += (*s == 34) * !(double_qu % 2);
 		double_qu += (*s == 39) * !(queot % 2);
-		ft_printf("<%s> count = %d queot = %d:-:\n", s, count, queot);
 		if (ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
 			break ;
 		count++;
@@ -125,14 +122,11 @@ int	*word_len(char *s, char **sym, int part)
 	i = 0;
 	while (*s && i < part)
 	{
-		ft_printf("<%s> i = %d\n", s, part);
 		array[i] = get_token_len(s, sym);
 		s += array[i];
 		s += count_space(s);
-		ft_printf("<%s> arrays[%i] = %d::,\n", s, i, array[i]);
 		if (++i < part && ft_find(s, sym))
 			array[i] = get_symb_len(ft_find(s, sym) - 1, s, sym);
-		ft_printf("<%s> arrays[%i] = %d::\n", s, i, array[i]);
 		if (i < part)
 			s += array[i++];
 	}
@@ -152,13 +146,11 @@ char	**word_cutter(char *s, int *len_array, char **array)
 	k = 0;
 	while (s[k])
 	{
-		ft_printf("<%d>=arrays[%i]::,\n", len_array[i], i);
 		if (len_array[i] != 0)
 			array[i][++j] = s[k++];
 		if (--len_array[i] < 1)
 		{
 			array[i][++j] = '\0';
-			ft_printf("<%s> arrays[%i][%d]::,\n", array[i], i, j);
 			i++;
 			j = -1;
 			l += len_array[i] + 1;
@@ -167,29 +159,29 @@ char	**word_cutter(char *s, int *len_array, char **array)
 	return (array);
 }
 
-char	**expr_split(char *s, char **sym, int *part)
+char	**expr_split(char *s, char **sym, int part)
 {
 	char	**array;
 	int		*len_array;
 	int		i;
 
 	array = NULL;
-	if (detect_sym_error(s, sym, part))
+	if (detect_sym_error(s, sym, &part))
 		return (NULL);
-	array = (char **)ft_calloc(*part + 1, sizeof(char *));
+	array = (char **)ft_calloc(part + 1, sizeof(char *));
 	if (!array)
 		return (NULL);
-	len_array = word_len(s, sym, *part);
+	len_array = word_len(s, sym, part);
 	if (!len_array)
 	{
 		free(array);
 		return (NULL);
 	}
 	i = -1;
-	while (++i < *part)
+	while (++i < part)
 		array[i] = (char *)ft_calloc(len_array[i] + 1, sizeof(char));
 	array = word_cutter(s, len_array, array);
-	array[*part] = NULL;
+	array[part] = NULL;
 	free(len_array);
 	return (array);
 }

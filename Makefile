@@ -20,7 +20,8 @@ FLAGS = -lreadline -lcurses -fsanitize=address
 
 SRC = 	ft_utils.c\
 		symbole_parcing.c\
-		minishell.c 
+		minishell.c\
+		create_tree.c
 
 OBJ = $(SRC:.c=.o)
 

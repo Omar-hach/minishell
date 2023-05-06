@@ -16,13 +16,13 @@ void	creat_lexic(t_lexic *lex)
 	lex->l_cmd = (char **)malloc(8 * sizeof(char *));
 	if (!lex->l_cmd)
 		exit(1);
-	lex->l_cmd[0] = "env";
+	lex->l_cmd[0] = "env";//11
 	lex->l_cmd[1] = "pwd";
 	lex->l_cmd[2] = "cd";
 	lex->l_cmd[3] = "exit";
 	lex->l_cmd[4] = "export";
 	lex->l_cmd[5] = "unset";
-	lex->l_cmd[6] = "echo";
+	lex->l_cmd[6] = "echo";//17
 	lex->l_cmd[7] = NULL;
 	lex->l_symb = (char **)malloc(6 * sizeof(char *));
 	if (!lex->l_cmd)
@@ -30,11 +30,11 @@ void	creat_lexic(t_lexic *lex)
 		free(lex->l_cmd);
 		exit(1);
 	}
-	lex->l_symb[0] = "|";
+	lex->l_symb[0] = "|";//21
 	lex->l_symb[1] = ">>";
 	lex->l_symb[2] = ">";
 	lex->l_symb[3] = "<<";
-	lex->l_symb[4] = "<";
+	lex->l_symb[4] = "<";//25
 	lex->l_symb[5] = NULL;
 }
 
