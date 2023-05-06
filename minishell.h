@@ -27,8 +27,11 @@
 # include <termios.h>
 # include <curses.h>
 # include <term.h>
+# include <limits.h>
 # include "libft/libft.h"
 # include "libft/print/ft_printf.h"
+
+// # define PATH_MAX 32000
 
 typedef struct s_token
 {
@@ -62,18 +65,38 @@ typedef struct s_lexic
 
 /*
 lexixe{
-    pape | ::= priority lv.2 --> cmd | cmd
-    in derect > >> ::= priority lv.1 -->  cmd > file
-    out derect < ::= priority lv.0 --> cmd < file
-    $() ::= --> $cmd || $var
-    
-    << ? 
+	 pape | ::= priority lv.2 --> cmd | cmd
+	 in derect > >> ::= priority lv.1 -->  cmd > file
+	 out derect < ::= priority lv.0 --> cmd < file
+	 $() ::= --> $cmd || $var
+	 
+	 << ? 
 }
 */
 
-int     ft_strncmp(const char *s1, const char *s2, size_t n);
-int	ft_strlen(const char *s);
-char	*ft_strdup(const char *s);
-size_t  ft_strlcpy(char *dst, const char *src, size_t dstsize); 
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
+int		ft_strlen(const char *s);
+char		*ft_strdup(const char *s);
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
+int		ft_isalnum(int c);
+char		*ft_strjoin(char const *s1, char const *s2);
+char		**ft_split(char const *s, char c);
+void		*ft_calloc(size_t count, size_t size);
+
+char		*ft_strdup_newline(char *s);
+char		*join_args(char **args, char between);
+int		fork1();
+int		ft_dup(int fd, int new_fd);
+char		*find_path(char *file);
+
+int 		ft_isvar(char *var);
+int		ft_findvar(char *var);
+void		ft_putenv(char *var);
+void		ft_unputenv(char *name);
+int		replace_var(char *var, char *value);
+
+int		exec_cmd(t_token token);
+int		exec_symbol(t_tree *tree, t_token *tokens);
+int		exec_node(t_tree *tree, t_token *tokens);
 
 #endif
