@@ -42,16 +42,16 @@ int	ft_pipe(t_tree *tree, t_token *tokens)
 		return (1);
 	pid[1] = fork1();
 	if (pid[1] == 0)
-		out = ft_piped_end(fd, 0, tree->right_son, tokens);
+		out = ft_piped_end(fd, 0, tree->left_son, tokens);
 	pid[2] = fork1();
 	if (pid[2] == 0)
-		out = ft_piped_end(fd, 1, tree->left_son, tokens);
+		out = ft_piped_end(fd, 1, tree->right_son, tokens);
 	close(fd[0]);
 	close(fd[1]);
 	waitpid(pid[1], NULL, 0);
 	waitpid(pid[2], NULL, 0);
-	free(fd);
-	free(pid);
+	// free(fd);
+	// free(pid);
 	return (out);
 }
 
@@ -59,8 +59,14 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 {
 	int	fd;
 	int	x;
+	int	redir;
+	t_tree *cmd;
 
-	// ft_printf("<\n");
+	// // ft_printf("<\n");
+	cmd = tree->right_son;
+	redir = tokens[tree->token_index].in;
+	while (redir != cmd->token_index)
+		cmd = cmd->right_son;
 	if (fork1() == 0)
 	{
 		x = tree->token_index;
@@ -72,7 +78,7 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 		}
 		if (ft_dup(fd, STDIN_FILENO) < 0)
 			return (2);
-		exec_node(tree->left_son, tokens);
+		exec_node(cmd, tokens);
 		close(fd);
 	}
 	wait(NULL);
@@ -96,9 +102,11 @@ int	ft_redirect_in_append(t_tree *tree, t_token *tokens)
 		}
 		if (ft_dup(fd, STDIN_FILENO) < 0)
 			return (2);
-		exec_node(tree->left_son, tokens);
+		exec_node(tree->right_son, tokens);
 		close(fd);
 	}
+	else if (tree->father && tokens[tree->father->token_index].type == 20)
+		exec_node(tree->right_son, tokens);
 	wait(NULL);
 	return (0);
 }
@@ -107,8 +115,13 @@ int	ft_redirect_out(t_tree *tree, t_token *tokens)
 {
 	int	fd;
 	int	x;
+	int	redir;
+	t_tree *cmd;
 
-	// ft_printf(">\n");
+	cmd = tree->right_son;
+	redir = tokens[tree->token_index].in;
+	while (redir != cmd->token_index)
+		cmd = cmd->right_son;
 	if (fork1() == 0)
 	{
 		x = tree->token_index;
@@ -120,11 +133,11 @@ int	ft_redirect_out(t_tree *tree, t_token *tokens)
 		}
 		if (ft_dup(fd, STDOUT_FILENO) < 0)
 			return (2);
-		exec_node(tree->left_son, tokens);
+		exec_node(cmd, tokens);
 		close(fd);
 	}
-	else if (tokens[tree->father->token_index].type == 20)
-		exec_node(tree->left_son, tokens);
+	// else if (tree->father && tokens[tree->father->token_index].type == 20)
+	// 	exec_node(tree->right_son, tokens);
 	wait(NULL);
 	return (0);
 }
@@ -146,11 +159,11 @@ int	ft_redirect_out_append(t_tree *tree, t_token *tokens)
 		}
 		if (ft_dup(fd, STDOUT_FILENO) < 0)
 			return (2);
-		exec_node(tree->left_son, tokens);
+		exec_node(tree->right_son, tokens);
 		close(fd);
 	}
-	else if (tokens[tree->father->token_index].type == 20)
-		exec_node(tree->left_son, tokens);
+	else if (tree->father && tokens[tree->father->token_index].type == 20)
+		exec_node(tree->right_son, tokens);
 	wait(NULL);
 	return (0);
 }
@@ -160,17 +173,18 @@ int	exec_symbol(t_tree *tree, t_token *tokens)
 	int	x;
 	int	out;
 
+	out = 1;
 	x = tree->token_index;
 	// ft_printf("x = %d\n", x);
-	if (tokens[x].type == 20)
+	if (tokens[x].type == 21)
 		out = ft_pipe(tree, tokens);
-	else if (tokens[x].type == 21)
-		out = ft_redirect_in(tree, tokens);
 	else if (tokens[x].type == 22)
-		out = ft_redirect_in_append(tree, tokens);
+		out = ft_redirect_in(tree, tokens);
 	else if (tokens[x].type == 23)
-		out = ft_redirect_out(tree, tokens);
+		out = ft_redirect_in_append(tree, tokens);
 	else if (tokens[x].type == 24)
+		out = ft_redirect_out(tree, tokens);
+	else if (tokens[x].type == 25)
 		out = ft_redirect_out_append(tree, tokens);
 	return (out);
 }

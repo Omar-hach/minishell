@@ -9,124 +9,242 @@
 /*   Updated: 2023/03/26 23:14:59 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "minishell.h"
 
-#include"minishell.h"
-
-int ex;
-
-void creat_lexic(t_lexic *lex)
+char *fill_cmd(char *word, int j, int i)
 {
-	lex->l_cmd = (char **)malloc(8 * sizeof(char *));
-	lex->l_cmd[0] = "cd";
-	lex->l_cmd[1] = "echo";
-	lex->l_cmd[2] = "echo -n";
-	lex->l_cmd[3] = "pwd";
-	lex->l_cmd[4] = "export";
-	lex->l_cmd[5] = "unset";
-	lex->l_cmd[6] = "env";
-	lex->l_cmd[7] = "exit";
-	lex->l_symb = (char **)malloc(6 * sizeof(char *));
-	lex->l_symb[0] = "|";
-	lex->l_symb[1] = ">";
-	lex->l_symb[2] = ">>";
-	lex->l_symb[3] = "<";
-	lex->l_symb[4] = "<<";
-	lex->l_symb[5] = "$";
-}
-/*
-enum e_symbol :char {
-	pipe = 'l',
-	out = 'o',
-	Out_double = 'O',
-	in = 'i',
-	int_double = 'I'.
-	var = '$'
-};*/
+	char	*cmd;
 
-
-int	token_in_word(char **token, int len, char *word, int type)
-{
-	int	i;
-	int	j;
-	int	diff;
-
-	j = -1;
+	cmd = (char *)ft_calloc(++i, sizeof(char));
+	if(!cmd)
+		return (NULL);
 	i = -1;
-	diff = 1;
-	while(++j < len)
+	while ((word[++i] != ' ' && word[i] != '\t') && word[i])
 	{
-		i = -1;
-		while (token[++i] && diff)
-			diff = ft_strncmp(token[i], word, ft_strlen(token[i]));
-		if(!diff)
-			return(i + 1 + 10 * type);
+		while (word[i] == 34 || word[i] == 39)
+			i++;
+		cmd[j] = word[i];
+		j++;
 	}
-	return(10 * type);
+	cmd[j] = '\0';
+	return (cmd);
 }
-
-void	lexer_words(char **words, int num_words)
+char *fill_symb(char *word, int j, int i)//probleme here
 {
-	t_lexic	lex;
-	int	i;
-	//int	j;
-	int	*class;
+	char	*sym;
 
-	creat_lexic(&lex);
-	class = (int *) ft_calloc(num_words, sizeof(int));
 	i = -1;
-	//j = 0;
-	while (++i < num_words)
+	j = 1;
+	ft_printf("cmd=%s",word);
+	if((word[0] == '>' && word[1] == '>') || (word[0] == '<' && word[1] == '<'))
 	{
-		class[i] = token_in_word(lex.l_cmd, num_words, words[i], 2);
-		if(!class[i])
-			class[i] = token_in_word(lex.l_symb, num_words, words[i], 1);
-		if(!class[i])
-		{
-			printf("ERORR");
-			break ;
-		}
-		else
-			printf("<%d>",class[i]);
+		j = 2;
+		sym = (char *)ft_calloc(j + 1, sizeof(char));
 	}
-	printf("\n");
+	else
+		sym = (char *)ft_calloc(j + 1, sizeof(char));
+	if(++i < j)
+		sym[j] = word[j];
+	sym[j] = '\0';
+	return (sym);
 }
-
-void	split_input(char *input)
+//echo hello > a b c --> cat a : helo b c
+char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 {
-	int i;
-	int count;
-	char **words;
+	int		i;
+	int		j;
+	char	*arg;
+	char	*cmd;
 
 	i = 0;
-	count = 0;
-	while (input[++i])
+	j = 0;
+	word += count_space(word);
+	if(*word == '|')
 	{
-		if((input[i] == ' ' && input[i - 1] != ' ')
-		|| (input[i + 1] == '\0' && input[i] != ' '))
-			count++;
+		*token = 21;
+		return (NULL);
 	}
-	words = ft_split(input, ' ');
-	lexer_words(words, count);
+	while(word[i] != ' ' && word[i] != '\t' && word[i] != '\0')
+		i++;
+	ft_printf("token[%s]=%d\n",word, type);
+	if(type > 19 || type < 2)
+		cmd = fill_cmd(word, j, i);
+	if(type < 20 &&  type > 2)
+		cmd = fill_symb(word, j, i);
+	if(!cmd)
+		return (NULL);
+	if(ft_find(cmd, lex.l_cmd))
+		*token = ft_find(cmd, lex.l_cmd) + 10;
+	else if(ft_find(cmd, lex.l_symb) && ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
+		*token = ft_find(cmd, lex.l_symb) + 20;
+	else if(ft_strchr(cmd, '/'))//maybe put './' in arg ???
+	{
+		*token = 1;
+		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
+		ft_memcpy(arg,word, ft_strlen(word) + 1);
+		return (arg);
+	}
+	else
+	{
+		printf("minshell: %s :command not found\n",cmd);
+		return (NULL);
+	}
+	ft_printf("cmd =%s.\n",cmd);
+	arg = (char *)ft_calloc(ft_strlen(word + i) - count_space(word + i) + 1, sizeof(char));
+	if(!arg)
+		return (NULL);
+	word += count_space(word + i) + i;
+	i = -1;
+	while (word[++i])//handle removing quote and 
+		arg[i] = word[i];
+	arg[i] = '\0';
+	return (arg);
+}
+
+int		nodes_count(char **word)
+{
+	int	i;
+	int	part;
+
+	i = -1;
+	part = 0;
+	while(word[++i])
+	{
+		printf("'%s' ", word[i]);
+		if(word[i][0] != '>' || word[i][0] != '<')
+			part++;
+	}
+	printf("\npart=%d\n",part);
+	return (part);
+}
+//acess 
+t_token	*split_input(char *input,int *len)
+{
+	int		i;
+	int 	j;
+	t_lexic	lex;
+	t_token	*nodes;
+	char	**words;
+
+	creat_lexic(&lex);
+//	input = detect_exec_var(input); for $VAR
+	i = 1;
+	words = expr_split(input, lex.l_symb, i);
+	if (!words)
+	{
+		free(lex.l_cmd);
+		free(lex.l_symb);
+		return (NULL);
+	}
+	*len = nodes_count(words);
+	nodes = (t_token *)ft_calloc(*len, sizeof(t_token));
+	if (!nodes)
+	{
+		free(nodes);
+		free(lex.l_cmd);
+		free(lex.l_symb);
+		return (NULL);
+	}
+	i = -1;
+	j = 0;
+	while(words[++i])
+	{
+		nodes[j].type = 0;
+		nodes[j].arg = cmd_split(words[i], &nodes[j].type, lex,  (j > 0) * nodes[j - 1].type);//should put words[i + 2], 0 , 2 , 4
+		ft_printf("i=%d j =%d token=%d\n",i,j,nodes[j].type);
+		if (!nodes[i].arg && nodes[j].type == 0)// [0]cmd arg [1]| [2]cmd arg [3]>arg [4]arg2
+		{
+			free(words);
+			free(nodes);
+			free(lex.l_cmd);
+			free(lex.l_symb);
+			return (NULL);//127
+		}
+		if(nodes[j].type > 21)
+			nodes[j].arg = ft_strjoin(nodes[j].arg, words[(i++) + 1]);
+		j++;
+	}
+	i = -1;
+	while (++i < *len)
+		printf("i =%d type=%d <%s>\n",i, nodes[i].type , nodes[i].arg);
+	free(lex.l_cmd);
+	free(lex.l_symb);
+	return (nodes);
 }
 //<cmd><|><exp>
+
+void treeprint(t_tree *root, int level,t_token *nodes)
+{
+	int i =7;
+
+    if (root == NULL)
+        return;
+	level += 8;
+    treeprint(root->right_son, level, nodes);
+	ft_printf("\n");
+    while (++i < level)
+	{
+        ft_printf(" ");
+	}
+	ft_printf("{%p} I= %d ,type=%d=%s-->left=%p-->right=%p\n",root, root->token_index, nodes[root->token_index].type,nodes[root->token_index].arg, root->left_son, root->right_son);
+    treeprint(root->left_son, level, nodes);
+}
+
 int	main()
 {
-	char* input;
-	//char **l_cmd;
-	//char **l_symb;
+	char *input;
+	int ex;
+	t_token	*nodes;
+	t_tree *tree;
+	// char **l_cmd;
+	// char **l_symb;
 
-	while(!ex)
+	ex = 1;
+	tree = NULL;
+	nodes = NULL;
+	while (ex)
 	{
 		input = readline(">>> MiniShell $>");
-		if(*input)
+		if (*(input + count_space(input)))
 		{
 			add_history(input);
-			split_input(input);
+			nodes = split_input(input, &ex);
+			if(nodes)
+			{
+				tree = create_tree(nodes, ex);
+				treeprint(tree, 0, nodes);
+				ft_printf("\n------EXEC-----\n");
+				exec_node(tree, nodes);
+				free(tree);
+			}
+			free(nodes);
 		}
-
 		free(input);
 	}
 	exit(0);
 }
- //"e""c""h""o" hello need to work
- // error file name too long.
+
+//"e""c""h""o" hello need to work,// DONE
+// error file name too long > 256
+/*
+----root=17=arg -->echo
+*****branch=21=(null)-->0x6030000028f0
+branch=21=(null)-->left=0x0-->right=0x0
+root=17=arg -->left=0x0-->right=0x0
+branch=21=(null)-->left=echo-->right=0x0
+root=17=arg -->left=0x0-->right=0x0
+*****branch=13=-->cd
+branch=13=-->left=0x0-->right=0x0
+root=21=(null)-->left=echo-->right=0x0
+branch=13=-->left=0x0-->right=0x0
+root=21=(null)-->left=echo-->right=cd
+*****branch=21=(null)-->0x603000002950
+branch=21=(null)-->left=0x0-->right=0x0
+root=13=-->left=0x0-->right=0x0
+branch=21=(null)-->left=cd-->right=0x0
+root=13=-->left=0x0-->right=0x0
+*****branch=11=-->env
+branch=11=-->left=0x0-->right=0x0
+root=21=(null)-->left=cd-->right=0x0
+branch=11=-->left=0x0-->right=0x0
+root=21=(null)-->left=cd-->right=env*/

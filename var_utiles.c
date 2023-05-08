@@ -43,6 +43,81 @@
 // 		environ[x] = ft_strdup(name);
 // }
 
+char	*mint_dollars(char *s, int start, int name_len, char *val)
+{
+	int		size;
+	char	*no_money;
+	int 	x;
+	int		y;
+
+	// ft_printf("s=%d name=%d val=%d\n",ft_strlen(s) , name_len ,ft_strlen(val));
+	size = ft_strlen(s) - name_len + ft_strlen(val) + 1;
+	no_money = (char *) malloc (size * sizeof(char));
+	x = -1;
+	while (++x <= start)
+		no_money[x] = s[x];
+	// x--;
+	// ft_printf("x=%d\n",x);
+	y = 0;
+	while (y < ft_strlen(val))
+	{
+		no_money[x + y] = val[y];
+		y++;
+	}
+	y += x;
+	x += name_len + 1;
+	// ft_printf("x=%d\n",x);
+	while (x < size)
+		no_money[y++] = s[x++];
+	no_money[x] = '\0';
+	return (no_money);
+}
+
+char	*get_dollars(char *s, int x)
+{
+	int	y;
+	int	z;
+	char *name;
+	char *val;
+
+	while (s[x] && s[x] != '$')
+		x++;
+	if (x == ft_strlen(s))
+		return (0);
+	y = x;
+	z = 0;
+	while (s[x] && s[x++] != ' ')
+		z++;
+	if (z <= 1)
+		return (0);
+	name = (char *) malloc (z * sizeof(char));
+	x = y;
+	z = -1;
+	while (s[x] && s[x] != ' ')
+		name[z++] = s[x++];
+	name[z] = '\0';
+	val = getenv(name);
+	// ft_printf("%s, start=%d len=%d name=%s ,%s\n",s , y ,z ,name, val);
+	return (mint_dollars(s, y - 1 , z , val));
+}
+
+char	*dola_dola(char *s)
+{
+	int	x;
+	char *out;
+
+	out = s;
+	x = -1;
+	while (s[++x])
+	{
+		if (s[x] == '$')
+		{
+			out = get_dollars(out, x);
+		}
+	}
+	return (out);
+}
+
 int	ft_findvar(char *var)
 {
 	int			x;
@@ -93,7 +168,7 @@ int	replace_var(char *name, char *value)
 
 int	ft_isvar(char *var)
 {
-	int	size;
+	// int	size;
 	int	x;
 	int	y;
 
@@ -136,7 +211,6 @@ void	ft_putenv(char *var)
 		new_env[x++] = var_;
 		new_env[x] = NULL;
 		environ = new_env;
-		free(environ);
 	}
 	else
 		environ[x] = ft_strdup(var);

@@ -20,7 +20,7 @@ int	ft_env()
 
 	// x = -1;
 	// while (environ[++x])
-		// out = join_args(environ, '\n');
+	// 	out = join_args(environ, '\n');
 	// ft_printf(out);
 	x = -1;
 	while (environ[++x])
@@ -30,14 +30,19 @@ int	ft_env()
 
 int	ft_echo(char *arg, char flag)
 {
-	char	*out;
+	// char	*out;
 
 	// if (flag == 'n')
 	// 	out = ft_strdup(arg);
 	// else if (flag == 0)
 	// 	out = ft_strdup_newline(arg);
 	// ft_printf(out);
-	if (flag == 'n')
+	if (dola_dola(arg))
+	{
+		ft_printf(dola_dola(arg));
+		ft_printf("\n");
+	}
+	else if (flag == 'n')
 		ft_printf(arg);
 	else if (flag == 0)
 	{
@@ -77,13 +82,13 @@ int	ft_cd(char *arg)
 	{
 		if (chdir(arg) < 0)
 		{
-			perror("cannot change dir\n");
+			perror("cannot change dir");
 			return (1);
 		}
 	}
 	else
 	{
-		perror("dir don exist\n");
+		perror("dir don exist");
 		return (2);
 	}
 	return (0);
@@ -128,9 +133,11 @@ int	ft_export(char *arg)
 	}
 	x = -1;
 	while (args[++x])
+	{
 		ft_putenv(args[x]);
+		// ft_printf("export = %s\n",getenv(args[x]));
+	}
 	// ft_env();
-	// ft_printf("export = %s\n",getenv("VR"));
 	// ft_unset("VR ok");
 	// ft_env();
 	return (0);
@@ -145,15 +152,16 @@ int	exec_cmd(t_token token)
 {
 	int	out;
 
+	out = 0;
 	if (token.type == 11)
 		out = ft_env();
 	else if (token.type == 12)
 		out = ft_pwd();
 	else if (token.type == 13)
 		out = ft_cd(token.arg);
-	else if (token.type == 14)
-		out = ft_export(token.arg);
 	else if (token.type == 15)
+		out = ft_export(token.arg);
+	else if (token.type == 16)
 		out = ft_unset(token.arg);
 	else if (token.type == 17)
 		out = ft_echo(token.arg, 0);

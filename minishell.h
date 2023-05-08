@@ -41,14 +41,6 @@ typedef struct s_token
 	int	out;
 }t_token;
 
-/*
-typedef struct s_input
-{
-	t_command *comand;
-	int token;
-}t_input;
-*/
-
 typedef struct s_tree
 {
 	int	token_index;
@@ -95,8 +87,18 @@ void		ft_putenv(char *var);
 void		ft_unputenv(char *name);
 int		replace_var(char *var, char *value);
 
+char		*dola_dola(char *s);
+
 int		exec_cmd(t_token token);
 int		exec_symbol(t_tree *tree, t_token *tokens);
 int		exec_node(t_tree *tree, t_token *tokens);
+
+char	**expr_split(char *s, char **sym, int part);
+void	creat_lexic(t_lexic *lex);
+int		count_space(char *s);
+int		ft_find(char *s, char **token);
+int		error_print(char *mes, char *prob, int n);
+t_tree *create_tree(t_token *nodes, int len);
+
 
 #endif
