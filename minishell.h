@@ -69,5 +69,6 @@ void	creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);
 int		error_print(char *mes, char *prob, int n);
+t_tree *create_tree(t_token *nodes, int len);
 
 #endif

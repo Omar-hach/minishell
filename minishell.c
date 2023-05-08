@@ -61,14 +61,15 @@ char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 	word += count_space(word);
 	if(*word == '|')
 	{
-		*token = 11;
+		*token = 21;
 		return (NULL);
 	}
 	while(word[i] != ' ' && word[i] != '\t' && word[i] != '\0')
 		i++;
-	if(type < 20)
+	ft_printf("token[%s]=%d\n",word, type);
+	if(type > 19 || type < 2)
 		cmd = fill_cmd(word, j, i);
-	if(type > 19)
+	if(type < 20 &&  type > 2)
 		cmd = fill_symb(word, j, i);
 	if(!cmd)
 		return (NULL);
@@ -77,8 +78,13 @@ char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 	else if(ft_find(cmd, lex.l_symb) && ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
 		*token = ft_find(cmd, lex.l_symb) + 20;
 	else if(ft_strchr(cmd, '/'))//maybe put './' in arg ???
+	{
 		*token = 1;
-	else if(type < 20)
+		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
+		ft_memcpy(arg,word, ft_strlen(word) + 1);
+		return (arg);
+	}
+	else
 	{
 		printf("minshell: %s :command not found\n",cmd);
 		return (NULL);
@@ -89,7 +95,7 @@ char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 		return (NULL);
 	word += count_space(word + i) + i;
 	i = -1;
-	while (word[++i])
+	while (word[++i])//handle removing quote and 
 		arg[i] = word[i];
 	arg[i] = '\0';
 	return (arg);
@@ -128,15 +134,16 @@ t_token	*split_input(char *input,int *len)
 	{
 		free(lex.l_cmd);
 		free(lex.l_symb);
-		return (1);
+		return (NULL);
 	}
 	*len = nodes_count(words);
-	nodes = (t_token *)ft_calloc(len, sizeof(t_token));
+	nodes = (t_token *)ft_calloc(*len, sizeof(t_token));
 	if (!nodes)
 	{
 		free(nodes);
 		free(lex.l_cmd);
 		free(lex.l_symb);
+		return (NULL);
 	}
 	i = -1;
 	j = 0;
@@ -145,31 +152,44 @@ t_token	*split_input(char *input,int *len)
 		nodes[j].token = 0;
 		nodes[j].arg = cmd_split(words[i], &nodes[j].token, lex,  (j > 0) * nodes[j - 1].token);//should put words[i + 2], 0 , 2 , 4
 		ft_printf("i=%d j =%d token=%d\n",i,j,nodes[j].token);
-		if (!nodes[i].arg && nodes[j].token != 11)// [0]cmd arg [1]| [2]cmd arg [3]>arg [4]arg2
+		if (!nodes[i].arg && nodes[j].token == 0)// [0]cmd arg [1]| [2]cmd arg [3]>arg [4]arg2
 		{
 			free(words);
 			free(nodes);
 			free(lex.l_cmd);
 			free(lex.l_symb);
-			return (127);
+			return (NULL);//127
 		}
-		if(nodes[j].token > 20)
+		if(nodes[j].token > 21)
 			nodes[j].arg = ft_strjoin(nodes[j].arg, words[(i++) + 1]);
 		j++;
 	}
 	i = -1;
-	while (words[++i])
-		printf("--%s--", words[i]);
-	printf("\n");
-	i = -1;
 	while (++i < *len)
 		printf("i =%d type=%d <%s>\n",i, nodes[i].token , nodes[i].arg);
-	free(nodes);
 	free(lex.l_cmd);
 	free(lex.l_symb);
-	return (0);
+	return (nodes);
 }
 //<cmd><|><exp>
+
+void treeprint(t_tree *root, int level,t_token *nodes)
+{
+	int i =7;
+
+    if (root == NULL)
+        return;
+	level += 8;
+    treeprint(root->right_son, level, nodes);
+	ft_printf("\n");
+    while (++i < level)
+	{
+        ft_printf(" ");
+	}
+	ft_printf("%d=%s-->left=%p-->right=%p\n", nodes[root->indix].token,nodes[root->indix].arg, root->left_son, root->right_son);
+    treeprint(root->left_son, level, nodes);
+}
+
 int	main()
 {
 	char *input;
@@ -189,9 +209,13 @@ int	main()
 		{
 			add_history(input);
 			nodes = split_input(input, &ex);
-			tree = create_tree(nodes, ex);
+			if(nodes)
+			{
+				tree = create_tree(nodes, ex);
+				treeprint(tree, 0, nodes);
+				free(tree);
+			}
 			free(nodes);
-			free(tree);
 		}
 		free(input);
 	}
@@ -200,4 +224,25 @@ int	main()
 
 //"e""c""h""o" hello need to work,// DONE
 // error file name too long > 256
-//
+/*
+----root=17=arg -->echo
+*****branch=21=(null)-->0x6030000028f0
+branch=21=(null)-->left=0x0-->right=0x0
+root=17=arg -->left=0x0-->right=0x0
+branch=21=(null)-->left=echo-->right=0x0
+root=17=arg -->left=0x0-->right=0x0
+*****branch=13=-->cd
+branch=13=-->left=0x0-->right=0x0
+root=21=(null)-->left=echo-->right=0x0
+branch=13=-->left=0x0-->right=0x0
+root=21=(null)-->left=echo-->right=cd
+*****branch=21=(null)-->0x603000002950
+branch=21=(null)-->left=0x0-->right=0x0
+root=13=-->left=0x0-->right=0x0
+branch=21=(null)-->left=cd-->right=0x0
+root=13=-->left=0x0-->right=0x0
+*****branch=11=-->env
+branch=11=-->left=0x0-->right=0x0
+root=21=(null)-->left=cd-->right=0x0
+branch=11=-->left=0x0-->right=0x0
+root=21=(null)-->left=cd-->right=env*/

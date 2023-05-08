@@ -30,11 +30,11 @@ t_tree *create_tree(t_token *nodes, int len)
 	int		*list;
 	int		i;
 
-	i = 0;
+	i = -1;
 	list = (int *)ft_calloc(len + 1, sizeof(int));
 	list[len] = -1;
-	while (list[i] > -1)
-		list[i++] = nodes->token;
+	while (list[++i] > -1)
+		list[i] = nodes[i].token;
 	i = 0;
 	root = new_branch(i++);
 	while (list[i] > -1)
@@ -42,15 +42,18 @@ t_tree *create_tree(t_token *nodes, int len)
 		branch = new_branch(i);
 		if(list[i] == 21)
 		{
+			while(root->father)
+				root = root->father;
 			root->father = branch;
 			branch->right_son = root;
 		}
 		else
 		{
-			root->right_son = branch;
+			root->left_son = branch;
 			branch->father = root;
 		}
 		root = branch;
+		i++;
 	}
 	tree = root;
 	while(tree->father)
@@ -58,3 +61,4 @@ t_tree *create_tree(t_token *nodes, int len)
 	free(list);
 	return (tree);
 }
+
