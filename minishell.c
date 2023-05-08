@@ -29,13 +29,13 @@ char *fill_cmd(char *word, int j, int i)
 	cmd[j] = '\0';
 	return (cmd);
 }
-char *fill_symb(char *word, int j, int i)//probleme here
+char *fill_symb(char *word, int j, int i)//working fine
 {
 	char	*sym;
 
 	i = -1;
 	j = 1;
-	ft_printf("cmd=%s",word);
+	ft_printf("cmd=%s_\n",word);
 	if((word[0] == '>' && word[1] == '>') || (word[0] == '<' && word[1] == '<'))
 	{
 		j = 2;
@@ -43,8 +43,9 @@ char *fill_symb(char *word, int j, int i)//probleme here
 	}
 	else
 		sym = (char *)ft_calloc(j + 1, sizeof(char));
-	if(++i < j)
-		sym[j] = word[j];
+	while(++i < j)
+	{
+		sym[i] = word[i];}
 	sym[j] = '\0';
 	return (sym);
 }
@@ -73,11 +74,12 @@ char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 		cmd = fill_symb(word, j, i);
 	if(!cmd)
 		return (NULL);
-	if(ft_find(cmd, lex.l_cmd))
+	ft_printf("cmd =%d.\n",ft_find(cmd, lex.l_cmd));
+	if(ft_find(cmd, lex.l_cmd) && ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
 		*token = ft_find(cmd, lex.l_cmd) + 10;
-	else if(ft_find(cmd, lex.l_symb) && ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
+	else if(ft_find(cmd, lex.l_symb))
 		*token = ft_find(cmd, lex.l_symb) + 20;
-	else if(ft_strchr(cmd, '/'))//maybe put './' in arg ???
+	else if(ft_strchr(cmd, '/'))
 	{
 		*token = 1;
 		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
@@ -89,13 +91,12 @@ char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 		printf("minshell: %s :command not found\n",cmd);
 		return (NULL);
 	}
-	ft_printf("cmd =%s.\n",cmd);
 	arg = (char *)ft_calloc(ft_strlen(word + i) - count_space(word + i) + 1, sizeof(char));
 	if(!arg)
 		return (NULL);
 	word += count_space(word + i) + i;
 	i = -1;
-	while (word[++i])//handle removing quote and 
+	while (word[++i])//handle removing quote and ???
 		arg[i] = word[i];
 	arg[i] = '\0';
 	return (arg);
@@ -195,12 +196,12 @@ int	main()
 	char *input;
 	int ex;
 	t_token	*nodes;
-	t_tree *tree;
+	//t_tree *tree;
 	// char **l_cmd;
 	// char **l_symb;
 
 	ex = 1;
-	tree = NULL;
+	//tree = NULL;
 	nodes = NULL;
 	while (ex)
 	{
@@ -209,12 +210,12 @@ int	main()
 		{
 			add_history(input);
 			nodes = split_input(input, &ex);
-			if(nodes)
+			/*if(nodes)
 			{
 				tree = create_tree(nodes, ex);
 				treeprint(tree, 0, nodes);
 				free(tree);
-			}
+			}*/
 			free(nodes);
 		}
 		free(input);
