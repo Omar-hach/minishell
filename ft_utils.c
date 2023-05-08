@@ -42,8 +42,9 @@ int	count_space(char *s)
 {
 	int	i;
 
+	if(!s)
+		return (0);
 	i = 0;
-	ft_printf(s);
 	while (s[i] && ((s[i] == ' ') || (s[i] == '\t')))
 		i++;
 	return (i);

@@ -22,7 +22,7 @@ SRC = 	ft_utils.c\
 		symbole_parcing.c\
 		minishell.c\
 		create_tree.c\
-		tree.c symbol.c commands.c utils.c var_utiles.c\
+		tree.c symbol.c commands.c utils.c var_utiles.c dollars.c\
 
 OBJ = $(SRC:.c=.o)
 

@@ -205,7 +205,7 @@ int	main()
 	while (ex)
 	{
 		input = readline(">>> MiniShell $>");
-		if (*(input + count_space(input)))
+		if (input && *(input + count_space(input)))
 		{
 			add_history(input);
 			nodes = split_input(input, &ex);
@@ -218,8 +218,11 @@ int	main()
 				free(tree);
 			}
 			free(nodes);
+			free(input);
 		}
-		free(input);
+		if(!input)
+			ex = 0;
+		//ft_printf("%s\n",input);
 	}
 	exit(0);
 }

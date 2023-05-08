@@ -30,16 +30,17 @@ int	ft_env()
 
 int	ft_echo(char *arg, char flag)
 {
-	// char	*out;
+	char	*out;
 
 	// if (flag == 'n')
 	// 	out = ft_strdup(arg);
 	// else if (flag == 0)
 	// 	out = ft_strdup_newline(arg);
 	// ft_printf(out);
-	if (dola_dola(arg))
+	out = dola_dola(arg);
+	if (out)
 	{
-		ft_printf(dola_dola(arg));
+		ft_printf(out);
 		ft_printf("\n");
 	}
 	else if (flag == 'n')
