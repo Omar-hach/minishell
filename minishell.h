@@ -30,10 +30,12 @@
 # include "libft/libft.h"
 # include "libft/print/ft_printf.h"
 
+# include <limits.h>
+
 typedef struct s_token
 {
 	int		token;
-	char	*arg;
+	char	*arg;//**arg;
 	char	*in;
 	char	*out;
 }t_token;
@@ -59,7 +61,7 @@ lexixe{
     pape | ::= priority lv.2 --> cmd | cmd
     in derect > >> ::= priority lv.1 -->  cmd > file
     out derect < ::= priority lv.0 --> cmd < file
-    $() ::= --> $cmd || $var
+    $ ::= --> $cmd || $var
     
     << ? 
 }

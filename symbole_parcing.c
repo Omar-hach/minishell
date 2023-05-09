@@ -25,9 +25,12 @@ int	last_char(char *s, int queot, int double_qu)
 		printf("minshell: error unexpected token %c\n", 39);
 		return (1);
 	}
-	if (*s == '>' || *s == '|' || *s == '<')//need to fix this for << AND >>
+	if (*s == '>' || *s == '|' || *s == '<')
 	{
-		printf("minshell: error unexpected token `%c'\n", *s);
+		printf("minshell: error unexpected token `%c", *s);
+		if ((*(s - 1) == '>' && *s == '>') || (*(s - 1) == '>' && *s == '>'))
+			printf("%c", *(s - 1));
+		printf("'\n");
 		return (1);
 	}
 	return (0);
@@ -86,8 +89,6 @@ int	get_symb_len(int sym_type, char *s, char **sym)
 	}
 	return (count);
 }
-
-//ft_printf("`q =%d dq=%d sym = %d find =%d\n",(queot % 2) , (double_qu % 2), (s[count] != ' ' && s[count] != '\t'), ft_find(s + count, sym));
 
 int	get_token_len(char *s, char **sym)
 {
@@ -184,10 +185,3 @@ char	**expr_split(char *s, char **sym, int part)
 	free(len_array);
 	return (array);
 }
-
-//>>> MiniShell $> MiniShell $>"l""s"'|'"gre""p"
-//minshell: error unexpected token '>'
-//minishell(51477,0x116491dc0) malloc: Incorrect checksum for freed object 0x7fc38ac19de0: probably modified after being freed.
-//Corrupt value: 0x0
-//minishell(51477,0x116491dc0) malloc: *** set a breakpoint in malloc_error_break to debug
-//[1]    51477 abort      ./minishell*/
