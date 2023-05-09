@@ -74,6 +74,7 @@ int		ft_isalnum(int c);
 char		*ft_strjoin(char const *s1, char const *s2);
 char		**ft_split(char const *s, char c);
 void		*ft_calloc(size_t count, size_t size);
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 
 char		*ft_strdup_newline(char *s);
 char		*join_args(char **args, char between);
@@ -87,7 +88,7 @@ void		ft_putenv(char *var);
 void		ft_unputenv(char *name);
 int		replace_var(char *var, char *value);
 
-char		*dola_dola(char *s);
+char		*replace_dollars(char *s);
 
 int		exec_cmd(t_token token);
 int		exec_symbol(t_tree *tree, t_token *tokens);

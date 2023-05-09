@@ -16,40 +16,26 @@ int	ft_env()
 {
 	int			x;
 	extern char	**environ;
-	// char		*out;
 
-	// x = -1;
-	// while (environ[++x])
-	// 	out = join_args(environ, '\n');
-	// ft_printf(out);
 	x = -1;
 	while (environ[++x])
 		ft_printf("%s\n", environ[x]);
 	return (0);
 }
 
-int	ft_echo(char *arg, char flag)
+int	ft_echo(char *arg)
 {
 	char	*out;
+	char	flag;
 
-	// if (flag == 'n')
-	// 	out = ft_strdup(arg);
-	// else if (flag == 0)
-	// 	out = ft_strdup_newline(arg);
-	// ft_printf(out);
-	out = dola_dola(arg);
+	out = replace_dollars(arg);
+	flag = 0;
 	if (out)
-	{
-		ft_printf(out);
-		ft_printf("\n");
-	}
+		ft_printf("%s\n",out);
 	else if (flag == 'n')
-		ft_printf(arg);
+		ft_printf("%s\n",out);
 	else if (flag == 0)
-	{
-		ft_printf(arg);
-		ft_printf("\n");
-	}
+		ft_printf("%s\n",arg);
 	return (0);
 }
 
@@ -63,10 +49,6 @@ int	ft_pwd()
 	i = 0;
 	while (dir[i])
 		i++;
-	//out = (char *)malloc((i + 2) * sizeof(char));
-	//i = -1;
-	//while (dir[++i] != '\0')
-	//	out[i] = dir[i];
 	dir[i++] = '\n';
 	dir[i] = '\0';
 	ft_printf(dir);
@@ -77,7 +59,12 @@ int	ft_pwd()
 int	ft_cd(char *arg)
 {
 	DIR	*dir;
+	int	x;
 
+	x = ft_strlen(arg) - 1;
+	while(arg[x] == ' ')
+		x--;
+	arg[x + 1] = '\0';
 	dir = opendir(arg);
 	if (dir)
 	{
@@ -136,7 +123,7 @@ int	ft_export(char *arg)
 	while (args[++x])
 	{
 		ft_putenv(args[x]);
-		// ft_printf("export = %s\n",getenv(args[x]));
+		// ft_printf("exported = %s\n",getenv(args[x]));
 	}
 	// ft_env();
 	// ft_unset("VR ok");
@@ -165,6 +152,6 @@ int	exec_cmd(t_token token)
 	else if (token.type == 16)
 		out = ft_unset(token.arg);
 	else if (token.type == 17)
-		out = ft_echo(token.arg, 0);
+		out = ft_echo(token.arg);
 	return (out);
 }

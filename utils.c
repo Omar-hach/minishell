@@ -54,7 +54,7 @@ char	*ft_strdup_newline(char *s)
 	return (out);
 }
 
-// find path of executable in $PATH (/bin/ : /usr/bin/)
+// find path of executable in $PATH (/bin : /usr/bin)
 char	*find_path(char *file)
 {
 	int		x;

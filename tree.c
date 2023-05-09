@@ -12,7 +12,7 @@
 
 #include"minishell.h"
 
-void	exec_prog(t_token token)
+int	exec_prog(t_token token)
 {
 	char	*prog_name;
 	char	**prog_argv;
@@ -20,8 +20,8 @@ void	exec_prog(t_token token)
 	//char	*prog_envp[] = { "some", "environment", NULL };
 
 	prog_argv = ft_split(token.arg, ' ');
-	prog_name = ft_strdup(prog_argv[0]);
-	execve(prog_name, prog_argv, prog_envp);
+	prog_name = prog_argv[0];
+	return (execve(prog_name, prog_argv, prog_envp));
 }
 
 int	exec_token(t_tree *tree, t_token *tokens)
@@ -32,7 +32,7 @@ int	exec_token(t_tree *tree, t_token *tokens)
 	out = 1;
 	x = tree->token_index;
 	if (tokens[x].type == 1)
-		exec_prog(tokens[x]);
+		out = exec_prog(tokens[x]);
 	else if (tokens[x].type / 10 == 1)
 		out = exec_cmd(tokens[x]);
 	else if (tokens[x].type / 10 == 2)
@@ -68,47 +68,45 @@ int	exec_node(t_tree *tree, t_token *tokens)
 	// 		cmd = cmd->left_son;
 	// 	}
 	// }
-	// if (tokens[x].type == 1 && !tree->father)
-	// {
-	// 	if (fork1() == 0)
-	// 		out = exec_token(tree, tokens);
-	// 	wait(NULL);
-	// }
-	// else
+	if (tokens[x].type == 1 && !tree->father)
+	{
+		if (fork1() == 0)
+			out = exec_prog(tokens[x]);
+		wait(NULL);
+	}
+	else
 		out = exec_token(tree, tokens);
-		// ft_printf("node %d finished\n",x);
+	// ft_printf("node %d finished = %d\n",x,OUT);
 	return (out);
 }
 
-void	read_tree(t_tree *tree, t_token *tokens)
-{
-	// int	x;
+// ls | grep a < file1 > file2
+//
+//           4   file2    
+//            \
+//             \
+//              0    
+//             / \
+//            /   \
+//      ls   1     3  file1
+//                  \
+//                   \
+//                    2  grep
+//                 
+//   
 
-	while (tree->left_son)
-		tree = tree->left_son;
-	if (tree->father && tree->father->right_son)
-		tree = tree->father;
-	// printf("node %d\n", tree->token_index);
-	while (tree)
-	{
-		exec_node(tree, tokens);
-		tree = tree->father;
-	}
-}
-
-
-// ls | grep a < file1 <file2
+// ls | grep a < file1 < file2
 //
 //              0       
 //             / \
 //            /   \
-//           2     1
-//                /
-//               /
-//              3
-//             /   
-//            /
-//           4    
+//    file1  3     2
+//            \
+//             \
+//      file2   4
+//               \
+//                \
+//                 1 
 //                 
 //   
 
@@ -117,10 +115,11 @@ void	read_tree(t_tree *tree, t_token *tokens)
 //              0 
 //             / \
 //            /   \
-//           2     1
+//           1     2
 //                / \
 //               /   \
-//              4     3
+//              3     4   ls
+//
 
 
 

@@ -91,7 +91,7 @@ char	*get_dollars(char *s, int x)
 
 
 // search for all  dolar var
-char	*dola_dola(char *s)
+char	*replace_dollars(char *s)
 {
 	int	x;
 	char *out;
