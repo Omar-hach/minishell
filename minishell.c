@@ -74,7 +74,7 @@ char	*find_path(char *file)
 		if (access(path, F_OK) == 0)
 			return (path);
 	}
-	return (0);
+	return (NULL);
 }
 
 //echo "hello    ">a   b   c --> cat a : helo b c
@@ -99,7 +99,7 @@ char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 	ft_printf("token[%s]=%d\n",word, type);
 	if(type > 19 || type < 1)
 		cmd = fill_cmd(word, j, i);
-	if(type < 20 &&  type > 0)
+	if(type < 20 && type > 0)
 		cmd = fill_symb(word, j, &i);
 	if(!cmd)
 		return (NULL);
@@ -107,7 +107,7 @@ char	*cmd_split(char *word, int *token, t_lexic	lex, int type)
 	ft_printf("cmd[%d]=%s\n",i,cmd);
 	if(ft_find(cmd, lex.l_cmd) && ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
 		*token = ft_find(cmd, lex.l_cmd) + 10;
-	else if(ft_find(cmd, lex.l_symb) && type < 20)
+	else if(ft_find(cmd, lex.l_symb) && type < 20)//probleme here
 		*token = ft_find(cmd, lex.l_symb) + 20;
 	else if(ft_strchr(cmd, '/'))
 	{
@@ -194,7 +194,7 @@ t_token	*split_input(char *input,int *len)
 	i = -1;
 	j = 0;
 	k = 0;
-	while(words[++i])
+	while (words[++i])
 	{
 		nodes[j].token = 0;
 		nodes[j].arg = cmd_split(words[i], &nodes[j].token, lex,  (j > 0) * nodes[j - 1].token);//should put words[i + 2], 0 , 2 , 4
@@ -202,11 +202,11 @@ t_token	*split_input(char *input,int *len)
 		if (!nodes[i].arg && nodes[j].token == 0)// [0]cmd arg [1]| [2]cmd arg [3]>arg [4]arg2
 		{
 			i = -1;
-			while(words[++i])
+			while (words[++i])
 				free(words[i]);
 			free(words);
 			i = -1;
-			while(++i < (*len - 1))
+			while (++i < (*len - 1))
 				free(nodes[i].arg);
 			free(nodes);
 			free(lex.l_cmd);
@@ -254,29 +254,26 @@ int	main()
 	char	*input;
 	int		ex;
 	t_token	*nodes;
-	//t_tree *tree;
-	// char **l_cmd;
-	// char **l_symb;
+	t_tree *tree;
 
 	ex = 1;
-	//tree = NULL;
+	tree = NULL;
 	nodes = NULL;
 	while (ex)
 	{
 		input = readline(">>> MiniShell $>");
 		if(!input)
 			break;
-		ft_printf("ex=%d\n",ARG_MAX);
 		if (*(input + count_space(input)))
 		{
 			add_history(input);
 			nodes = split_input(input, &ex);
-			/*if(nodes)
+			if(nodes)
 			{
 				tree = create_tree(nodes, ex);
 				treeprint(tree, 0, nodes);
 				free(tree);
-			}*/
+			}
 			if(nodes)
 			{
 				while(-1 < --ex)
@@ -287,7 +284,7 @@ int	main()
 		}
 		free(input);
 	}
-	exit(0);
+	exit(1);
 }
 //"e""c""h""o" hello need to work,// DONE
 // error file name too long > 256

@@ -73,4 +73,7 @@ int		ft_find(char *s, char **token);
 int		error_print(char *mes, char *prob, int n);
 t_tree *create_tree(t_token *nodes, int len);
 
+
+void treeprint(t_tree *root, int level,t_token *nodes);
+
 #endif

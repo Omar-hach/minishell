@@ -40,17 +40,34 @@ t_tree *create_tree(t_token *nodes, int len)
 	while (list[i] > -1)
 	{
 		branch = new_branch(i);
-		if(list[i] == 21)
+		if(list[i] < 19)
 		{
-			while(root->father)
+			if(!root->left_son)
+				root->left_son = branch;
+			else
+				root->right_son = branch;
+			branch->father = root;
+		}
+		if(list[i] == 22 || list[i] == 23 )
+		{
+			while (root->father && list[root->father->indix] == 21)
+				root = root->father;
+			if(list[root->indix] != 21)
+				list[i] = 21;
+			else
+			{
+				branch->father = root;
+				branch->left_son = root->left_son;
+				root->left_son = branch;
+				branch->left_son->father = branch;
+			}
+		}
+		if(list[i] == 21 || list[i] > 23 )
+		{
+			while (root->father)
 				root = root->father;
 			root->father = branch;
 			branch->right_son = root;
-		}
-		else
-		{
-			root->left_son = branch;
-			branch->father = root;
 		}
 		root = branch;
 		i++;
@@ -60,5 +77,22 @@ t_tree *create_tree(t_token *nodes, int len)
 		tree = tree->father;
 	free(list);
 	return (tree);
-}
+}/*
+        1=/bin/cat-->left=0x0-->right=0x0
 
+21=(null)-->left=0x7fb159f041a0-->right=0x7fb159f040d0
+
+        1=/bin/ls-->left=0x7fb159f041c0-->right=0x0
+
+                23=file-->left=0x0-->right=0x0
+<banch[23]=0x7fb159f041c0 root[1]->father[]=0x7fb159f041a0>
+<banch[23]=0x7f9dbdf041c0 root[1]->father[]=0x7f9dbdf041a0>
+
+        1=/bin/ls-->left=0x0-->right=0x0
+
+21=(null)-->left=0x7f9dbdf041a0-->right=0x7f9dbdf040d0
+
+        1=/bin/cat-->left=0x7f9dbdf041c0-->right=0x0
+
+                23=file-->left=0x0-->right=0x0
+<banch[23]=0x7f9dbdf041c0 root[1]->father[]=0x7f9dbdf041a0>*/

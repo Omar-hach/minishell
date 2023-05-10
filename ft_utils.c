@@ -31,10 +31,10 @@ void	creat_lexic(t_lexic *lex)
 		exit(1);
 	}
 	lex->l_symb[0] = "|";//21
-	lex->l_symb[1] = ">>";
-	lex->l_symb[2] = ">";
-	lex->l_symb[3] = "<<";
-	lex->l_symb[4] = "<";//25
+	lex->l_symb[1] = "<<";
+	lex->l_symb[2] = "<";
+	lex->l_symb[3] = ">>";
+	lex->l_symb[4] = ">";//25
 	lex->l_symb[5] = NULL;
 }
 
