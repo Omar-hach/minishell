@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-t_tree *new_branch(int data)
+t_tree	*new_branch(int data)
 {
 	t_tree	*tree;
 
@@ -22,7 +22,27 @@ t_tree *new_branch(int data)
 	tree->right_son = NULL;
 	return (tree);
 }
-t_tree *create_tree(t_token *nodes, int len)
+
+void	treeprint(t_tree *root, int level, t_token *nodes)
+{
+	int	i;
+
+	i = 7;
+	if (root == NULL)
+		return ;
+	level += 8;
+	treeprint(root->right_son, level, nodes);
+	ft_printf("\n");
+	while (++i < level)
+	{
+		ft_printf(" ");
+	}
+	ft_printf("%d=%s-->left=%p-->right=%p\n", nodes[root->indix].token, nodes[root->indix].arg, root->left_son, root->right_son);
+	treeprint(root->left_son, level, nodes);
+	free(root);
+}
+
+t_tree	*create_tree(t_token *nodes, int len)
 {
 	t_tree	*branch;
 	t_tree	*root;
@@ -40,19 +60,19 @@ t_tree *create_tree(t_token *nodes, int len)
 	while (list[i] > -1)
 	{
 		branch = new_branch(i);
-		if(list[i] < 19)
+		if (list[i] < 19)
 		{
-			if(!root->left_son)
+			if (!root->left_son)
 				root->left_son = branch;
 			else
 				root->right_son = branch;
 			branch->father = root;
 		}
-		if(list[i] == 22 || list[i] == 23 )
+		if (list[i] == 22 || list[i] == 23)
 		{
 			while (root->father && list[root->father->indix] == 21)
 				root = root->father;
-			if(list[root->indix] != 21)
+			if (list[root->indix] != 21 && list[i] < 23)
 				list[i] = 21;
 			else
 			{
@@ -62,7 +82,7 @@ t_tree *create_tree(t_token *nodes, int len)
 				branch->left_son->father = branch;
 			}
 		}
-		if(list[i] == 21 || list[i] > 23 )
+		if (list[i] == 21 || list[i] > 23)
 		{
 			while (root->father)
 				root = root->father;
@@ -73,11 +93,13 @@ t_tree *create_tree(t_token *nodes, int len)
 		i++;
 	}
 	tree = root;
-	while(tree->father)
+	while (tree->father)
 		tree = tree->father;
 	free(list);
 	return (tree);
-}/*
+}
+
+/*
         1=/bin/cat-->left=0x0-->right=0x0
 
 21=(null)-->left=0x7fb159f041a0-->right=0x7fb159f040d0

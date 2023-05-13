@@ -17,10 +17,9 @@ char	*mint_dollars(char *s, int start, int name_len, char *val)
 {
 	int		size;
 	char	*no_money;
-	int 	x;
+	int		x;
 	int		y;
 
-	// ft_printf("s=%d name=%d val=%d\n",ft_strlen(s) , name_len ,ft_strlen(val));
 	size = ft_strlen(s) - name_len + ft_strlen(val) + 1;
 	no_money = (char *) malloc (size * sizeof(char));
 	x = -1;
@@ -40,19 +39,15 @@ char	*mint_dollars(char *s, int start, int name_len, char *val)
 	return (no_money);
 }
 
-// remove dolar var
 char	*tax_dollars(char *s, int start, int name_len)
 {
-	int 	x;
+	int		x;
 	int		y;
 
-	// ft_printf("s=%d name=%d val=%d\n",ft_strlen(s) , name_len ,ft_strlen(val));
 	x = 0;
 	while (x <= start)
 		x++;
 	y = x + name_len + 1;
-	// while (s[y] && s[y] == ' ')
-	// 	y++;
 	while (s[y])
 		s[x++] = s[y++];
 	s[x] = '\0';
@@ -60,6 +55,7 @@ char	*tax_dollars(char *s, int start, int name_len)
 }
 
 // get start and lenght of dolar var
+
 char	*get_dollars(char *s, int x)
 {
 	int		y;
@@ -82,19 +78,18 @@ char	*get_dollars(char *s, int x)
 	name[z] = '\0';
 	val = getenv(name);
 	if (!val)
-		out = tax_dollars(s, y - 1 , z);
+		out = tax_dollars(s, y - 1, z);
 	else
-		out = mint_dollars(s, y - 1 , z , val);
-	// ft_printf("%s, start=%d len=%d name=%s ,%s\n",s , y ,z ,name, val);
+		out = mint_dollars(s, y - 1, z, val);
 	return (out);
 }
 
-
 // search for all  dolar var
+
 char	*replace_dollars(char *s)
 {
-	int	x;
-	char *out;
+	int		x;
+	char	*out;
 
 	x = 0;
 	while (s[x] && s[x] != '$')
@@ -106,7 +101,7 @@ char	*replace_dollars(char *s)
 	while (out[++x])
 	{
 		if (out[x] == '$')
-			out = get_dollars(out, x); 
+			out = get_dollars(out, x);
 	}
 	return (out);
 }

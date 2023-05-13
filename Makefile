@@ -21,7 +21,10 @@ FLAGS = -lreadline -lcurses
 SRC = 	ft_utils.c\
 		symbole_parcing.c\
 		minishell.c\
-		create_tree.c
+		create_tree.c\
+		nodes_utils.c\
+		free_utils.c\
+		detect_sym_error.c
 
 OBJ = $(SRC:.c=.o)
 

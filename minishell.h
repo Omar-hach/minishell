@@ -36,7 +36,7 @@ typedef struct s_token
 {
 	int		token;
 	char	*arg;//**arg;
-	char	*in;
+	int		redir;
 	char	*out;
 }t_token;
 
@@ -66,14 +66,22 @@ lexixe{
     << ? 
 }
 */
+
 char	**expr_split(char *s, char **sym, int part);
-void	creat_lexic(t_lexic *lex);
+int		creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);
 int		error_print(char *mes, char *prob, int n);
-t_tree *create_tree(t_token *nodes, int len);
+t_tree	*create_tree(t_token *nodes, int len);
+int		detect_sym_error(char *s, char **sym, int *part);
+void	*free_aray(char	**words);
+t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex);
+void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes,  int len);
+int		nodes_count(char **word);
+t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes, int *len);
+char	*cmd_split(char *word, int *token, t_lexic lex, int type);
+int		detect_sym_error(char *s, char **sym, int *part);
 
-
-void treeprint(t_tree *root, int level,t_token *nodes);
+void	treeprint(t_tree *root, int level, t_token *nodes);
 
 #endif
