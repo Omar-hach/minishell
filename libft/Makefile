@@ -12,18 +12,8 @@
 
 NAME = libft.a
 
-CC = gcc 
 
-CFLAGS = -Wall -Werror -Wextra
-
-SRC = print/ft_strlen.c\
-	print/ft_putnbr.c\
-	print/ft_putnbr_abs.c\
-	print/ft_putstr.c\
-	print/ft_putchar.c\
-	print/ft_printf.c\
-	print/ft_address.c\
-	ft_atoi.c\
+SRC = ft_atoi.c\
 	ft_bzero.c\
 	ft_calloc.c\
 	ft_isalnum.c\
@@ -56,22 +46,34 @@ SRC = print/ft_strlen.c\
 	ft_tolower.c\
 	ft_toupper.c\
 	ft_strtrim.c\
-	ft_strmapi.c
+	ft_strmapi.c\
+	print/ft_strlen.c\
+	print/ft_putnbr.c\
+	print/ft_putnbr_abs.c\
+	print/ft_putstr.c\
+	print/ft_putchar.c\
+	print/ft_printf.c\
+	print/ft_address.c\
+	get_next_line/get_next_line_bonus.c\
+	get_next_line/get_next_line_utils_bonus.c
 
+CC = gcc
 
 OBJ = $(SRC:.c=.o)
 
-all:$(NAME)
+CFLAGS = -Wall -Wextra -Werror
+
+all: $(NAME)
 
 $(NAME):$(OBJ)
-	ar rc  $(NAME) $(OBJ)
+	ar rc $(NAME) $(OBJ)
 
 clean:
-	rm -f *.o print/*.o
+	rm -f *.o print/*.o get_next_line/*.o
 
-fclean:clean
+fclean: clean
 	rm -f $(NAME)
 
-re:fclean all
+re: fclean all
 
-.PHONY:all fclean clean re 
+.PHONY: clean fclean re
