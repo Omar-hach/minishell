@@ -70,10 +70,11 @@ t_tree	*create_tree(t_token *nodes, int len)
 		}
 		if (list[i] == 22 || list[i] == 23)
 		{
+			ft_printf("list=%d",list[root->indix]);
 			while (root->father && list[root->father->indix] == 21)
 				root = root->father;
-			if (list[root->indix] != 21 && i > 0 && list[i - 1] < 24)
-				list[i] = 21;
+			if (list[root->indix] != 21)
+				list[i] = 26;
 			else
 			{
 				ft_printf("here\n");
@@ -85,6 +86,7 @@ t_tree	*create_tree(t_token *nodes, int len)
 		}
 		if (list[i] == 21 || list[i] > 23)
 		{
+			if(list[i] > 23)
 			while (root->father)
 				root = root->father;
 			root->father = branch;

@@ -158,6 +158,28 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 		free(bin);
 	return (arg);
 }
+/*
+char	*trim_arg(char** words)
+{
+	char	*trimed;
+	int		i = -1;
+	int		j = -1;
+	int		k = -1;
+
+	while (words[++j])
+	{
+		while (words[j][++i])
+		{
+			if(word[j][i] == '\t')
+				gfhreg;
+		}
+	}
+}
+
+char	*fill_arg(char* word)
+{
+
+}*/
 
 t_token	*split_input(char *input, int *len)
 {
@@ -169,9 +191,10 @@ t_token	*split_input(char *input, int *len)
 	if (creat_lexic(&lex))
 		return (NULL);
 	i = 1;
-	words = expr_split(input, lex.l_symb, i);
+	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
 	if (!words)
 		return (free_struct_array(NULL, &lex, NULL, -1));
+	//words = trim_word(words);
 	*len = nodes_count(words);
 	nodes = NULL;
 	nodes = malloc_nodes(nodes, *len, &lex);
@@ -179,7 +202,9 @@ t_token	*split_input(char *input, int *len)
 		return (NULL);
 	i = -1;
 	while (++i < (*len))
+	{
 		printf("i =%d type=%d <%s>\n", i, nodes[i].token, nodes[i].arg);
+	}
 	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
 }

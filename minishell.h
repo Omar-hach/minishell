@@ -35,7 +35,7 @@
 typedef struct s_token
 {
 	int		token;
-	char	*arg;//**arg;
+	char	*arg;
 	int		redir;
 	char	*out;
 }t_token;
