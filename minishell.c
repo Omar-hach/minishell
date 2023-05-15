@@ -95,24 +95,26 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 	}
 	while (word[i] != ' ' && word[i] != '\t' && word[i] != '\0')
 		i++;
-	if (type > 19 || type < 1)
+	ft_printf("cmd[]=%s.%d\n", word, type);
+	word = replace_dollars(word); //$ management
+	if (type == 21 || type < 1)
 		cmd = fill_cmd(word, j, i);
-	if (type < 20 && type > 0)
+	if ((type > 0 && type < 20) || type > 21)
 		cmd = fill_symb(word, j, &i);
 	if (!cmd)
 		return (NULL);
 	bin = find_path(cmd, -1, -1, -1);
+	//token detection
 	if (ft_find(cmd, lex.l_cmd)
 		&& ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd)){
 		*token = ft_find(cmd, lex.l_cmd) + 10;}
-	else if (ft_find(cmd, lex.l_symb) && type < 20) //probleme here
+	else if (ft_find(cmd, lex.l_symb) && (type > 21 || type < 20)) //probleme here
 		*token = ft_find(cmd, lex.l_symb) + 20;
 	else if (ft_strchr(cmd, '/'))
 	{
 		*token = 1;
 		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
 		ft_memcpy(arg, word, ft_strlen(word) + 1);
-		ft_printf("token[%p]=%s\n", word, word);
 		return (arg);
 	}
 	else if (bin)
@@ -136,16 +138,21 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 		return (NULL);
 	}
 	ft_printf("cmd[%d]=%s\n", i, cmd);
+	//fill arg
 	i = ft_strlen(cmd);
 	arg = (char *)ft_calloc(ft_strlen(word + i) - count_space(word + i) + 1,
 			sizeof(char));
 	if (!arg)
+	{
+		free(cmd);
 		return (NULL);
+	}
 	word += count_space(word + i) + i;
 	i = -1;
 	while (word[++i]) //handle arg to **arg with no ""
 		arg[i] = word[i];
 	arg[i] = '\0';
+	//free the rest
 	free(cmd);
 	if (bin)
 		free(bin);
@@ -161,7 +168,6 @@ t_token	*split_input(char *input, int *len)
 
 	if (creat_lexic(&lex))
 		return (NULL);
-//	input = detect_exec_var(input); for $VAR
 	i = 1;
 	words = expr_split(input, lex.l_symb, i);
 	if (!words)
@@ -207,7 +213,7 @@ int	main(void)
 			}
 		}
 		free(input);
-		system("leaks minishell");
+		//system("leaks minishell");
 	}
 	exit(1);
 }

@@ -60,7 +60,7 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 	{
 		nodes[j].arg = cmd_split(words[i], &nodes[j].token, *lex,
 				(j > 0) * nodes[j - 1].token);
-		ft_printf("i=%d j =%d k=%d token=%d\n", i, j, k, nodes[j].token);
+		ft_printf("i=%d j =%d k=%d arg=%s\n", i, j, k, nodes[j].arg);
 		if (!nodes[i].arg && nodes[j].token == 0)
 			return (free_struct_array(words, lex, nodes, *len));//127
 		if (nodes[j].token > 21)

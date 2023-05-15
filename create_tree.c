@@ -39,7 +39,7 @@ void	treeprint(t_tree *root, int level, t_token *nodes)
 	}
 	ft_printf("%d=%s-->left=%p-->right=%p\n", nodes[root->indix].token, nodes[root->indix].arg, root->left_son, root->right_son);
 	treeprint(root->left_son, level, nodes);
-	free(root);
+	//free(root);
 }
 
 t_tree	*create_tree(t_token *nodes, int len)
@@ -72,10 +72,11 @@ t_tree	*create_tree(t_token *nodes, int len)
 		{
 			while (root->father && list[root->father->indix] == 21)
 				root = root->father;
-			if (list[root->indix] != 21 && list[i] < 23)
+			if (list[root->indix] != 21 && i > 0 && list[i - 1] < 24)
 				list[i] = 21;
 			else
 			{
+				ft_printf("here\n");
 				branch->father = root;
 				branch->left_son = root->left_son;
 				root->left_son = branch;

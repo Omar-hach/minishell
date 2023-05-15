@@ -16,7 +16,7 @@ CC = gcc
 
 CFLAGS = -Werror -Wall -Wextra 
 
-FLAGS = -lreadline -lcurses 
+FLAGS = -lreadline -lcurses -fsanitize=address
 #-fsanitize=address
 SRC = 	ft_utils.c\
 		symbole_parcing.c\
@@ -24,7 +24,8 @@ SRC = 	ft_utils.c\
 		create_tree.c\
 		nodes_utils.c\
 		free_utils.c\
-		detect_sym_error.c
+		detect_sym_error.c\
+		dollars.c
 
 OBJ = $(SRC:.c=.o)
 

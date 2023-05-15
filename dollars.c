@@ -85,17 +85,18 @@ char	*get_dollars(char *s, int x)
 }
 
 // search for all  dolar var
-
+// echo "'$PWD'" --> '/Users/ohachami/Documents/repo_git/minishell'
+// echo '"$PWD"' --> '$PWD'
 char	*replace_dollars(char *s)
 {
 	int		x;
 	char	*out;
 
 	x = 0;
-	while (s[x] && s[x] != '$')
+	while (s[x] && s[x] != '$')// do skip queut
 		x++;
 	if (x == ft_strlen(s))
-		return (0);
+		return (s);
 	out = s;
 	x = -1;
 	while (out[++x])
@@ -103,5 +104,32 @@ char	*replace_dollars(char *s)
 		if (out[x] == '$')
 			out = get_dollars(out, x);
 	}
+	free(s);
 	return (out);
 }
+
+/*
+char	*replace_dollars(char *s)
+{
+	int		x;
+	char	*out;
+	int		queot;
+	int		double_qu;
+
+	x = 0;
+	queot = 0;
+	double_qu = 0;
+	while (s[x] && s[x] != '$')
+	{
+		queot += (*s == 34) * !(double_qu % 2);
+		if(queot % 2 == 0)
+			x++;
+		if(s[x] == '$')
+			out = get_dollars(s, x);
+	}
+	if (s[x])
+		return (s);
+	free(s);
+	return (out);
+}
+*/

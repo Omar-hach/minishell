@@ -81,6 +81,7 @@ int		nodes_count(char **word);
 t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes, int *len);
 char	*cmd_split(char *word, int *token, t_lexic lex, int type);
 int		detect_sym_error(char *s, char **sym, int *part);
+char	*replace_dollars(char *s);
 
 void	treeprint(t_tree *root, int level, t_token *nodes);
 
