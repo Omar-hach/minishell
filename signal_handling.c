@@ -10,23 +10,25 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
+
 void	handler(int sig, siginfo_t *info, void *n)
 {
-	char* command;
 	if(sig == 2)
 	{
-		printf("\n");
-		command = readline(">>> MiniShell $>");
-		if(*command)
-		{
-			add_history(command);
-			printf("%s\n", command);
-		}
-		free(command);
+		start_mini_shell();
 	}
-	if(sig == 3)
+	if(sig == SIGQUIT)
 	{
 		ex = 1;
 	}
-}*/
+}
+
+void handle_signals()
+{
+	struct sigaction sign;
+
+	sign.sa_flags = SA_RESTART;
+	sign.sa_sigaction = &handler;
+	sigaction(SIGINT, &sign, NULL);//ctr-C
+	sigaction(SIGQUIT, &sign, NULL);//ctr-/
+}

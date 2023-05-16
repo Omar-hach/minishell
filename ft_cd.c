@@ -1,0 +1,102 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yhachami <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/13 20:22:32 by yhachami          #+#    #+#             */
+/*   Updated: 2023/05/13 20:22:35 by yhachami         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include"minishell.h"
+
+int	ft_pwd()
+{
+	char	*dir;
+
+	dir = (char *)malloc(PATH_MAX);
+	if (!dir)
+		return (1);
+	getcwd(dir, PATH_MAX);
+	ft_printf("%s\n", dir);
+	free(dir);
+	return (0);
+}
+
+char	*extra_cd(char *path)
+{
+	char *name;
+
+	if (path[0] == '~')
+	{
+		name = getenv("HOME");
+		if (name)
+			path = mint_dollars(path, 0, 0, getenv("HOME"));
+		else
+		{
+			perror("cd: HOME not set");
+			return (0);
+		}
+	}
+	if (path[0] == '-' && !path[1])
+	{
+		path = getenv("OLDPWD");
+		if (!path)
+		{
+			perror("cd: OLDPWD not set");
+			return (0);
+		}
+		else
+			ft_printf("%s\n", path);
+	}
+	return (path);
+}
+
+int	change_dir(char *path)
+{
+	DIR	*dir;
+
+	dir = opendir(path);
+	if (dir)
+	{
+		closedir(dir);
+		if (chdir(path) < 0)
+		{
+			perror("cd: couldnt change working directory");
+			return (1);
+		}
+	}
+	else
+	{
+		perror("cd: no such file or directory");
+		return (2);
+	}
+	return (0);
+}
+
+int	ft_cd(int ac, char **av)
+{
+	char	*path;
+	int		out;
+
+	if (ac == 0)
+	{
+		path = getenv("HOME");
+		if (!path)
+		{
+			perror("cd: HOME not set");
+			return (3);
+		}
+	}
+	else
+	{
+		path = extra_cd(av[0]);
+		if (!path)
+			return (1);
+	}
+	out = change_dir(path);
+	free(path);
+	return (out);
+}

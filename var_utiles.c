@@ -93,7 +93,6 @@ int	replace_var(char *name, char *value)
 
 int	ft_isvar(char *var)
 {
-	// int	size;
 	int	x;
 	int	y;
 
@@ -134,6 +133,7 @@ void	ft_putenv(char *var)
 		var_ = ft_strdup(environ[--x]);
 		new_env[x++] = ft_strdup(var);
 		new_env[x++] = var_;
+		free(var_);
 		new_env[x] = NULL;
 		environ = new_env;
 	}

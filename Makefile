@@ -16,13 +16,18 @@ CC = gcc
 
 CFLAGS = -Werror -Wall -Wextra 
 
-FLAGS = -lreadline -lcurses -fsanitize=address
+FLAGS = -lreadline -lcurses 
+# -fsanitize=address
 
 SRC = 	ft_utils.c\
 		symbole_parcing.c\
 		minishell.c\
+		free_utils.c\
+		detect_sym_error.c\
 		create_tree.c\
-		tree.c symbol.c commands.c utils.c var_utiles.c dollars.c\
+		nodes_utils.c\
+		exec_tree.c symbol.c commands.c utils.c var_utiles.c dollars.c\
+		ft_cd.c  ft_echo.c ft_pipe.c
 
 OBJ = $(SRC:.c=.o)
 

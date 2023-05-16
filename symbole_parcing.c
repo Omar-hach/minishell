@@ -11,57 +11,6 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-int	last_char(char *s, int queot, int double_qu)
-{
-	while (*s == ' ' || *s == '\t')
-		s--;
-	if (queot % 2)
-	{
-		printf("minshell: error unexpected token %c\n", 34);
-		return (1);
-	}
-	if (double_qu % 2)
-	{
-		printf("minshell: error unexpected token %c\n", 39);
-		return (1);
-	}
-	if (*s == '>' || *s == '|' || *s == '<')//need to fix this for << AND >>
-	{
-		printf("minshell: error unexpected token `%c'\n", *s);
-		return (1);
-	}
-	return (0);
-}
-
-int	detect_sym_error(char *s, char **sym, int *part)
-{
-	int	queot;
-	int	double_qu;
-
-	queot = 0;
-	double_qu = 0;
-	if (ft_find(s + count_space(s), sym))
-		return (error_print("minshell: error unexpected token",
-				sym[ft_find(s, sym) - 1], 2));
-	while (*s)
-	{
-		queot += (*s == 34) * !(double_qu % 2);
-		double_qu += (*s == 39) * !(queot % 2);
-		if ((*s == ';' || *s == 92) && !(queot % 2) && !(double_qu % 2))
-			return (error_print("minshell: error unexpected token", s, 1));
-		if (*(++s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
-		{
-			s += ft_strlen(sym[ft_find(s, sym) - 1]);
-			s += count_space(s);
-			if (ft_find(s, sym))
-				return (error_print("minshell: error unexpected token",
-						sym[ft_find(s, sym) - 1], 2));
-			*part += 2;
-		}
-	}
-	return (last_char(s - 1, queot, double_qu));
-}
-
 int	get_symb_len(int sym_type, char *s, char **sym)
 {
 	int	queot;
@@ -86,8 +35,6 @@ int	get_symb_len(int sym_type, char *s, char **sym)
 	}
 	return (count);
 }
-
-//ft_printf("`q =%d dq=%d sym = %d find =%d\n",(queot % 2) , (double_qu % 2), (s[count] != ' ' && s[count] != '\t'), ft_find(s + count, sym));
 
 int	get_token_len(char *s, char **sym)
 {
@@ -184,10 +131,3 @@ char	**expr_split(char *s, char **sym, int part)
 	free(len_array);
 	return (array);
 }
-
-//>>> MiniShell $> MiniShell $>"l""s"'|'"gre""p"
-//minshell: error unexpected token '>'
-//minishell(51477,0x116491dc0) malloc: Incorrect checksum for freed object 0x7fc38ac19de0: probably modified after being freed.
-//Corrupt value: 0x0
-//minishell(51477,0x116491dc0) malloc: *** set a breakpoint in malloc_error_break to debug
-//[1]    51477 abort      ./minishell*/

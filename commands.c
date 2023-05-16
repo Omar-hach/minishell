@@ -23,135 +23,115 @@ int	ft_env()
 	return (0);
 }
 
-int	ft_echo(char *arg)
+int	ft_unset(int ac, char **av)
 {
-	char	*out;
-	char	flag;
+	extern char	**environ;
+	int			x;
 
-	out = replace_dollars(arg);
-	flag = 0;
-	if (out)
-		ft_printf("%s\n",out);
-	else if (flag == 'n')
-		ft_printf("%s\n",out);
-	else if (flag == 0)
-		ft_printf("%s\n",arg);
-	return (0);
-}
-
-int	ft_pwd()
-{
-	char	*dir;
-	int		i;
-
-	dir = (char *)malloc(PATH_MAX);
-	getcwd(dir, PATH_MAX);
-	i = 0;
-	while (dir[i])
-		i++;
-	dir[i++] = '\n';
-	dir[i] = '\0';
-	ft_printf(dir);
-	free(dir);
-	return (0);
-}
-
-int	ft_cd(char *arg)
-{
-	DIR	*dir;
-	int	x;
-
-	x = ft_strlen(arg) - 1;
-	while(arg[x] == ' ')
-		x--;
-	arg[x + 1] = '\0';
-	dir = opendir(arg);
-	if (dir)
+	if (ac == 0)
 	{
-		if (chdir(arg) < 0)
-		{
-			perror("cannot change dir");
-			return (1);
-		}
+		perror("unset: not enough arguments");
+		return (1);
 	}
 	else
 	{
-		perror("dir don exist");
-		return (2);
-	}
-	return (0);
-}
-
-int	ft_unset(char *arg)
-{
-	extern char	**environ;
-	char		**args;
-	int			x;
-
-	args = ft_split(arg, ' ');
-	x = -1;
-	while (args[++x])
-	{
-		if (ft_findvar(args[x]) == -1)
+		x = -1;
+		while (av[++x])
 		{
-			perror("not a valid variable");
-			return (1);
-		}
-		else
-			ft_unputenv(args[x]);
-	}
-	return (0);
-}
-
-int	ft_export(char *arg)
-{
-	extern char	**environ;
-	char		**args;
-	int			x;
-
-	args = ft_split(arg, ' ');
-	x = -1;
-	while (args[++x])
-	{
-		if (ft_isvar(args[x]) == 0)
-		{
-			perror("not a valid variable");
-			return (1);
+			if (ft_isvar(av[x]) == 0)
+			{
+				perror("unset: invalid parameter name");
+				return (1);
+			}
+			else
+				ft_unputenv(av[x]);
 		}
 	}
-	x = -1;
-	while (args[++x])
-	{
-		ft_putenv(args[x]);
-		// ft_printf("exported = %s\n",getenv(args[x]));
-	}
-	// ft_env();
-	// ft_unset("VR ok");
-	// ft_env();
 	return (0);
 }
 
-int	ft_exit()
+int	ft_export(int ac, char **av)
 {
+	extern char	**environ;
+	int			x;
+
+	if (ac == 0)
+		ft_env();
+	else
+	{
+		x = -1;
+		while (av[++x])
+		{
+			if (ft_isvar(av[x]) == 0)
+			{
+				perror("export: not valid in this context");
+				return (1);
+			}
+			else
+			{
+				ft_putenv(av[x]);
+				// ft_printf("exported = %s\n",getenv(av[x]));
+			}
+		}
+	}
+	return (0);
+}
+
+int	ft_exit(int ac, char **av)
+{
+	int	x;
+
+	if (av[0])
+	{
+		x = -1;
+		while (av[0][++x])
+		{
+			if (ft_isdigit(av[0][x]) == 0)
+			{
+				perror("exit: numeric argument required");
+				exit(0);
+			}
+		}
+	}
+	if (ac == 0)
+	{
+		x = ft_atoi(av[0]);
+		exit(x);
+	}
+	else if (ac > 1)
+	{
+		perror("exit: too many arguments");
+		return (1);
+	}
 	return (0);
 }
 
 int	exec_cmd(t_token token)
 {
-	int	out;
+	int		out;
+	int		ac;
+	char	**av;
 
-	out = 0;
+	// av = ft_split(token.arg, ' ');
+	av = token.args;
+	ac  = 0;
+	while (av[ac])
+		ac++;
+	out = -1;
 	if (token.type == 11)
 		out = ft_env();
 	else if (token.type == 12)
 		out = ft_pwd();
 	else if (token.type == 13)
-		out = ft_cd(token.arg);
+		out = ft_cd(ac, av);
 	else if (token.type == 15)
-		out = ft_export(token.arg);
+		out = ft_export(ac, av);
 	else if (token.type == 16)
-		out = ft_unset(token.arg);
+		out = ft_unset(ac, av);
 	else if (token.type == 17)
-		out = ft_echo(token.arg);
+		out = ft_echo(ac, av);
+	else if (token.type == 14)
+		out = ft_exit(ac, av);
+	free(av);
 	return (out);
 }

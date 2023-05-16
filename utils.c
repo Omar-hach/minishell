@@ -55,21 +55,19 @@ char	*ft_strdup_newline(char *s)
 }
 
 // find path of executable in $PATH (/bin : /usr/bin)
-char	*find_path(char *file)
+char	*find_path(char *file, int x, int y, int z)
 {
-	int		x;
-	int		y;
-	int		z;
 	char	*path;
 	char	**all_paths;
 
 	all_paths = ft_split(getenv("PATH"), ':');
-	x = -1;
-	while (all_paths[++x])
+	path = NULL;
+	while (all_paths[++x] && !path)
 	{
 		y = -1;
 		z = -1;
-		path = (char *) malloc(ft_strlen (all_paths[x]) + ft_strlen (file) + 2);
+		path = (char *)ft_calloc(ft_strlen(all_paths[x])
+				+ ft_strlen(file) + 2, 1);
 		while (all_paths[x][++y])
 			path[y] = all_paths[x][y];
 		path[y++] = '/';
@@ -77,9 +75,12 @@ char	*find_path(char *file)
 			path[y + z] = file[z];
 		path[y + z] = '\0';
 		if (access(path, F_OK) == 0)
-			return (path);
+			break ;
+		free(path);
+		path = NULL;
 	}
-	return (0);
+	free_aray(all_paths);
+	return (path);
 }
 
 int	fork1(void)

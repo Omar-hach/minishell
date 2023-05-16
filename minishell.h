@@ -30,6 +30,8 @@
 # include <limits.h>
 # include "libft/libft.h"
 # include "libft/print/ft_printf.h"
+# include <errno.h>
+# include <string.h>
 
 // # define PATH_MAX 32000
 
@@ -37,13 +39,13 @@ typedef struct s_token
 {
 	int	type;
 	char	*arg;
-	int	in;
-	int	out;
+	char	**args;
+	int	redir;
 }t_token;
 
 typedef struct s_tree
 {
-	int	token_index;
+	int				token_index;
 	struct s_tree	*father;
 	struct s_tree	*left_son;
 	struct s_tree	*right_son;
@@ -74,32 +76,49 @@ int		ft_isalnum(int c);
 char		*ft_strjoin(char const *s1, char const *s2);
 char		**ft_split(char const *s, char c);
 void		*ft_calloc(size_t count, size_t size);
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
+char		*ft_strnstr(const char *haystack, const char *needle, size_t len);
 
 char		*ft_strdup_newline(char *s);
 char		*join_args(char **args, char between);
 int		fork1();
 int		ft_dup(int fd, int new_fd);
-char		*find_path(char *file);
+// char		*find_path(char *file);
+char		*find_path(char *file, int x, int y, int z);
 
 int 		ft_isvar(char *var);
 int		ft_findvar(char *var);
 void		ft_putenv(char *var);
 void		ft_unputenv(char *name);
 int		replace_var(char *var, char *value);
-
+char		*mint_dollars(char *s, int start, int name_len, char *val);
 char		*replace_dollars(char *s);
+
+int		ft_cd(int ac, char **av);
+int		ft_echo(int ac, char **av);
+int		ft_pwd();
+int		ft_pipe(t_tree *tree, t_token *tokens);
 
 int		exec_cmd(t_token token);
 int		exec_symbol(t_tree *tree, t_token *tokens);
 int		exec_node(t_tree *tree, t_token *tokens);
 
-char	**expr_split(char *s, char **sym, int part);
-void	creat_lexic(t_lexic *lex);
+char		**expr_split(char *s, char **sym, int part);
+int		creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);
 int		error_print(char *mes, char *prob, int n);
-t_tree *create_tree(t_token *nodes, int len);
+t_tree	*create_tree(t_token *nodes, int len);
+int		detect_sym_error(char *s, char **sym, int *part);
+void		*free_aray(char	**words);
+t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex);
+void		*free_struct_array(char **words, t_lexic *lex, t_token *nodes,  int len);
+int		nodes_count(char **word);
+t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes, int *len);
+char		*cmd_split(char *word, int *token, t_lexic lex, int type);
+int		detect_sym_error(char *s, char **sym, int *part);
+
+void		free_tree(t_tree *root);
+void		treeprint(t_tree *root, int level, t_token *nodes);
 
 
 #endif

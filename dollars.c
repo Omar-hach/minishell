@@ -17,21 +17,18 @@ char	*mint_dollars(char *s, int start, int name_len, char *val)
 {
 	int		size;
 	char	*no_money;
-	int 	x;
+	int		x;
 	int		y;
 
-	// ft_printf("s=%d name=%d val=%d\n",ft_strlen(s) , name_len ,ft_strlen(val));
+	// ft_printf("s=%d n=%d val=%d\n",ft_strlen(s),name_len,ft_strlen(val));
 	size = ft_strlen(s) - name_len + ft_strlen(val) + 1;
 	no_money = (char *) malloc (size * sizeof(char));
 	x = -1;
-	while (++x <= start)
+	while (++x < start)
 		no_money[x] = s[x];
-	y = 0;
-	while (y < ft_strlen(val))
-	{
+	y = -1;
+	while (++y < ft_strlen(val))
 		no_money[x + y] = val[y];
-		y++;
-	}
 	y += x;
 	x += name_len + 1;
 	while (x < size)
@@ -43,10 +40,9 @@ char	*mint_dollars(char *s, int start, int name_len, char *val)
 // remove dolar var
 char	*tax_dollars(char *s, int start, int name_len)
 {
-	int 	x;
+	int		x;
 	int		y;
 
-	// ft_printf("s=%d name=%d val=%d\n",ft_strlen(s) , name_len ,ft_strlen(val));
 	x = 0;
 	while (x <= start)
 		x++;
@@ -60,7 +56,7 @@ char	*tax_dollars(char *s, int start, int name_len)
 }
 
 // get start and lenght of dolar var
-char	*get_dollars(char *s, int x)
+char	*get_dollars(char *s, int *x)
 {
 	int		y;
 	int		z;
@@ -68,45 +64,44 @@ char	*get_dollars(char *s, int x)
 	char	*val;
 	char	*out;
 
-	y = x;
+	y = *x;
 	z = 0;
-	while (s[++x] && s[x] != ' ' && s[x] != '$')
+	while (s[++y] && s[y] != ' ' && s[y] != '$')
 		z++;
 	if (z < 1)
 		return (s);
 	name = (char *) malloc (z * sizeof(char));
-	x = y;
+	y = *x;
 	z = 0;
-	while (s[++x] && s[x] != ' ' && s[x] != '$')
-		name[z++] = s[x];
+	while (s[++y] && s[y] != ' ' && s[y] != '$')
+		name[z++] = s[y];
 	name[z] = '\0';
+	*x -= 1;
 	val = getenv(name);
 	if (!val)
-		out = tax_dollars(s, y - 1 , z);
+		out = tax_dollars(s, *x, z);
 	else
-		out = mint_dollars(s, y - 1 , z , val);
-	// ft_printf("%s, start=%d len=%d name=%s ,%s\n",s , y ,z ,name, val);
+		out = mint_dollars(s, *x + 1, z, val);
 	return (out);
 }
-
 
 // search for all  dolar var
 char	*replace_dollars(char *s)
 {
-	int	x;
-	char *out;
+	int		x;
+	char	*out;
 
 	x = 0;
 	while (s[x] && s[x] != '$')
 		x++;
 	if (x == ft_strlen(s))
-		return (0);
+		return (s);
 	out = s;
 	x = -1;
 	while (out[++x])
 	{
 		if (out[x] == '$')
-			out = get_dollars(out, x); 
+			out = get_dollars(out, &x);
 	}
 	return (out);
 }
