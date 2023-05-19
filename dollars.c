@@ -90,6 +90,8 @@ char	*get_dollars(char *s, int *x, int qt)
 		z++;
 		if (y == *x + 1 && (s[y] >= '0' && s[y] <= '9'))
 			break;
+		if (s[y] == '?')
+			return (mint_dollars(s, *x--, 1, ft_itoa(*error)));
 	}
 	if (z == 0 && (qt == 0 || !s[y]))
 		return (s);

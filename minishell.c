@@ -244,7 +244,6 @@ void shvlvl()
 	replace_var("SHLVL", shlvl);
 	// shlvl = getenv("SHLVL");
 	ft_putenv("OLDPWD");
-	ft_putenv("?=0");
 }
 
 int	ft_minishell()
@@ -258,6 +257,7 @@ int	ft_minishell()
 	tree = NULL;
 	nodes = NULL;
 	shvlvl();
+	*error = 100;
 	while (ex)
 	{
 		input = readline(">>> MiniShell $>");

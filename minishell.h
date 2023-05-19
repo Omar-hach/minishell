@@ -33,7 +33,7 @@
 # include <errno.h>
 # include <string.h>
 
-// # define PATH_MAX 32000
+// # define ERROR 0
 
 int		*error;
 

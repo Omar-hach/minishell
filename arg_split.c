@@ -49,9 +49,8 @@ int	skip_quote(char *s, int y, int z)
 			skip = 1;
 			QQQ = 1;
 		}
-		if ((s[y] != '\"' && s[y] != '\'')
-			|| ((s[y] == '\"') && !(dualqt % 2) && skip == 0)
-			|| ((s[y] == '\'') && !(qt % 2) && skip == 0))
+		if ((s[y] != '\"' && s[y] != '\'') || ((s[y] == '\"') && !(dualqt % 2)
+			&& skip == 0) || ((s[y] == '\'') && !(qt % 2) && skip == 0))
 		{
 			s[z] = s[y];
 			z++;
@@ -74,6 +73,7 @@ void	ft_skip(t_token *token, int i)
 		// ft_printf("so SQiping %d = ", x); 
 		z = 0;
 		y = 0;
+		token[i].redir = 0;
 		token[i].redir = skip_quote(token[i].args[x], 0, 0);
 		// ft_printf("\n");
 		x++;

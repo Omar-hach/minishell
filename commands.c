@@ -12,7 +12,7 @@
 
 #include"minishell.h"
 
-int	ft_env(int exp)
+int	ft_env_declare()
 {
 	int			x;
 	int			y;
@@ -22,27 +22,33 @@ int	ft_env(int exp)
 	x = -1;
 	while (environ[++x])
 	{
-		if (exp)
+		printf("declare -x ");
+		y = -1;
+		z = 0;
+		while (environ[x][++y])
 		{
-			printf("declare -x ");
-			y = -1;
-			z = 0;
-			while (environ[x][++y])
+			printf("%c", environ[x][y]);
+			if (environ[x][y] == '=')
 			{
-				printf("%c", environ[x][y]);
-				if (environ[x][y] == '=')
-				{
-					printf("\"");
-					z++;
-				}
-			}
-			if (z)
 				printf("\"");
-			printf("\n");
+				z++;
+			}
 		}
-		else
-			printf("%s\n", environ[x]);
+		if (z)
+			printf("\"");
+		printf("\n");
 	}
+	return (0);
+}
+
+int	ft_env()
+{
+	int			x;
+	extern char	**environ;
+
+	x = -1;
+	while (environ[++x])
+		printf("%s\n", environ[x]);
 	return (0);
 }
 
@@ -102,7 +108,7 @@ int	ft_export(int ac, char **av)
 	int			r;
 
 	if (ac == 0)
-		ft_env(1);
+		ft_env_declare();
 	else
 	{
 		x = -1;
@@ -171,7 +177,7 @@ int	exec_cmd(t_token token)
 		ac++;
 	out = -1;
 	if (token.type == 11)
-		out = ft_env(0);
+		out = ft_env();
 	else if (token.type == 12)
 		out = ft_pwd();
 	else if (token.type == 13)

@@ -54,10 +54,13 @@ char	*here_doc(char *s, int *fd_out, int qt)
 	{
 		input = readline("> ");
 		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
+		{
+			// close(bibe[0]);
 			break ;
+		}
 		if (*(input + count_space(input)))
 		{
-			if (qt == 1)
+			if (qt == 0)
 				input = replace_dollars(input);
 			// printf("%s\n", input);
 	        write(bibe[1], input, ft_strlen(input));
