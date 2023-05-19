@@ -25,7 +25,9 @@ SRC = 	ft_utils.c\
 		nodes_utils.c\
 		free_utils.c\
 		detect_sym_error.c\
-		dollars.c
+		dollars.c\
+		trim_word.c
+#dont dair solve this it will break every things
 
 OBJ = $(SRC:.c=.o)
 

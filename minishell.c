@@ -11,19 +11,23 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-char	*fill_cmd(char *word, int j, int i)
+char	*fill_cmd(char *word, int j, int *i)
 {
 	char	*cmd;
+	int		k;
 
-	cmd = (char *)ft_calloc(++i, sizeof(char));
+	while ((((word[(*i)] != ' ' && word[(*i)] != '\t')) || !is_outside_quoet(word, *i)) && word[(*i)])
+		(*i)++;
+	ft_printf("i = %d = %d \n", *i, is_outside_quoet(word, *i));
+	cmd = (char *)ft_calloc((*i), sizeof(char));
 	if (!cmd)
 		return (NULL);
-	i = -1;
-	while ((word[++i] != ' ' && word[i] != '\t') && word[i])
+	k = -1;
+	while (++k < (*i) - 1)
 	{
-		while (word[i] == 34 || word[i] == 39)
-			i++;
-		cmd[j] = word[i];
+		while (word[k] == 34 || word[k] == 39)
+			k++;
+		cmd[j] = word[k];
 		j++;
 	}
 	cmd[j] = '\0';
@@ -87,18 +91,17 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 
 	i = 0;
 	j = 0;
+	cmd = NULL;
 	word += count_space(word);
+	word = replace_dollars(word); //$ management
 	if (*word == '|')
 	{
 		*token = 21;
 		return (NULL);
 	}
-	while (word[i] != ' ' && word[i] != '\t' && word[i] != '\0')
-		i++;
-	ft_printf("cmd[]=%s.%d\n", word, type);
-	word = replace_dollars(word); //$ management
 	if (type == 21 || type < 1)
-		cmd = fill_cmd(word, j, i);
+		cmd = fill_cmd(word, j, &i);
+	ft_printf("cmd[]=%s.%d\n", cmd, i);
 	if ((type > 0 && type < 20) || type > 21)
 		cmd = fill_symb(word, j, &i);
 	if (!cmd)
@@ -139,7 +142,6 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 	}
 	ft_printf("cmd[%d]=%s\n", i, cmd);
 	//fill arg
-	i = ft_strlen(cmd);
 	arg = (char *)ft_calloc(ft_strlen(word + i) - count_space(word + i) + 1,
 			sizeof(char));
 	if (!arg)
@@ -158,28 +160,6 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 		free(bin);
 	return (arg);
 }
-/*
-char	*trim_arg(char** words)
-{
-	char	*trimed;
-	int		i = -1;
-	int		j = -1;
-	int		k = -1;
-
-	while (words[++j])
-	{
-		while (words[j][++i])
-		{
-			if(word[j][i] == '\t')
-				gfhreg;
-		}
-	}
-}
-
-char	*fill_arg(char* word)
-{
-
-}*/
 
 t_token	*split_input(char *input, int *len)
 {
@@ -194,7 +174,12 @@ t_token	*split_input(char *input, int *len)
 	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
 	if (!words)
 		return (free_struct_array(NULL, &lex, NULL, -1));
-	//words = trim_word(words);
+	i = -1;
+	while (words[++i])
+	{
+		ft_printf("'%s' ", words[i]);
+	}
+	printf("\n------------------------------\n");
 	*len = nodes_count(words);
 	nodes = NULL;
 	nodes = malloc_nodes(nodes, *len, &lex);
@@ -203,7 +188,9 @@ t_token	*split_input(char *input, int *len)
 	i = -1;
 	while (++i < (*len))
 	{
-		printf("i =%d type=%d <%s>\n", i, nodes[i].token, nodes[i].arg);
+		printf("i =%d type=%d <%s>\n------------------------------\n", i, nodes[i].token, nodes[i].arg);
+		trim_word(nodes[i].arg, nodes[i].token);
+		printf("------------------------------\n");
 	}
 	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);

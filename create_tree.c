@@ -79,9 +79,9 @@ t_tree	*create_tree(t_token *nodes, int len)
 			{
 				ft_printf("here\n");
 				branch->father = root;
-				branch->left_son = root->left_son;
+				branch->right_son = root->left_son;
 				root->left_son = branch;
-				branch->left_son->father = branch;
+				branch->right_son->father = branch;
 			}
 		}
 		if (list[i] == 21 || list[i] > 23)

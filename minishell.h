@@ -66,7 +66,9 @@ lexixe{
     << ? 
 }
 */
+int		error;
 
+int		is_outside_quoet(char *s, int end);
 char	**expr_split(char *s, char **sym, int part);
 int		creat_lexic(t_lexic *lex);
 int		count_space(char *s);
@@ -82,6 +84,7 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes, int *len);
 char	*cmd_split(char *word, int *token, t_lexic lex, int type);
 int		detect_sym_error(char *s, char **sym, int *part);
 char	*replace_dollars(char *s);
+char	**trim_word(char *words, int type);
 
 void	treeprint(t_tree *root, int level, t_token *nodes);
 

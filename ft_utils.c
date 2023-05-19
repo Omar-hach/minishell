@@ -56,7 +56,7 @@ int	ft_find(char *s, char **token)
 
 	i = -1;
 	diff = 0;
-	while (token[++i])
+	while (token && token[++i])
 	{
 		diff = ft_strncmp(token[i], s, ft_strlen(token[i]));
 		if (!diff)
@@ -75,4 +75,21 @@ int	error_print(char *message, char *prob, int n)
 	}
 	printf("'\n");
 	return (1);
+}
+
+int	is_outside_quoet(char *s, int end)
+{
+	int	i;
+	int	queot;
+	int	double_qu;
+
+	queot = 0;
+	double_qu = 0;
+	i = -1;
+	while(s[++i] && i < end)
+	{
+		queot += (s[i] == 34) * !(double_qu % 2);
+		double_qu += (s[i] == 39) * !(queot % 2);
+	}
+	return(!(queot % 2) && !(double_qu % 2) && s[i]);
 }
