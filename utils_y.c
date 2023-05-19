@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_y.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yhachami <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,48 +11,6 @@
 /* ************************************************************************** */
 
 #include"minishell.h"
-
-char	*join_args(char **args, char between)
-{
-	int		x;
-	int		i;
-	int		j;
-	int		size;
-	char	*out;
-
-	size = 0;
-	i = -1;
-	while (args[++i])
-		size += ft_strlen(args[i]) + 1;
-	out = (char *) malloc(size * sizeof(char));
-	x = -1;
-	i = -1;
-	while (args[++i])
-	{
-		j = -1;
-		while (args[i][++j])
-			out[++x] = args[i][j];
-		out[++x] = between;
-	}
-	out[x] = '\0';
-	return (out);
-}
-
-char	*ft_strdup_newline(char *s)
-{
-	int		i;
-	int		size;
-	char	*out;
-
-	size = ft_strlen(s) + 1;
-	out = (char *) malloc(size * sizeof(char));
-	i = -1;
-	while (s[++i])
-		out[i] = s[i];
-	out[i] = '\n';
-	out[i + 1] = '\0';
-	return (out);
-}
 
 // find path of executable in $PATH (/bin : /usr/bin)
 char	*find_path(char *file, int x, int y, int z)

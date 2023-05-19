@@ -18,13 +18,13 @@ int	ft_address(unsigned long adr, int detect)
 
 	digit = 1;
 	if (digit == detect && adr < 16)
-		write(1, "0x", 2);
+		write(2, "0x", 2);
 	if (adr < 10)
 		printer = adr + '0';
 	if (adr > 9 && adr < 16)
 		printer = adr - 10 + 'a';
 	if (adr < 16)
-		write(1, &printer, 1);
+		write(2, &printer, 1);
 	if (adr > 15)
 	{
 		digit += ft_address(adr / 16, detect++);

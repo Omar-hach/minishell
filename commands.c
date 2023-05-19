@@ -12,14 +12,37 @@
 
 #include"minishell.h"
 
-int	ft_env()
+int	ft_env(int exp)
 {
 	int			x;
+	int			y;
+	int			z;
 	extern char	**environ;
 
 	x = -1;
 	while (environ[++x])
-		ft_printf("%s\n", environ[x]);
+	{
+		if (exp)
+		{
+			printf("declare -x ");
+			y = -1;
+			z = 0;
+			while (environ[x][++y])
+			{
+				printf("%c", environ[x][y]);
+				if (environ[x][y] == '=')
+				{
+					printf("\"");
+					z++;
+				}
+			}
+			if (z)
+				printf("\"");
+			printf("\n");
+		}
+		else
+			printf("%s\n", environ[x]);
+	}
 	return (0);
 }
 
@@ -27,20 +50,42 @@ int	ft_unset(int ac, char **av)
 {
 	extern char	**environ;
 	int			x;
+	int			y;
+	int			r;
 
 	if (ac == 0)
 	{
-		perror("unset: not enough arguments");
-		return (1);
+		// perror("unset: not enough arguments");
+		return (0);
 	}
 	else
 	{
 		x = -1;
 		while (av[++x])
 		{
-			if (ft_isvar(av[x]) == 0)
+			y = 0;
+			while (av[x][++y])
 			{
-				perror("unset: invalid parameter name");
+				if (av[x][y] == '=')
+				{
+					ft_printf("unset: '%s': not a valid identifier\n", av[x]);
+					return (1);
+				}
+				if (av[x][y] == ';')
+				{
+					ft_printf("unset: '%s': not a valid identifier\n", av[x]);
+					return (127);
+				}
+			}
+			r = ft_isvar(av[x]);
+			if (av[x][0] == '-')
+			{
+				ft_printf("unset: '%s': not a valid identifier\n", av[x]);
+				return (2);
+			}
+			if (r == 0 || r == -1)
+			{
+				ft_printf("unset: '%s': not a valid identifier\n", av[x]);
 				return (1);
 			}
 			else
@@ -54,19 +99,28 @@ int	ft_export(int ac, char **av)
 {
 	extern char	**environ;
 	int			x;
+	int			r;
 
 	if (ac == 0)
-		ft_env();
+		ft_env(1);
 	else
 	{
 		x = -1;
 		while (av[++x])
 		{
-			if (ft_isvar(av[x]) == 0)
+			r = ft_isvar(av[x]);
+			if (av[x][0] == '-')
 			{
-				perror("export: not valid in this context");
+				ft_printf("export: '%s':  not a valid identifier\n", av[x]);
+				return (2);
+			}
+			if ((av[x][0] >= '0' && av[x][0] <= '9') || r == 0 || r == -1)
+			{
+				ft_printf("export: '%s':  not a valid identifier\n", av[x]);
 				return (1);
 			}
+			if (r == -3 || r == -2)
+				return (0);
 			else
 			{
 				ft_putenv(av[x]);
@@ -79,28 +133,27 @@ int	ft_export(int ac, char **av)
 
 int	ft_exit(int ac, char **av)
 {
-	int	x;
+	char	x;
 
 	if (av[0])
 	{
-		x = -1;
-		while (av[0][++x])
+		x = (char) ft_atoi(av[0]);
+		if (x == 0 && av[0][0] != '0' && av[0][1] != '0')
 		{
-			if (ft_isdigit(av[0][x]) == 0)
-			{
-				perror("exit: numeric argument required");
-				exit(0);
-			}
+			ft_printf("exit: %s: numeric argument required\n", av[0]);
+			exit(255);
 		}
 	}
-	if (ac == 0)
+	if (ac == 1)
 	{
-		x = ft_atoi(av[0]);
+		x = (char) ft_atoi(av[0]);
+		if (x == 0 && av[0][1] != '0' && av[0][0] != '0')
+			exit(255);
 		exit(x);
 	}
 	else if (ac > 1)
 	{
-		perror("exit: too many arguments");
+		ft_printf("exit: too many arguments\n");
 		return (1);
 	}
 	return (0);
@@ -112,14 +165,13 @@ int	exec_cmd(t_token token)
 	int		ac;
 	char	**av;
 
-	// av = ft_split(token.arg, ' ');
 	av = token.args;
 	ac  = 0;
 	while (av[ac])
 		ac++;
 	out = -1;
 	if (token.type == 11)
-		out = ft_env();
+		out = ft_env(0);
 	else if (token.type == 12)
 		out = ft_pwd();
 	else if (token.type == 13)

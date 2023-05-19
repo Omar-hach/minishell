@@ -38,25 +38,43 @@ char	*mint_dollars(char *s, int start, int name_len, char *val)
 }
 
 // remove dolar var
-char	*tax_dollars(char *s, int start, int name_len)
+char	*tax_dollars(char *s, int start, int name_len, char *name)
 {
 	int		x;
 	int		y;
 
-	x = 0;
-	while (x <= start)
-		x++;
-	y = x + name_len + 1;
-	// while (s[y] && s[y] == ' ')
-	// 	y++;
+	(void)(name);
+	// if (!ft_isvar(name))
+	// 	return (s);
+	x = start;
+	y = start + name_len + 1;
 	while (s[y])
 		s[x++] = s[y++];
 	s[x] = '\0';
 	return (s);
 }
 
+char	*get_dollar_name(char *s, int x, int z)
+{
+	int		y;
+	char	*name;
+
+	name = (char *) malloc ((z + 1) * sizeof(char));
+	y = x;
+	z = 0;
+	while (s[++y] && s[y] != ' ' && s[y] != '$' && s[y] != '\''
+		&& s[y] != '\"' && s[y] != '/' && s[y] != '=')
+	{
+		name[z++] = s[y];
+		if (y == x + 1 && (s[y] >= '0' && s[y] <= '9'))
+			break;
+	}
+	name[z] = '\0';
+	return (name);
+}
+
 // get start and lenght of dolar var
-char	*get_dollars(char *s, int *x)
+char	*get_dollars(char *s, int *x, int qt)
 {
 	int		y;
 	int		z;
@@ -66,22 +84,23 @@ char	*get_dollars(char *s, int *x)
 
 	y = *x;
 	z = 0;
-	while (s[++y] && s[y] != ' ' && s[y] != '$')
+	while (s[++y] && s[y] != ' ' && s[y] != '$' && s[y] != '\''
+		&& s[y] != '\"' && s[y] != '/' && s[y] != '=')
+	{
 		z++;
-	if (z < 1)
+		if (y == *x + 1 && (s[y] >= '0' && s[y] <= '9'))
+			break;
+	}
+	if (z == 0 && (qt == 0 || !s[y]))
 		return (s);
-	name = (char *) malloc (z * sizeof(char));
-	y = *x;
-	z = 0;
-	while (s[++y] && s[y] != ' ' && s[y] != '$')
-		name[z++] = s[y];
-	name[z] = '\0';
-	*x -= 1;
+	name = get_dollar_name(s, *x, z);
+	// ft_printf("name = %s\n",name);
 	val = getenv(name);
 	if (!val)
-		out = tax_dollars(s, *x, z);
+		out = tax_dollars(s, *x, z, name);
 	else
-		out = mint_dollars(s, *x + 1, z, val);
+		out = mint_dollars(s, *x, z, val);
+	*x -= 1;
 	return (out);
 }
 
@@ -90,7 +109,11 @@ char	*replace_dollars(char *s)
 {
 	int		x;
 	char	*out;
+	int		qt;
+	int		dualqt;
 
+	qt = 0;
+	dualqt = 0;
 	x = 0;
 	while (s[x] && s[x] != '$')
 		x++;
@@ -100,8 +123,10 @@ char	*replace_dollars(char *s)
 	x = -1;
 	while (out[++x])
 	{
-		if (out[x] == '$')
-			out = get_dollars(out, &x);
+		dualqt += (out[x] == '\"') * !(qt % 2);
+		qt += (out[x] == '\'') * !(dualqt % 2);
+		if (out[x] == '$' && !(qt % 2))
+			out = get_dollars(out, &x, !(dualqt % 2));
 	}
 	return (out);
 }

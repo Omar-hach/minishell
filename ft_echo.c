@@ -57,26 +57,31 @@ char	get_flag(char **s, int *x)
 
 int	ft_echo(int ac, char **av)
 {
-	char	*txt;
+	// char	*txt;
 	char	flag;
 	int		x;
+	int		start;
 
 	if (ac > 0)
 	{
 		x = -1;
 		flag = get_flag(av, &x);
+		start = 1;
 		// ft_printf("%s = %c\n",av[x] , flag);
 		while (++x < ac)
 		{
-			txt = replace_dollars(av[x]); 
+			if (start == 0)
+				printf(" ");
+			start = 0;
+			// av[x] = extra_cd(av[x]); 
 			if (flag == 'n')
-				ft_printf("%s ",txt);
+				printf("%s",av[x]);
 			else if (flag == '0')
-				ft_printf("%s ",txt);
-			free(txt);
+				printf("%s",av[x]);
+			// free(txt);
 		}
 	}
 	if (ac == 0 || flag == '0')
-		ft_printf("\n");
+		printf("\n");
 	return (0);
 }

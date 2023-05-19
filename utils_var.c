@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   var_utiles.c                                       :+:      :+:    :+:   */
+/*   utils_var.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yhachami <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -95,12 +95,21 @@ int	ft_isvar(char *var)
 {
 	int	x;
 	int	y;
+	int	val;
 
 	x = -1;
+	val = 0;
+	if (var[0] == '-')
+		return (-4);
+	if (var[0] == '+')
+		return (-1);
 	while (var[++x])
 	{
 		if (var[x] == '=')
 		{
+			if (var[x - 1] == '+')
+				return (-2);
+			val = 1;
 			y = x - 1;
 			while (var[y] && (ft_isalnum(var[y]) == 1 || var[y] == '_'))
 			{
@@ -110,6 +119,21 @@ int	ft_isvar(char *var)
 			}
 		}
 	}
+	x = -1;
+	val = 0;
+	while (var[++x])
+	{
+		if (val == 0 && (var[x] == '-'  || var[x] == '\\' || var[x] == '+' || var[x] == '='
+			|| var[x] == '}' || var[x] == '{' || var[x] == '!'
+			|| var[x] == '@' || var[x] == '#' || var[x] == '%'
+			|| var[x] == '^' || var[x] == '&' || var[x] == '*'
+			|| var[x] == '~' || var[x] == ';' || var[x] == '.'))
+			return (-1);
+		if (var[x] == '=')
+			val = 1;
+	}
+	if (val == 0)
+		return (-3);
 	return (0);
 }
 
@@ -133,7 +157,6 @@ void	ft_putenv(char *var)
 		var_ = ft_strdup(environ[--x]);
 		new_env[x++] = ft_strdup(var);
 		new_env[x++] = var_;
-		free(var_);
 		new_env[x] = NULL;
 		environ = new_env;
 	}

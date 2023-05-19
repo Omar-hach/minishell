@@ -53,6 +53,7 @@ t_tree	*create_tree(t_token *nodes, int len)
 	i = -1;
 	list = (int *)ft_calloc(len + 1, sizeof(int));
 	list[len] = -1;
+	// list[len + 1] = -1;
 	while (list[++i] > -1)
 		list[i] = nodes[i].type;
 	i = 0;
@@ -60,6 +61,7 @@ t_tree	*create_tree(t_token *nodes, int len)
 	while (list[i] > -1)
 	{
 		branch = new_branch(i);
+			// ft_printf("list=%d | i = %d",list[root->token_index], i);
 		if (list[i] < 19)
 		{
 			if (!root->left_son)
@@ -68,9 +70,9 @@ t_tree	*create_tree(t_token *nodes, int len)
 				root->right_son = branch;
 			branch->father = root;
 		}
-		if (list[i] == 22 || list[i] == 23)
+		// if (list[i] == 22 || list[i] == 23)
+		if (list[i] > 21)
 		{
-			// ft_printf("list=%d",list[root->token_index]);
 			while (root->father && list[root->father->token_index] == 21)
 				root = root->father;
 			if (list[root->token_index] != 21)
@@ -79,16 +81,26 @@ t_tree	*create_tree(t_token *nodes, int len)
 			{
 				// ft_printf("here\n");
 				branch->father = root;
-				branch->left_son = root->left_son;
+				branch->right_son = root->left_son;
 				root->left_son = branch;
-				branch->left_son->father = branch;
+				branch->right_son->father = branch;
 			}
 		}
-		if (list[i] == 21 || list[i] > 23)
+		if (list[i] == 21)// || list[i] > 23)
 		{
+			// if(list[i] > 23)
+			// {
+				// while (root->father && list[root->father->token_index] == 21)
+				// root = root->father;
+			// }
+			// else
+			// {
+			// 	while (root->father)
+			// 		root = root->father;
+			// }
 			if(list[i] > 23)
-			while (root->father)
-				root = root->father;
+				while (root->father)
+					root = root->father;
 			root->father = branch;
 			branch->right_son = root;
 		}

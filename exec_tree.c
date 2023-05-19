@@ -12,37 +12,6 @@
 
 #include"minishell.h"
 
-void	ft_skip(char **av)
-{
-	int		x;
-	int		y;
-	int		z;
-	// char	**args;
-
-	// x = 0;
-	// while (av[x])
-	// 	x++;
-	// av = (char **) malloc(x * sizeof(char *));
-	x = 0;
-	while (av[x])
-	{
-		// av = (char **) malloc(ft_strlen(av[x]) * sizeof(char *));
-		z = 0;
-		y = 0;
-		while (av[x][y])
-		{
-			if (av[x][y] == '\"' || av[x][y] == '\'')
-				y++;
-			av[x][z] = av[x][y];
-			z++;
-			y++;
-		}
-		av[x][z] = '\0';
-		x++;
-	}
-	// return (args);
-}
-
 int	exec_prog(t_token token)
 {
 	int		out;
@@ -52,7 +21,9 @@ int	exec_prog(t_token token)
 
 	// prog_argv = ft_split(token.arg, ' ');
 	prog_argv = token.args;
-	out = execve(prog_argv[0], prog_argv, prog_envp);
+	if (fork1() == 0)
+		out = execve(prog_argv[0], prog_argv, prog_envp);
+	wait(&out);
 	free(prog_argv);
 	return (out);
 }
@@ -62,15 +33,21 @@ int	exec_token(t_tree *tree, t_token *tokens)
 	int	x;
 	int	out;
 	// char **args;
+	// int i;
 
-	out = 1;
+	out = 0;
 	x = tree->token_index;
-	// ft_printf("node %d : type = %d , arg = %s\n",x,tokens[x].type, tokens[x].arg);
-	tokens[x].args = ft_split(tokens[x].arg, ' ');
+	// printf("node %d : type = %d , arg = %s\n\n",x,tokens[x].type, tokens[x].arg);
+	tokens[x].args = arg_split(tokens[x].arg, " 	");
 	if (tokens[x].args)
 	{
-		ft_skip(tokens[x].args);
-		// ft_printf("skipeed = %s\n",  tokens[x].args[0]);
+		// i = -1;
+		// while (tokens[x].args[++i])
+			// ft_printf("no skipeed %d = %s\n",i,  tokens[x].args[i]);
+		ft_skip(tokens, x);
+		// i = -1;
+		// while (tokens[x].args[++i])
+			// ft_printf("skipeed %d = %s\n",i,  tokens[x].args[i]);
 	}
 	if (tokens[x].type == 1)
 		out = exec_prog(tokens[x]);
@@ -78,6 +55,7 @@ int	exec_token(t_tree *tree, t_token *tokens)
 		out = exec_cmd(tokens[x]);
 	else if (tokens[x].type / 10 == 2)
 		out = exec_symbol(tree ,tokens);
+	// printf("\n out = %d %s \n", out , tokens[x].arg);
 	return (out);
 }
 
@@ -98,14 +76,17 @@ int	exec_redir(t_tree *tree, t_token *tokens)
 		{
 			// ft_printf("<^> %d\n", redir->token_index);
 			out = exec_token(redir, tokens);
+			// printf("reee 1 = %d",out);
 			if (out)
 				exit(out);
 			redir = redir->father;
 		}
 		out = exec_token(cmd, tokens);
+		// printf("reee 2 = %d",out);
 		exit(out);
 	}
 	wait(&out);
+	// printf("reee = %d",out);
 	return (out);
 }
 
@@ -116,18 +97,22 @@ int	exec_node(t_tree *tree, t_token *tokens)
 
 	out = 0;
 	x = tree->token_index;
-	if (tokens[x].type == 1 && !tree->father)
-	{
-		if (fork1() == 0)
-			out = exec_token(tree, tokens);
-		wait(NULL);
-	}
-	else if (tokens[x].type > 21)
+	// if (tokens[x].type == 1 && !tree->father)
+	// {
+	// 	if (fork1() == 0)
+	// 		out = exec_token(tree, tokens);
+	// 	wait(&out);
+	// }
+	if (tokens[x].type > 21)
 		out = exec_redir(tree, tokens);
 	else
 		out = exec_token(tree, tokens);
-	// ft_printf("node %d finished = %d\n",x,OUT);
-	return (out);
+	*error = out;
+	if (out > 2)
+		*error = 1;
+	// printf("%d out = %d %d \n",x, out , *error);
+	// ft_printf("node %d finished = %d\n",x,out);
+	return (*error );
 }
 
 // ls | grep a < file1 > file2
@@ -158,8 +143,8 @@ int	exec_node(t_tree *tree, t_token *tokens)
 //               \
 //                \
 //                 1 
-//                 
-//   
+//
+//
 
 //
 // /bin/ls | /usr/bin/grep c | /usr/bin/grep o

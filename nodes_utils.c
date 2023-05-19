@@ -60,13 +60,13 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 	{
 		nodes[j].arg = cmd_split(words[i], &nodes[j].type, *lex,
 				(j > 0) * nodes[j - 1].type);
-		// ft_printf("i=%d j =%d k=%d token=%d\n", i, j, k, nodes[j].type);
 		if (!nodes[i].arg && nodes[j].type == 0)
 			return (free_struct_array(words, lex, nodes, *len));//127
 		if (nodes[j].type > 21)
 			nodes[k].arg = ft_strjoin(nodes[k].arg, words[(i++) + 1]);
 		if (nodes[j].type == 21)
 			k = i;
+		// ft_printf("i=%d j =%d k=%d token=%d cmd=%s\n", i, j, k, nodes[j].type , nodes[j].arg);
 		j++;
 	}
 	return (nodes);

@@ -19,9 +19,9 @@ int	ft_putnbr_abs(unsigned int dec, char flag, char c, unsigned int base)
 	degit = 1;
 	if (flag == '#' && dec != 0)
 	{
-		write(1, "0", 1);
+		write(2, "0", 1);
 		printer = 'x' * (c == 'x') + 'X' * (c == 'X');
-		write(1, &printer, 1);
+		write(2, &printer, 1);
 		degit += 2;
 	}
 	if (dec < 10)
@@ -29,7 +29,7 @@ int	ft_putnbr_abs(unsigned int dec, char flag, char c, unsigned int base)
 	if (dec > 9 && dec < base)
 		printer = dec - 10 + (c == 'x') * 'a' + (c == 'X') * 'A';
 	if (dec < base)
-		write(1, &printer, 1);
+		write(2, &printer, 1);
 	if (dec > base - 1)
 	{
 		degit += ft_putnbr_abs(dec / base, '@', c, base);

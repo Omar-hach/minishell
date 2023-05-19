@@ -31,7 +31,7 @@ static int	convertion_check(char sign, char flag, va_list args)
 	else if (sign == 'X')
 		len = ft_putnbr_abs(va_arg(args, unsigned int), flag, 'X', 16);
 	else
-		write(1, &sign, 1);
+		write(2, &sign, 1);
 	return (len);
 }
 

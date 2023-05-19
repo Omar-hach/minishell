@@ -35,6 +35,8 @@
 
 // # define PATH_MAX 32000
 
+int		*error;
+
 typedef struct s_token
 {
 	int	type;
@@ -68,22 +70,14 @@ lexixe{
 }
 */
 
-int		ft_strncmp(const char *s1, const char *s2, size_t n);
-int		ft_strlen(const char *s);
-char		*ft_strdup(const char *s);
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
-int		ft_isalnum(int c);
-char		*ft_strjoin(char const *s1, char const *s2);
-char		**ft_split(char const *s, char c);
-void		*ft_calloc(size_t count, size_t size);
-char		*ft_strnstr(const char *haystack, const char *needle, size_t len);
-
 char		*ft_strdup_newline(char *s);
 char		*join_args(char **args, char between);
 int		fork1();
 int		ft_dup(int fd, int new_fd);
 // char		*find_path(char *file);
 char		*find_path(char *file, int x, int y, int z);
+char		**arg_split(char const *s, char *c);
+void		ft_skip(t_token *tokens, int i);
 
 int 		ft_isvar(char *var);
 int		ft_findvar(char *var);
@@ -93,15 +87,19 @@ int		replace_var(char *var, char *value);
 char		*mint_dollars(char *s, int start, int name_len, char *val);
 char		*replace_dollars(char *s);
 
+char		*extra_cd(char *path);
 int		ft_cd(int ac, char **av);
 int		ft_echo(int ac, char **av);
 int		ft_pwd();
 int		ft_pipe(t_tree *tree, t_token *tokens);
 
+int		exec_token(t_tree *tree, t_token *tokens);
 int		exec_cmd(t_token token);
 int		exec_symbol(t_tree *tree, t_token *tokens);
 int		exec_node(t_tree *tree, t_token *tokens);
 
+int		is_outside_quoet(char *s, int end);
+char		**trim_word(char *words, int type);
 char		**expr_split(char *s, char **sym, int part);
 int		creat_lexic(t_lexic *lex);
 int		count_space(char *s);

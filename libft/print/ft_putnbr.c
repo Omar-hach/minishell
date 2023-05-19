@@ -20,7 +20,7 @@ int	ft_printer(int n)
 	if (n < 10)
 	{
 		printer = n + '0';
-		write(1, &printer, 1);
+		write(2, &printer, 1);
 	}
 	else
 	{
@@ -37,17 +37,17 @@ int	ft_putnbr(int n, char flag)
 	digit = 0;
 	if (n == -2147483648)
 	{
-		write(1, "-2147483648", 11);
+		write(2, "-2147483648", 11);
 		return (11);
 	}
 	if (n >= 0 && (flag == ' ' || flag == '+'))
 	{
-		write(1, &flag, 1);
+		write(2, &flag, 1);
 		digit++;
 	}
 	if (n < 0)
 	{
-		write(1, "-", 1);
+		write(2, "-", 1);
 		n = (-1) * n;
 		digit++;
 	}

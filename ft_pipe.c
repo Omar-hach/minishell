@@ -19,16 +19,17 @@ int	ft_piped_end(int *fd, int io, t_tree *tree, t_token *tokens)
 	if (io == 0)
 	{
 		if (ft_dup(fd[0], STDIN_FILENO) < 0)
-			return (2);
+			exit (1);
 	}
 	else
 	{
 		if (ft_dup(fd[1], STDOUT_FILENO) < 0)
-			return (2);
+			exit (1);
 	}
 	close(fd[0]);
 	close(fd[1]);
 	out = exec_node(tree, tokens);
+	// printf("\n out = %d \n", out);
 	exit(out);
 }
 
@@ -40,8 +41,10 @@ int	ft_pipe(t_tree *tree, t_token *tokens)
 	int		*pid;
 	int		*fd;
 	int		out;
+	int		out2;
 
 	out = 0;
+	out2 = 0;
 	pid = (int *) malloc(2 * sizeof(int));
 	fd = (int *) malloc(2 * sizeof(int));
 	if (pipe(fd) < 0)
@@ -52,11 +55,12 @@ int	ft_pipe(t_tree *tree, t_token *tokens)
 	pid[2] = fork1();
 	if (pid[2] == 0)
 		ft_piped_end(fd, 1, tree->right_son, tokens);
-	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid[1], &out, 0);
+	close(fd[0]);
 	waitpid(pid[2], &out, 0);
+	waitpid(pid[1], &out2, 0);
+	// printf("\n out = %d | out2 = %d \n", out, out2);
 	free(fd);
 	free(pid);
-	return (out);
+	return (out2);
 }

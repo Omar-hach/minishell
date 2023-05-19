@@ -17,10 +17,10 @@ int	ft_putstr(char *s)
 
 	if (!s)
 	{
-		write(1, "(null)", 6);
+		write(2, "(null)", 6);
 		return (6);
 	}
 	len = ft_strlen(s);
-	write(1, s, len);
+	write(2, s, len);
 	return (len);
 }

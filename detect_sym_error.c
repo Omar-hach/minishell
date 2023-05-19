@@ -17,20 +17,17 @@ int	last_char(char *s, int queot, int double_qu)
 		s--;
 	if (queot % 2)
 	{
-		printf("minshell: error unexpected token %c\n", 34);
+		ft_printf("minshell: error unexpected token %c\n", 34);
 		return (1);
 	}
 	if (double_qu % 2)
 	{
-		printf("minshell: error unexpected token %c\n", 39);
+		ft_printf("minshell: error unexpected token %c\n", 39);
 		return (1);
 	}
 	if (*s == '>' || *s == '|' || *s == '<')
 	{
-		printf("minshell: error unexpected token `%c", *s);
-		if ((*(s - 1) == '>' && *s == '>') || (*(s - 1) == '>' && *s == '>'))
-			printf("%c", *(s - 1));
-		printf("'\n");
+		printf("minshell: error unexpected token `\\n'");
 		return (1);
 	}
 	return (0);
@@ -43,24 +40,29 @@ int	detect_sym_error(char *s, char **sym, int *part)
 
 	queot = 0;
 	double_qu = 0;
-	if (ft_find(s + count_space(s), sym))
-		return (error_print("minshell: error unexpected token",
-				sym[ft_find(s, sym) - 1], 2));
+	s += count_space(s); 
+	if (!ft_strncmp(s, "|", 1))
+		return (error_print("minshell: error unexpected token", "|", 1));
 	while (*s)
 	{
 		queot += (*s == 34) * !(double_qu % 2);
 		double_qu += (*s == 39) * !(queot % 2);
 		if ((*s == ';' || *s == 92) && !(queot % 2) && !(double_qu % 2))
 			return (error_print("minshell: error unexpected token", s, 1));
-		if (*(++s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
+		// if (*(++s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
+		if (*(s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
 		{
+			queot = ft_find(s, sym);
 			s += ft_strlen(sym[ft_find(s, sym) - 1]);
 			s += count_space(s);
-			if (ft_find(s, sym))
+			if ((queot > 1 && ft_find(s, sym) > 0) || (queot == 1 && ft_find(s, sym) == 1))
+			// if (ft_find(s, sym))
 				return (error_print("minshell: error unexpected token",
 						sym[ft_find(s, sym) - 1], 2));
+			queot = 0;
 			*part += 2;
 		}
+		s++;
 	}
 	return (last_char(s - 1, queot, double_qu));
 }
