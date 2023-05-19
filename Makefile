@@ -16,7 +16,7 @@ CC = gcc
 
 CFLAGS = -Werror -Wall -Wextra 
 
-FLAGS = -lreadline -lcurses 
+FLAGS = -lreadline -lcurses -fsanitize=address
 # -fsanitize=address
 
 SRC = 	minishell.c\

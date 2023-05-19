@@ -68,10 +68,11 @@ int	exec_redir(t_tree *tree, t_token *tokens)
 	if (fork1() == 0)
 	{
 		redir = tree;
-		while (tokens[redir->token_index].type > 21)
+		while (redir->right_son && tokens[redir->token_index].type > 21)
 			redir = redir->right_son;
 		cmd = redir;
-		redir = redir->father;
+		if (redir->father)
+			redir = redir->father;
 		while (redir && tokens[redir->token_index].type > 21)
 		{
 			// ft_printf("<^> %d\n", redir->token_index);
@@ -112,7 +113,7 @@ int	exec_node(t_tree *tree, t_token *tokens)
 		*error = 1;
 	// printf("%d out = %d %d \n",x, out , *error);
 	// ft_printf("node %d finished = %d\n",x,out);
-	return (*error );
+	return (*error);
 }
 
 // ls | grep a < file1 > file2

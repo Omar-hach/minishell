@@ -11,47 +11,47 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-char	*fill_cmd(char *word, int j, int *i)
-{
-	char	*cmd;
-	int		k;
-
-	while ((((word[(*i)] != ' ' && word[(*i)] != '\t')) || !is_outside_quoet(word, *i)) && word[(*i)])
-		(*i)++;
-	// ft_printf("i = %d = %d \n", *i, is_outside_quoet(word, *i));
-	cmd = (char *)ft_calloc((*i), sizeof(char));
-	if (!cmd)
-		return (NULL);
-	k = -1;
-	while (++k < (*i))
-	{
-		while (word[k] == 34 || word[k] == 39)
-			k++;
-		cmd[j] = word[k];
-		j++;
-	}
-	cmd[j] = '\0';
-	return (cmd);
-}
-
 // char	*fill_cmd(char *word, int j, int i)
 // {
 // 	char	*cmd;
+// 	int		k;
 
-// 	cmd = (char *)ft_calloc(++i, sizeof(char));
+// 	while ((((word[(i)] != ' ' && word[(i)] != '\t')) || !is_outside_quoet(word, i)) && word[(i)])
+// 		(i)++;
+// 	// ft_printf("i = %d = %d \n", *i, is_outside_quoet(word, *i));
+// 	cmd = (char *)ft_calloc((i), sizeof(char));
 // 	if (!cmd)
 // 		return (NULL);
-// 	i = -1;
-// 	while ((word[++i] != ' ' && word[i] != '\t') && word[i])
+// 	k = -1;
+// 	while (++k < (i))
 // 	{
-// 		while (word[i] == 34 || word[i] == 39)
-// 			i++;
-// 		cmd[j] = word[i];
+// 		while (word[k] == 34 || word[k] == 39)
+// 			k++;
+// 		cmd[j] = word[k];
 // 		j++;
 // 	}
 // 	cmd[j] = '\0';
 // 	return (cmd);
 // }
+
+char	*fill_cmd(char *word, int j, int i)
+{
+	char	*cmd;
+
+	cmd = (char *)ft_calloc(++i, sizeof(char));
+	if (!cmd)
+		return (NULL);
+	i = -1;
+	while ((word[++i] != ' ' && word[i] != '\t') && word[i])
+	{
+		while (word[i] == 34 || word[i] == 39)
+			i++;
+		cmd[j] = word[i];
+		j++;
+	}
+	cmd[j] = '\0';
+	return (cmd);
+}
 
 char	*fill_symb(char *word, int j, int *i)
 {
@@ -105,15 +105,18 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 		*token = 21;
 		return (NULL);
 	}
-	// while (word[i] != ' ' && word[i] != '\t' && word[i] != '\0')
-	// 	i++;
+	while (word[i] != ' ' && word[i] != '\t' && word[i] != '\0')
+		i++;
 	if (type == 21 || type < 1)
-		cmd = fill_cmd(word, j, &i);
+		cmd = fill_cmd(word, j, i);
 	// ft_printf("cmd[]=%s.%d\n", cmd, i);
 	if ((type > 0 && type < 20) || type > 21)
 		cmd = fill_symb(word, j, &i);
 	if (!cmd)
+	{
+		// *error = 100;
 		return (NULL);
+	}
 	bin = find_path(cmd, -1, -1, -1);
 	//token detection
 	if (ft_find(cmd, lex.l_cmd)
@@ -135,7 +138,8 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type)
 	}
 	else
 	{
-		printf("minshell: %s :command not found\n", cmd);
+		ft_printf("minshell: %s :command not found\n", cmd);
+		*error = 100;
 		free(cmd);
 		return (NULL);
 	}
@@ -197,7 +201,10 @@ t_token	*split_input(char *input, int *len)
 	i = 1;
 	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
 	if (!words)
+	{
+		*error = 2;
 		return (free_struct_array(NULL, &lex, NULL, -1));
+	}
 	// i = -1;
 	// while (words[++i])
 	// {
@@ -208,13 +215,16 @@ t_token	*split_input(char *input, int *len)
 	nodes = NULL;
 	nodes = malloc_nodes(nodes, *len, &lex);
 	if (!fill_nodes(words, &lex, nodes, len))
+	{
+		// *error = 127;
 		return (NULL);
+	}
 	// i = -1;
 	// while (++i < (*len))
 	// {
-		// printf("i =%d type=%d <%s>\n------------------------------\n", i, nodes[i].token, nodes[i].arg);
-		// trim_word(nodes[i].arg, nodes[i].type);
-		// printf("------------------------------\n");
+	// 	printf("i =%d type=%d <%s>\n------------------------------\n", i, nodes[i].type, nodes[i].arg);
+	// 	trim_word(nodes[i].arg, nodes[i].type);
+	// 	printf("------------------------------\n");
 	// }
 	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
@@ -267,7 +277,7 @@ int	ft_minishell()
 				ex = 1;
 			}
 		}
-		free(input);
+		// free(input);
 		//system("leaks minishell");
 	}
 	return(0);
@@ -295,7 +305,7 @@ int	main(int ac, char **av)
 			shvlvl();
 			nodes = split_input(in, &ex);
 			if (!nodes)
-				return (1);
+				return (*error);
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
@@ -304,10 +314,10 @@ int	main(int ac, char **av)
 				out = exec_node(tree, nodes);
 				free_struct_array(NULL, NULL, nodes, ex);
 				ex = 1;
-				// if (out < *error)
+				*error = out;
 			}
 		}
-		return (out);
+		return (*error);
 	}
 	else
 	{

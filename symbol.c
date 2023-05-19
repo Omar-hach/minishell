@@ -53,7 +53,7 @@ char	*here_doc(char *s, int *fd_out, int qt)
 	while (1)
 	{
 		input = readline("> ");
-		if (!input || ft_strncmp(input, s, ft_strlen(input)) == 0)
+		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
 			break ;
 		if (*(input + count_space(input)))
 		{

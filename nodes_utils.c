@@ -61,7 +61,10 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 		nodes[j].arg = cmd_split(words[i], &nodes[j].type, *lex,
 				(j > 0) * nodes[j - 1].type);
 		if (!nodes[i].arg && nodes[j].type == 0)
-			return (free_struct_array(words, lex, nodes, *len));//127
+		{
+			*error = 127;
+			return (free_struct_array(words, lex, nodes, *len));
+		}
 		if (nodes[j].type > 21)
 			nodes[k].arg = ft_strjoin(nodes[k].arg, words[(i++) + 1]);
 		if (nodes[j].type == 21)

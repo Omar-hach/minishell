@@ -27,7 +27,7 @@ int	last_char(char *s, int queot, int double_qu)
 	}
 	if (*s == '>' || *s == '|' || *s == '<')
 	{
-		printf("minshell: error unexpected token `\\n'");
+		ft_printf("minshell: error unexpected token `\\n'");
 		return (1);
 	}
 	return (0);
@@ -42,7 +42,10 @@ int	detect_sym_error(char *s, char **sym, int *part)
 	double_qu = 0;
 	s += count_space(s); 
 	if (!ft_strncmp(s, "|", 1))
+	{
+		*error = 2;
 		return (error_print("minshell: error unexpected token", "|", 1));
+	}
 	while (*s)
 	{
 		queot += (*s == 34) * !(double_qu % 2);
@@ -57,8 +60,11 @@ int	detect_sym_error(char *s, char **sym, int *part)
 			s += count_space(s);
 			if ((queot > 1 && ft_find(s, sym) > 0) || (queot == 1 && ft_find(s, sym) == 1))
 			// if (ft_find(s, sym))
+			{
+				*error = 127;
 				return (error_print("minshell: error unexpected token",
 						sym[ft_find(s, sym) - 1], 2));
+			}
 			queot = 0;
 			*part += 2;
 		}
