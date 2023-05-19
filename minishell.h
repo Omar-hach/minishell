@@ -85,6 +85,7 @@ char	*cmd_split(char *word, int *token, t_lexic lex, int type);
 int		detect_sym_error(char *s, char **sym, int *part);
 char	*replace_dollars(char *s);
 char	**trim_word(char *words, int type);
+void	handler(int sig, siginfo_t *info, void *n);
 
 void	treeprint(t_tree *root, int level, t_token *nodes);
 

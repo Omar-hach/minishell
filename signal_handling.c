@@ -9,8 +9,16 @@
 /*   Updated: 2023/04/08 20:00:39 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "minishell.h"
 
-/*
+int	func()
+{
+	struct sigaction	action;
+
+	action.sa_mask = 
+	action.s_sigaction = &handler;
+	sigaction(SIGQUIT, &action, NULL); 
+}
 void	handler(int sig, siginfo_t *info, void *n)
 {
 	char* command;
@@ -29,4 +37,4 @@ void	handler(int sig, siginfo_t *info, void *n)
 	{
 		ex = 1;
 	}
-}*/
+}

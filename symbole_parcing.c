@@ -176,6 +176,7 @@ char	**expr_split(char *input, char **sym, int part)
 		array[i] = (char *)calloc(len_array[i] + 1, sizeof(char));
 	array = words_cutter(s, len_array, array);
 	array[part] = NULL;
+	free(s);
 	free(len_array);
 	return (array);
 }

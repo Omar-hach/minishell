@@ -19,7 +19,7 @@ char	*fill_cmd(char *word, int j, int *i)
 	while ((((word[(*i)] != ' ' && word[(*i)] != '\t')) || !is_outside_quoet(word, *i)) && word[(*i)])
 		(*i)++;
 	ft_printf("i = %d = %d \n", *i, is_outside_quoet(word, *i));
-	cmd = (char *)ft_calloc((*i), sizeof(char));
+	cmd = (char *)ft_calloc(++(*i), sizeof(char));
 	if (!cmd)
 		return (NULL);
 	k = -1;
@@ -224,11 +224,12 @@ int	main(void)
 				ex = 1;
 			}
 		}
-		free(input);
 		//system("leaks minishell");
 	}
 	exit(1);
 }
+//SIGQUIT == CTL + \\
+//SIGINT == CTL + c
 
 //"e""c""h""o" hello need to work,// DONE
 // error file name too long > 256
