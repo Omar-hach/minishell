@@ -267,7 +267,6 @@ int	ft_minishell()
 				ex = 1;
 			}
 		}
-		free(input);
 		//system("leaks minishell");
 	}
 	return(0);
