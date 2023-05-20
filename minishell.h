@@ -100,7 +100,7 @@ int		exec_node(t_tree *tree, t_token *tokens);
 
 int		is_outside_quoet(char *s, int end);
 char		**trim_word(char *words, int type);
-char		**expr_split(char *s, char **sym, int part);
+char		**expr_split(char *s, char **sym, int parct);
 int		creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);
@@ -112,7 +112,7 @@ t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex);
 void		*free_struct_array(char **words, t_lexic *lex, t_token *nodes,  int len);
 int		nodes_count(char **word);
 t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes, int *len);
-char		*cmd_split(char *word, int *token, t_lexic lex, int type);
+char		*cmd_split(char *word, int *token, t_lexic lex);
 int		detect_sym_error(char *s, char **sym, int *part);
 
 void		free_tree(t_tree *root);

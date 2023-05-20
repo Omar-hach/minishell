@@ -17,6 +17,7 @@ char	*find_path(char *file, int x, int y, int z)
 {
 	char	*path;
 	char	**all_paths;
+// int			i;
 
 	all_paths = ft_split(getenv("PATH"), ':');
 	path = NULL;
