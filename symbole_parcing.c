@@ -20,11 +20,11 @@ int	get_symb_len(int sym_type, char *s, char **sym)
 	queot = 0;
 	double_qu = 0;
 	count = 0;
-	if (sym_type == 0)
+	if (sym_type < 2)
 		return (1);
-	else if (sym_type == 1 || sym_type == 3)
+	else if (sym_type == 2 || sym_type == 4)
 		count = 2 + count_space(s + 2);
-	else if (sym_type == 2 || sym_type > 3)
+	else if (sym_type == 3 || sym_type == 5)
 		count = 1 + count_space(s + 1);
 	while ((!ft_find(s + count, sym) && (s[count] != ' ' && s[count] != '\t')
 			&& s[count]) || (((queot % 2) || (double_qu % 2)) && s[count]))
