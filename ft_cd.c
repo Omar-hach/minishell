@@ -27,19 +27,6 @@ int	ft_pwd()
 
 char	*extra_cd(char *path)
 {
-	// char *name;
-
-	// if (path[0] == '~')
-	// {
-	// 	name = getenv("HOME");
-	// 	if (name)
-	// 		path = mint_dollars(path, 0, 0, getenv("HOME"));
-	// 	else
-	// 	{
-	// 		ft_printf("cd: HOME not set\n");
-	// 		return (0);
-	// 	}
-	// }
 	if (path[0] == '-' && !path[1])
 	{
 		path = getenv("OLDPWD");

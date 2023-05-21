@@ -58,8 +58,9 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 		if (!nodes[i].arg && nodes[j].type == 0)
 		{
 			*error = 127;
-			return (free_struct_array(words, lex, nodes, *len));
+			return (free_struct_array(NULL, lex, nodes, *len));
 		}
+		// printf("[%d] arg = %s , type = %d\n", i, nodes[j].arg, nodes[j].type);
 		j++;
 	}
 	return (nodes);

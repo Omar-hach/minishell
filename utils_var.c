@@ -102,7 +102,6 @@ int	ft_isvarname(char *var)
 	x = -1;
 	while (var[++x] && (var[x] != '='))
 	{
-		// printf("%c", var[x]);
 		if (ft_isalnum(var[x]) == 0 && var[x] != '_' && var[x] != '\"' && var[x] != '\''
 			&& !(var[x] == '+' && var[x + 1] == '='))
 			return (-1);

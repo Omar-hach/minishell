@@ -51,8 +51,6 @@ int	detect_sym_error(char *s, char **sym, int *part)
 	double_qu = (*s == 39);
 	while (*s)
 	{
-		queot += (*s == 34) * !(double_qu % 2);
-		double_qu += (*s == 39) * !(queot % 2);
 		// if (*(++s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
 		if (*(s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
 		{
@@ -66,7 +64,10 @@ int	detect_sym_error(char *s, char **sym, int *part)
 			queot = 0;
 			*part += 2;
 		}
+		queot += (*s == 34) * !(double_qu % 2);
+		double_qu += (*s == 39) * !(queot % 2);
 		s++;
 	}
+	// printf("%s ; %d ; %d\n",s - 1 ,  queot, double_qu);
 	return (last_char(s - 1, queot, double_qu));
 }

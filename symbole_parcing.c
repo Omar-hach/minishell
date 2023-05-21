@@ -68,9 +68,10 @@ char	*rearrange_input(char *s, char **sym, int i)
 	{
 		// if (count_space(s + i) > 1)
 		// 	i += count_space(s + i);
-		if(ft_find(s + i, sym) > 1 && is_outside_quoet(s, i))
+		// printf("%d", is_outside_quoet(s, i));
+		if(ft_find(s + i, sym) > 1 && !is_outside_quoet(s, i))
 			i += get_symb_len(ft_find(s + i, sym), s + i, sym) - 1;
-		else if (ft_find(s + i, sym) == 1 && is_outside_quoet(s, i))
+		else if (ft_find(s + i, sym) == 1 && !is_outside_quoet(s, i))
 			j = put_inderect(s, i, re);
 		else
 		{
@@ -181,6 +182,10 @@ char	**expr_split(char *input, char **sym, int part)
 	while (++i < part)
 		array[i] = (char *)ft_calloc(len_array[i] + 1, sizeof(char));
 	array = words_cutter(s + count_space(s), len_array, array, part);
+<<<<<<<<< Temporary merge branch 1
+	array[part] = NULL;
+=========
+>>>>>>>>> Temporary merge branch 2
 	if (s)
 		free(s);
 	free(len_array);

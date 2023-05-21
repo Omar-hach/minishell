@@ -93,9 +93,9 @@ int	ft_export(int ac, char **av)
 			r = ft_isvar(av[x]);
 			if (r == -1 || r == -2 || r == 0)
 				return (ft_printf("export: '%s': not a valid identifier\n", av[x]), 1);
-			if (r == -3 || r == -4)
+			else if (r == -3 || r == -4)
 				return (ft_printf("export: '%s': not a valid identifier\n", av[x]), 2);
-			if (r == 3 || r == 2)
+			else if (r == 3 || r == 2)
 				return (0);
 			else
 				ft_putenv(av[x]);
@@ -157,6 +157,6 @@ int	exec_cmd(t_token token)
 		out = ft_echo(ac, av);
 	else if (token.type == 14)
 		out = ft_exit(ac, av);
-	free(av);
+	// free(av);
 	return (out);
 }

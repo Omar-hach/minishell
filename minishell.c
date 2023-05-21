@@ -221,7 +221,7 @@ t_token	*split_input(char *input, int *len)
 	// }
 
 	// }
-	free_struct_array(words, &lex, NULL, -1);
+	// free_struct_array(words, NULL, NULL, -1);
 	return (nodes);
 }
 
@@ -252,7 +252,7 @@ int	ft_minishell()
 	tree = NULL;
 	nodes = NULL;
 	shvlvl();
-	*error = 100;
+	*error = 0;
 	while (ex)
 	{
 		input = readline(">>> MiniShell $> ");
@@ -266,7 +266,7 @@ int	ft_minishell()
 			{
 				tree = create_tree(nodes, ex);
 				// treeprint(tree, 0, nodes);
-				//ft_printf("\n------EXEC-----\n");
+				// ft_printf("\n------EXEC-----\n");
 				exec_node(tree, nodes);
 				free_struct_array(NULL, NULL, nodes, ex);
 				ex = 1;
@@ -275,7 +275,7 @@ int	ft_minishell()
 		// free(input);
 		//system("leaks minishell");
 	}
-	return(0);
+	return(*error);
 }
 
 int	main(int ac, char **av)
