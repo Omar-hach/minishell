@@ -43,7 +43,7 @@ int	exec_prog(t_token token)
 	}
 	wait(&out);
 	free(prog_argv);
-	printf("ooo %d %d\n", out >> 8, *error);
+	// printf("ooo %d %d\n", out >> 8, *error);
 	return (out >> 8);
 }
 
