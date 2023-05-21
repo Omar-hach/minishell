@@ -130,7 +130,7 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 		*token = 1;
 		return (expand_cmd(cmd, bin, word));
 	}
-	else
+	if (*token < 1)
 	{
 		ft_printf("minshell: %s :command not found\n", cmd);
 		*error = 127;
@@ -154,7 +154,10 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	free(cmd);
 	if (bin)
 		free(bin);
+<<<<<<< HEAD
 	// ft_printf("*word=%p\n", word);
+=======
+>>>>>>> 6d71d4fd8a1881dcc4be4f68f0f51835193467da
 	return (arg);
 }
 
@@ -214,7 +217,7 @@ t_token	*split_input(char *input, int *len)
 		return (NULL);
 	}
 	// i = -1;
-	//  while (++i < (*len))
+	// while (++i < (*len))
 	// {
 		// printf("i =%d type=%d <%s>\n------------------------------\n", i, nodes[i].type, nodes[i].arg);
 	// 	trim_word(nodes[i].arg, nodes[i].type);
@@ -222,8 +225,11 @@ t_token	*split_input(char *input, int *len)
 	// }
 
 	// }
+<<<<<<< HEAD
 	// ft_printf("words=%p ", words);
 	// ft_printf("word[0]=%p\n", words[0]);
+=======
+>>>>>>> 6d71d4fd8a1881dcc4be4f68f0f51835193467da
 	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
 }
@@ -307,7 +313,11 @@ int	main(int ac, char **av)
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
+<<<<<<< HEAD
 				// treeprint(tree, 0, nodes);
+=======
+				//treeprint(tree, 0, nodes);
+>>>>>>> 6d71d4fd8a1881dcc4be4f68f0f51835193467da
 				// ft_printf("\n------EXEC-----\n");
 				out = exec_node(tree, nodes);
 				free_struct_array(NULL, NULL, nodes, ex);
@@ -320,7 +330,6 @@ int	main(int ac, char **av)
 	else
 	{
 		int exit_status = ft_minishell();
-		ft_printf("exit=%d", exit_status);
 		exit(exit_status);
 	}
 	return (0);
