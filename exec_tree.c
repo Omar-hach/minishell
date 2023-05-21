@@ -17,22 +17,26 @@ int	exec_prog(t_token token)
 	int		out;
 	char	**prog_argv;
 	char	**prog_envp = NULL;
+	DIR		*dir;
 	//char	*prog_envp[] = { "some", "environment", NULL };
 
 	// prog_argv = ft_split(token.arg, ' ');
 	prog_argv = token.args;
-	// if (access(token.args[0], F_OK) == 0)
-	// {
-	// 	*error = 126;
-	// 	return (1);
-	// }
 	if (fork1() == 0)
 	{
 		out = execve(prog_argv[0], prog_argv, prog_envp);
-		ft_printf("%d", out);
+		// ft_printf("%d", out);
 	}
 	wait(&out);
 	free(prog_argv);
+	dir = opendir(token.args[0]);
+	if (dir)
+	{
+		// printf("NO\n");
+		*error = 126;
+		return (0);
+	}
+	// printf("ooo %d %d\n", out , *error);
 	return (out);
 }
 
@@ -118,8 +122,9 @@ int	exec_node(t_tree *tree, t_token *tokens)
 		out = exec_token(tree, tokens);
 	if (out > 2)
 		*error = 1;
-	else
+	else if (out != 0)
 		*error = out;
+	// printf("ooo %d %d\n", out , *error);
 	// printf("%d out = %d %d \n",x, out , *error);
 	// ft_printf("node %d finished = %d\n",x,out);
 	return (*error);

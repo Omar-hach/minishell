@@ -40,7 +40,6 @@ int put_inderect(char *s, int end, char *re)
 {
 	int k;
 	int j;
-	int i;
 
 	k = -1;
 	j = ft_strlen(re);
@@ -48,11 +47,8 @@ int put_inderect(char *s, int end, char *re)
 	{
 		if(count_space(s + k) == ft_strlen(s))
 			return (0);
-		i = k;
-		// k += count_space(s + k);
-		// if (i  < k)
-		// 	k--;
-		// printf("re = %s %s %d\n",re , s , k);
+
+		k += count_space(s + k);
 		re[j++] = s[k];
 		s[k] = ' ';
 	}
@@ -83,7 +79,7 @@ char	*rearrange_input(char *s, char **sym, int i)
 		}
 	}
 	put_inderect(s, i, re);
-	// free(s);
+	//free(s);
 	return (re);
 }
 
@@ -108,29 +104,32 @@ int	get_token_len(char *s, char **sym)
 	return (count);
 }
 
-int	*words_len(char *s, char **sym, int part)
+int	*words_len(char *s, char **sym, int part,char **arrays)
 {
-	int	*array;
+	int	*larray;
 	int	i;
 
-	array = (int *)calloc(part * 2, sizeof(int));
-	if (!array)
+	larray = (int *)ft_calloc(part + 1, sizeof(int));
+	if (!larray)
+	{
+		free(arrays);
 		return (NULL);
+	}
 	i = 0;
 	while (*s && i < part)
 	{
-		array[i] = get_token_len(s, sym);
-		s += array[i];
-		s += count_space(s);
-		if (++i < part && ft_find(s, sym))
-			array[i] = get_symb_len(ft_find(s, sym) - 1, s, sym);
+		s += larray[i];
+		if (i < part && ft_find(s, sym))
+			larray[i] = get_symb_len(ft_find(s, sym), s, sym);
+		else
+			larray[i] = get_token_len(s, sym);
 		if (i < part)
-			s += array[i++];
+			s += larray[i++];
 	}
-	return (array);
+	return (larray);
 }
 
-char	**words_cutter(char *s, int *len_array, char **array)
+char	**words_cutter(char *s, int *len_array, char **array, int part)
 {
 	int		i;
 	int		l;
@@ -141,16 +140,18 @@ char	**words_cutter(char *s, int *len_array, char **array)
 	i = 0;
 	j = -1;
 	k = 0;
-	while (s[k])
+	while (i < part)// || s[k])
 	{
-		if (len_array[i] != 0)
+		if (len_array[i] == 0)
+			array[i++] = NULL;
+		if (l != 0 && len_array[i])
 			array[i][++j] = s[k++];
-		if (--len_array[i] < 1)
+		if (--l < 1 && len_array[i])
 		{
 			array[i][++j] = '\0';
 			i++;
 			j = -1;
-			l += len_array[i] + 1;
+			l += len_array[i];
 		}
 	}
 	return (array);
@@ -164,26 +165,22 @@ char	**expr_split(char *input, char **sym, int part)
 	int		i;
 
 	array = NULL;
-	s = rearrange_input(input, sym, -1);
-	// printf("s=%s.\n",s);
+	s = rearrange_input(input, sym, -1); // printf("s=%s.\n",s);
 	if (detect_sym_error(s, sym, &part))
 	{
 		*error = 2;
 		return (NULL);
 	}
-	array = (char **)calloc(part + 1, sizeof(char *));
+	array = (char **)ft_calloc(part + 1, sizeof(char *));
 	if (!array)
 		return (NULL);
-	len_array = words_len(s, sym, part);
+	len_array = words_len(s + count_space(s), sym, part, array);
 	if (!len_array)
-	{
-		free(array);
 		return (NULL);
-	}
 	i = -1;
 	while (++i < part)
-		array[i] = (char *)calloc(len_array[i] + 1, sizeof(char));
-	array = words_cutter(s, len_array, array);
+		array[i] = (char *)ft_calloc(len_array[i] + 1, sizeof(char));
+	array = words_cutter(s + count_space(s), len_array, array, part);
 	array[part] = NULL;
 	free(s);
 	free(len_array);

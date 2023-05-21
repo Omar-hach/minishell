@@ -9,7 +9,7 @@
 /*   Updated: 2023/04/08 20:00:39 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
+/*# include "minshell.h"
 
 void	handler(int sig, siginfo_t *info, void *n)
 {
@@ -31,4 +31,4 @@ void handle_signals()
 	sign.sa_sigaction = &handler;
 	sigaction(SIGINT, &sign, NULL);//ctr-C
 	sigaction(SIGQUIT, &sign, NULL);//ctr-/
-}
+}*/

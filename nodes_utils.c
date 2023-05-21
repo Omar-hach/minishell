@@ -31,46 +31,42 @@ t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex)
 int	nodes_count(char **word)
 {
 	int	i;
-	int	part;
+//	int	part;
 
-	i = -1;
-	part = 0;
-	while (word[++i])
+	i = 0;
+	while (word[i])
 	{
-		// printf("'%s' ", word[i]);
-		if (word[i][0] != '>' && word[i][0] != '<')
-			part++;
+		//printf("'%s' ", word[i]);
+		i++;
 	}
-	// printf("\npart=%d\n", part);
-	return (part);
+	//printf("\npart=%d\n", i);
+	return (i);
 }
 
 t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 {
 	int	i;
 	int	j;
-	int	k;
 
 	i = -1;
 	j = 0;
-	k = 0;
-	if(!nodes)
+	if (!nodes)
 		*len = -1;
+	// ft_printf("--------------------\n");
 	while (words[++i] && nodes)
 	{
-		nodes[j].arg = cmd_split(words[i], &nodes[j].type, *lex,
-				(j > 0) * nodes[j - 1].type);
+		// ft_printf("+word[0]=%p\n",words[i]);
+		nodes[j].arg = cmd_split(words[i], &nodes[j].type, *lex);
 		if (!nodes[i].arg && nodes[j].type == 0)
 		{
 			*error = 127;
 			return (free_struct_array(words, lex, nodes, *len));
 		}
-		if (nodes[j].type > 21)
-			nodes[k].arg = ft_strjoin(nodes[k].arg, words[(i++) + 1]);
-		if (nodes[j].type == 21)
-			k = i;
+		// ft_printf("-word[%s]=%p\n",words[i], words[i] );
 		// ft_printf("i=%d j =%d k=%d token=%d cmd=%s\n", i, j, k, nodes[j].type , nodes[j].arg);
 		j++;
+		
 	}
+	// ft_printf("--------------------\n");
 	return (nodes);
 }
