@@ -18,7 +18,6 @@ void	*free_aray(char	**words)
 
 	i = -1;
 	while (words[++i]){
-	ft_printf("\n------%p--%s---\n", words[i], words[i]);
 		free(words[i]);}
 	free(words);
 	return (NULL);

@@ -52,21 +52,17 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 	j = 0;
 	if (!nodes)
 		*len = -1;
-	ft_printf("--------------------\n");
 	while (words[++i] && nodes)
 	{
-		ft_printf("+word[0]=%p\n",words[i]);
 		nodes[j].arg = cmd_split(words[i], &nodes[j].type, *lex);
 		if (!nodes[i].arg && nodes[j].type == 0)
 		{
 			*error = 127;
 			return (free_struct_array(words, lex, nodes, *len));
 		}
-		ft_printf("-word[%s]=%p\n",words[i], words[i] );
 		// ft_printf("i=%d j =%d k=%d token=%d cmd=%s\n", i, j, k, nodes[j].type , nodes[j].arg);
 		j++;
 		
 	}
-	ft_printf("--------------------\n");
 	return (nodes);
 }
