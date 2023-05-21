@@ -16,8 +16,8 @@ void	*free_aray(char	**words)
 	int	i;
 
 	i = -1;
-	while (words[++i]){
-		free(words[i]);}
+	while (words[++i])
+		free(words[i]);
 	free(words);
 	return (NULL);
 }

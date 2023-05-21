@@ -60,9 +60,7 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 			*error = 127;
 			return (free_struct_array(words, lex, nodes, *len));
 		}
-		// ft_printf("i=%d j =%d k=%d token=%d cmd=%s\n", i, j, k, nodes[j].type , nodes[j].arg);
 		j++;
-		
 	}
 	return (nodes);
 }

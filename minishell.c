@@ -291,7 +291,6 @@ int	main(int ac, char **av)
 	nodes = NULL;
 	out = 0;
 	error = (int *) malloc(1 * sizeof(int));
-	// ft_minishell();
 	if (ac >= 3 && !ft_strncmp(av[1], "-c", 3))
 	{
 		in = av[2];
