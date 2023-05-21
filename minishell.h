@@ -79,6 +79,7 @@ char		*find_path(char *file, int x, int y, int z);
 char		**arg_split(char const *s, char *c);
 void		ft_skip(t_token *tokens, int i);
 
+int		ft_isvarname(char *var);
 int 		ft_isvar(char *var);
 int		ft_findvar(char *var);
 void		ft_putenv(char *var);

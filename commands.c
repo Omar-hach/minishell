@@ -12,7 +12,7 @@
 
 #include"minishell.h"
 
-int	ft_env_declare()
+int	ft_env_declare(void)
 {
 	int			x;
 	int			y;
@@ -31,7 +31,7 @@ int	ft_env_declare()
 			if (environ[x][y] == '=')
 			{
 				printf("\"");
-				z++;
+				z = 1;
 			}
 		}
 		if (z)
@@ -41,7 +41,7 @@ int	ft_env_declare()
 	return (0);
 }
 
-int	ft_env()
+int	ft_env(void)
 {
 	int			x;
 	extern char	**environ;
@@ -56,44 +56,20 @@ int	ft_unset(int ac, char **av)
 {
 	extern char	**environ;
 	int			x;
-	int			y;
 	int			r;
 
 	if (ac == 0)
-	{
-		// perror("unset: not enough arguments");
 		return (0);
-	}
 	else
 	{
 		x = -1;
 		while (av[++x])
 		{
-			y = 0;
-			while (av[x][++y])
-			{
-				if (av[x][y] == '=')
-				{
-					ft_printf("unset: '%s': not a valid identifier\n", av[x]);
-					return (1);
-				}
-				if (av[x][y] == ';')
-				{
-					ft_printf("unset: '%s': not a valid identifier\n", av[x]);
-					return (127);
-				}
-			}
 			r = ft_isvar(av[x]);
-			if (av[x][0] == '-')
-			{
-				ft_printf("unset: '%s': not a valid identifier\n", av[x]);
-				return (2);
-			}
-			if (r == 0 || r == -1)
-			{
-				ft_printf("unset: '%s': not a valid identifier\n", av[x]);
-				return (1);
-			}
+			if (r == -1 || r == 1 || r == 0)
+				return (ft_printf("unset: '%s': not a valid identifier\n", av[x]), 1);
+			if (r == -3)
+				return (ft_printf("unset: '%s': not a valid identifier\n", av[x]), 2);
 			else
 				ft_unputenv(av[x]);
 		}
@@ -115,23 +91,14 @@ int	ft_export(int ac, char **av)
 		while (av[++x])
 		{
 			r = ft_isvar(av[x]);
-			if (av[x][0] == '-')
-			{
-				ft_printf("export: '%s':  not a valid identifier\n", av[x]);
-				return (2);
-			}
-			if ((av[x][0] >= '0' && av[x][0] <= '9') || r == 0 || r == -1)
-			{
-				ft_printf("export: '%s':  not a valid identifier\n", av[x]);
-				return (1);
-			}
-			if (r == -3 || r == -2)
+			if (r == -1 || r == -2 || r == 0)
+				return (ft_printf("export: '%s': not a valid identifier\n", av[x]), 1);
+			if (r == -3 || r == -4)
+				return (ft_printf("export: '%s': not a valid identifier\n", av[x]), 2);
+			if (r == 3 || r == 2)
 				return (0);
 			else
-			{
 				ft_putenv(av[x]);
-				// ft_printf("exported = %s\n",getenv(av[x]));
-			}
 		}
 	}
 	return (0);
@@ -172,7 +139,7 @@ int	exec_cmd(t_token token)
 	char	**av;
 
 	av = token.args;
-	ac  = 0;
+	ac = 0;
 	while (av[ac])
 		ac++;
 	out = -1;

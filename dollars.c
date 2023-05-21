@@ -117,7 +117,7 @@ char	*replace_dollars(char *s)
 	qt = 0;
 	dualqt = 0;
 	x = 0;
-	while (s[x] && s[x] != '$')
+	while (s[x] && s[x] != '$' && s[x] != '~')
 		x++;
 	if (x == ft_strlen(s))
 		return (s);
@@ -129,6 +129,9 @@ char	*replace_dollars(char *s)
 		qt += (out[x] == '\'') * !(dualqt % 2);
 		if (out[x] == '$' && !(qt % 2))
 			out = get_dollars(out, &x, !(dualqt % 2));
+		if (out[x] == '~' && !(qt % 2) && !(dualqt % 2)
+			&& ft_isdigit(out[x + 1]) == 0 && ft_isdigit(out[x - 1]) == 0)
+			out = mint_dollars(out, x, 0, getenv("HOME"));
 	}
 	return (out);
 }

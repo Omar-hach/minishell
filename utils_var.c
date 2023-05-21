@@ -91,24 +91,45 @@ int	replace_var(char *name, char *value)
 		return (-1);
 }
 
+int	ft_isvarname(char *var)
+{
+	int	x;
+
+	if (var[0] == '-')
+		return (-3);
+	if (ft_isdigit(var[0]) == 1)
+		return (-2);
+	x = -1;
+	while (var[++x] && (var[x] != '='))
+	{
+		// printf("%c", var[x]);
+		if (ft_isalnum(var[x]) == 0 && var[x] != '_' && var[x] != '\"' && var[x] != '\''
+			&& !(var[x] == '+' && var[x + 1] == '='))
+			return (-1);
+		if (var[x] == '\\')
+			return (-4);
+		if (var[x] == ';')
+			return (-5);
+	}
+	return (0);
+}
+
 int	ft_isvar(char *var)
 {
 	int	x;
 	int	y;
 	int	val;
 
+	val = ft_isvarname(var);
+	if (val != 0)
+		return (val);
 	x = -1;
-	val = 0;
-	if (var[0] == '-')
-		return (-4);
-	if (var[0] == '+')
-		return (-1);
 	while (var[++x])
 	{
 		if (var[x] == '=')
 		{
 			if (var[x - 1] == '+')
-				return (-2);
+				return (2);
 			val = 1;
 			y = x - 1;
 			while (var[y] && (ft_isalnum(var[y]) == 1 || var[y] == '_'))
@@ -119,21 +140,8 @@ int	ft_isvar(char *var)
 			}
 		}
 	}
-	x = -1;
-	val = 0;
-	while (var[++x])
-	{
-		if (val == 0 && (var[x] == '-'  || var[x] == '\\' || var[x] == '+' || var[x] == '='
-			|| var[x] == '}' || var[x] == '{' || var[x] == '!'
-			|| var[x] == '@' || var[x] == '#' || var[x] == '%'
-			|| var[x] == '^' || var[x] == '&' || var[x] == '*'
-			|| var[x] == '~' || var[x] == ';' || var[x] == '.'))
-			return (-1);
-		if (var[x] == '=')
-			val = 1;
-	}
 	if (val == 0)
-		return (-3);
+		return (3);
 	return (0);
 }
 
