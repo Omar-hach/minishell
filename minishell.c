@@ -42,18 +42,17 @@ char	*fill_cmd(char *word, int j, int *i)
 	while ((((word[(*i)] != ' ' && word[(*i)] != '\t')) || !is_outside_quoet(word, *i)) && word[(*i)])
 		(*i)++;
 	//ft_printf("i = %d = %d \n", *i, is_outside_quoet(word, *i));
-	cmd = (char *)ft_calloc(++(*i), sizeof(char));
+	cmd = (char *)ft_calloc((*i) + 1, sizeof(char));
 	if (!cmd)
 		return (NULL);
 	k = -1;
-	while (++k < (*i) - 1)
+	while (++k < (*i))
 	{
 		while (word[k] == 34 || word[k] == 39)
 			k++;
 		cmd[j] = word[k];
 		j++;
 	}
-	cmd[j] = '\0';
 	return (cmd);
 }
 
@@ -112,7 +111,8 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 		cmd = fill_cmd(word, j, &i);
 	if (!cmd || *token == 21)
 		return (NULL);
-	bin = find_path(cmd, -1, -1, -1);
+	if(ft_strncmp(cmd, "..", 2))
+		bin = find_path(cmd, -1, -1, -1);
 	//token detection
 	//ft_printf("word=%d.\n",  *token);
 	if (ft_find(cmd, lex.l_cmd)
