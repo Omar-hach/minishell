@@ -29,7 +29,6 @@ int	ft_piped_end(int *fd, int io, t_tree *tree, t_token *tokens)
 	close(fd[0]);
 	close(fd[1]);
 	out = exec_node(tree, tokens);
-	// printf("\n out = %d \n", out);
 	exit(out);
 }
 
@@ -59,8 +58,11 @@ int	ft_pipe(t_tree *tree, t_token *tokens)
 	close(fd[0]);
 	waitpid(pid[2], &out, 0);
 	waitpid(pid[1], &out2, 0);
-	// printf("\n out = %d | out2 = %d \n", out, out2);
+	printf("\n out = %d | out2 = %d \n", out, out2 >> 8);
 	free(fd);
 	free(pid);
-	return (out2);
+	// if (!out2)
+		// return (out);
+	// else
+		return (out2);
 }

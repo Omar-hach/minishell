@@ -21,6 +21,20 @@ int	exec_prog(t_token token)
 	//char	*prog_envp[] = { "some", "environment", NULL };
 
 	// prog_argv = ft_split(token.arg, ' ');
+	int len = ft_strlen(token.args[0]) - 1;
+	if (token.args[0][len] == '.')
+	{
+		ft_printf(" .: filename argument required\n");
+		*error = 2;
+		return (2);
+	}
+	dir = opendir(token.args[0]);
+	if (dir)
+	{
+		*error = 126;
+		ft_printf(" %s: is a directory\n", token.args[0]);
+		return (0);
+	}
 	prog_argv = token.args;
 	if (fork1() == 0)
 	{
@@ -29,15 +43,8 @@ int	exec_prog(t_token token)
 	}
 	wait(&out);
 	free(prog_argv);
-	dir = opendir(token.args[0]);
-	if (dir)
-	{
-		// printf("NO\n");
-		*error = 126;
-		return (0);
-	}
-	// printf("ooo %d %d\n", out , *error);
-	return (out);
+	printf("ooo %d %d\n", out >> 8, *error);
+	return (out >> 8);
 }
 
 int	exec_token(t_tree *tree, t_token *tokens)
@@ -52,15 +59,7 @@ int	exec_token(t_tree *tree, t_token *tokens)
 	// printf("node %d : type = %d , arg = %s\n\n",x,tokens[x].type, tokens[x].arg);
 	tokens[x].args = arg_split(tokens[x].arg, " 	");
 	if (tokens[x].args)
-	{
-		// i = -1;
-		// while (tokens[x].args[++i])
-			// ft_printf("no skipeed %d = %s\n",i,  tokens[x].args[i]);
 		ft_skip(tokens, x);
-		// i = -1;
-		// while (tokens[x].args[++i])
-			// ft_printf("skipeed %d = %s\n",i,  tokens[x].args[i]);
-	}
 	if (tokens[x].type == 1)
 		out = exec_prog(tokens[x]);
 	else if (tokens[x].type / 10 == 1)
@@ -120,11 +119,10 @@ int	exec_node(t_tree *tree, t_token *tokens)
 		out = exec_redir(tree, tokens);
 	else
 		out = exec_token(tree, tokens);
-	if (out > 2)
+	if (out > 2 && out != 127)
 		*error = 1;
 	else if (out != 0)
 		*error = out;
-	// printf("ooo %d %d\n", out , *error);
 	// printf("%d out = %d %d \n",x, out , *error);
 	// ft_printf("node %d finished = %d\n",x,out);
 	return (*error);

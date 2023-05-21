@@ -99,10 +99,9 @@ char	*get_dollars(char *s, int *x, int qt)
 	// ft_printf("name = %s\n",name);
 	val = getenv(name);
 	if (!val)
-		out = tax_dollars(s, *x, z, name);
+		out = tax_dollars(s, *x--, z, name);
 	else
-		out = mint_dollars(s, *x, z, val);
-	*x -= 1;
+		out = mint_dollars(s, *x--, z, val);
 	return (out);
 }
 
@@ -113,6 +112,7 @@ char	*replace_dollars(char *s)
 	char	*out;
 	int		qt;
 	int		dualqt;
+	char 	*home;
 
 	qt = 0;
 	dualqt = 0;
@@ -131,7 +131,13 @@ char	*replace_dollars(char *s)
 			out = get_dollars(out, &x, !(dualqt % 2));
 		if (out[x] == '~' && !(qt % 2) && !(dualqt % 2)
 			&& ft_isdigit(out[x + 1]) == 0 && ft_isdigit(out[x - 1]) == 0)
-			out = mint_dollars(out, x, 0, getenv("HOME"));
+		{
+			home = getenv("HOME");
+			if (home)
+				out = mint_dollars(out, x, 0, home);
+			else
+				ft_printf("~: HOME not set\n");
+		}
 	}
 	return (out);
 }

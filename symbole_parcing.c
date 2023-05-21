@@ -68,9 +68,10 @@ char	*rearrange_input(char *s, char **sym, int i)
 	{
 		// if (count_space(s + i) > 1)
 		// 	i += count_space(s + i);
-		if(ft_find(s + i, sym) > 1 && is_outside_quoet(s, i))
+		// printf("%d", is_outside_quoet(s, i));
+		if(ft_find(s + i, sym) > 1 && !is_outside_quoet(s, i))
 			i += get_symb_len(ft_find(s + i, sym), s + i, sym) - 1;
-		else if (ft_find(s + i, sym) == 1 && is_outside_quoet(s, i))
+		else if (ft_find(s + i, sym) == 1 && !is_outside_quoet(s, i))
 			j = put_inderect(s, i, re);
 		else
 		{

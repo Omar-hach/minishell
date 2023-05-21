@@ -28,11 +28,11 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 	fd = open(tokens[x].args[0], O_RDONLY, 0600);
 	if (fd < 0)
 	{
-		perror("couldnt open file");
+		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
 		return (1);
 	}
 	if (ft_dup(fd, STDIN_FILENO) < 0)
-		return (2);
+		return (1);
 	// exec_node(cmd, tokens);
 	close(fd);
 	// }
@@ -84,11 +84,11 @@ int	ft_redirect_in_append(t_tree *tree, t_token *tokens)
 	// fd = open(tokens[x].args[0], O_RDONLY | O_APPEND, 0600);
 	if (fd < 0)
 	{
-		perror("couldnt open file");
+		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
 		return (1);
 	}
 	if (ft_dup(fd, STDIN_FILENO) < 0)
-		return (2);
+		return (1);
 	close(fd);
 	return (0);
 }
@@ -102,11 +102,11 @@ int	ft_redirect_out(t_tree *tree, t_token *tokens)
 	fd = open(tokens[x].args[0], O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd < 0)
 	{	
-		perror("couldnt open file");
+		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
 		return (1);
 	}
 	if (ft_dup(fd, STDOUT_FILENO) < 0)
-		return (2);
+		return (1);
 	close(fd);
 	return (0);
 }
@@ -120,11 +120,11 @@ int	ft_redirect_out_append(t_tree *tree, t_token *tokens)
 	fd = open(tokens[x].args[0], O_WRONLY | O_CREAT | O_APPEND, 0600);
 	if (fd < 0)
 	{
-		perror("couldnt open file");
+		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
 		return (1);
 	}
 	if (ft_dup(fd, STDOUT_FILENO) < 0)
-		return (2);
+		return (1);
 	close(fd);
 	return (0);
 }
