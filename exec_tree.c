@@ -15,7 +15,6 @@
 int	exec_prog(t_token token)
 {
 	int		out;
-	char	**prog_argv;
 	char	**prog_envp = NULL;
 	DIR		*dir;
 	//char	*prog_envp[] = { "some", "environment", NULL };
@@ -28,45 +27,56 @@ int	exec_prog(t_token token)
 		*error = 2;
 		return (2);
 	}
-	dir = opendir(token.args[0]);
-	if (dir)
+	else
 	{
-		*error = 126;
-		ft_printf(" %s: is a directory\n", token.args[0]);
-		return (0);
+		dir = opendir(token.args[0]);
+		if (dir)
+		{
+			*error = 126;
+			ft_printf(" %s: is a directory\n", token.args[0]);
+			return (126);
+		}
 	}
-	prog_argv = token.args;
+	if (access(token.args[0], X_OK) != 0)
+	{
+		*error = 127;
+		ft_printf(" %s: No such file or directory\n", token.args[0]);
+		return (127);
+	}
 	if (fork1() == 0)
-	{
-		out = execve(prog_argv[0], prog_argv, prog_envp);
-		// ft_printf("%d", out);
-	}
+		out = execve(token.args[0], token.args, prog_envp);
 	wait(&out);
-	free(prog_argv);
-	// printf("ooo %d %d\n", out >> 8, *error);
-	return (out >> 8);
+	// free(prog_argv);
+	// printf("ooo %d %d\n", out, *error);
+	if (out < 0)
+		return (0);
+	else
+		return (out >> 8);
 }
 
 int	exec_token(t_tree *tree, t_token *tokens)
 {
 	int	x;
 	int	out;
-	// char **args;
-	// int i;
 
 	out = 0;
 	x = tree->token_index;
 	// printf("node %d : type = %d , arg = %s\n\n",x,tokens[x].type, tokens[x].arg);
 	tokens[x].args = arg_split(tokens[x].arg, " 	");
 	if (tokens[x].args)
+	{
 		ft_skip(tokens, x);
+		// int i = -1;
+		// while (tokens[x].args[++i])
+		// 	ft_printf("skipeed %d = %s\n",i,  tokens[x].args[i]);
+	}
 	if (tokens[x].type == 1)
 		out = exec_prog(tokens[x]);
 	else if (tokens[x].type / 10 == 1)
 		out = exec_cmd(tokens[x]);
 	else if (tokens[x].type / 10 == 2)
 		out = exec_symbol(tree ,tokens);
-	// printf("\n out = %d %s \n", out , tokens[x].arg);
+	// printf("%d token = %s = %d\n", out , tokens[x].arg, tokens[x].type);
 	return (out);
 }
 
@@ -98,8 +108,7 @@ int	exec_redir(t_tree *tree, t_token *tokens)
 		exit(out);
 	}
 	wait(&out);
-	// printf("reee = %d",out);
-	return (out);
+	return (out >> 8);
 }
 
 int	exec_node(t_tree *tree, t_token *tokens)
@@ -119,10 +128,14 @@ int	exec_node(t_tree *tree, t_token *tokens)
 		out = exec_redir(tree, tokens);
 	else
 		out = exec_token(tree, tokens);
-	if (out > 2 && out != 127)
-		*error = 1;
-	else if (out != 0)
+	// if (out > 2 && out != 127)
+	// 	*error = 1;
+	// else if (out != 0)
 		*error = out;
+	// if (tokens[x].arg)
+	// 	free(tokens[x].arg);
+	if (tokens[x].args)
+		free_aray(tokens[x].args);
 	// printf("%d out = %d %d \n",x, out , *error);
 	// ft_printf("node %d finished = %d\n",x,out);
 	return (*error);

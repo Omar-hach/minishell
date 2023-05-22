@@ -80,7 +80,6 @@ char	*rearrange_input(char *s, char **sym, int i)
 		}
 	}
 	put_inderect(s, i, re);
-	//free(s);
 	return (re);
 }
 
@@ -113,7 +112,7 @@ int	*words_len(char *s, char **sym, int part,char **arrays)
 	larray = (int *)ft_calloc(part + 1, sizeof(int));
 	if (!larray)
 	{
-		free(arrays);
+		(void)(arrays);
 		return (NULL);
 	}
 	i = 0;
@@ -154,7 +153,9 @@ char	**words_cutter(char *s, int *len_array, char **array, int part)
 			j = -1;
 			l += len_array[i];
 		}
+		// printf("cutted %s\n", array[i]);
 	}
+		// array[i] = NULL;
 	return (array);
 }
 
@@ -172,7 +173,7 @@ char	**expr_split(char *input, char **sym, int part)
 		*error = 2;
 		return (NULL);
 	}
-	array = (char **)ft_calloc(part + 1, sizeof(char *));
+	array = (char **)ft_calloc(part + 2, sizeof(char *));
 	if (!array)
 		return (NULL);
 	len_array = words_len(s + count_space(s), sym, part, array);

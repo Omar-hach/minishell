@@ -136,11 +136,9 @@ int	exec_cmd(t_token token)
 {
 	int		out;
 	int		ac;
-	char	**av;
 
-	av = token.args;
 	ac = 0;
-	while (av[ac])
+	while (token.args[ac])
 		ac++;
 	out = -1;
 	if (token.type == 11)
@@ -148,15 +146,14 @@ int	exec_cmd(t_token token)
 	else if (token.type == 12)
 		out = ft_pwd();
 	else if (token.type == 13)
-		out = ft_cd(ac, av);
+		out = ft_cd(ac, token.args);
 	else if (token.type == 15)
-		out = ft_export(ac, av);
+		out = ft_export(ac, token.args);
 	else if (token.type == 16)
-		out = ft_unset(ac, av);
+		out = ft_unset(ac, token.args);
 	else if (token.type == 17)
-		out = ft_echo(ac, av);
+		out = ft_echo(ac, token.args);
 	else if (token.type == 14)
-		out = ft_exit(ac, av);
-	// free(av);
+		out = ft_exit(ac, token.args);
 	return (out);
 }

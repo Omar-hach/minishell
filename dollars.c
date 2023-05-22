@@ -34,6 +34,7 @@ char	*mint_dollars(char *s, int start, int name_len, char *val)
 	while (x < size)
 		no_money[y++] = s[x++];
 	no_money[x] = '\0';
+	free(s);
 	return (no_money);
 }
 
@@ -63,7 +64,7 @@ char	*get_dollar_name(char *s, int x, int z)
 	y = x;
 	z = 0;
 	while (s[++y] && s[y] != ' ' && s[y] != '$' && s[y] != '\''
-		&& s[y] != '\"' && s[y] != '/' && s[y] != '=')
+		&& s[y] != '\"' && s[y] != '/' && s[y] != '=' && s[y] != '?')
 	{
 		name[z++] = s[y];
 		if (y == x + 1 && (s[y] >= '0' && s[y] <= '9'))
@@ -85,23 +86,24 @@ char	*get_dollars(char *s, int *x, int qt)
 	y = *x;
 	z = 0;
 	while (s[++y] && s[y] != ' ' && s[y] != '$' && s[y] != '\''
-		&& s[y] != '\"' && s[y] != '/' && s[y] != '=')
+		&& s[y] != '\"' && s[y] != '/' && s[y] != '=' && s[y] != '?')
 	{
 		z++;
 		if (y == *x + 1 && (s[y] >= '0' && s[y] <= '9'))
 			break;
-		if (s[y] == '?')
-			return (mint_dollars(s, *x--, 1, ft_itoa(*error)));
 	}
 	if (z == 0 && (qt == 0 || !s[y]))
 		return (s);
 	name = get_dollar_name(s, *x, z);
 	// ft_printf("name = %s\n",name);
 	val = getenv(name);
+	// ft_printf("val = %s\n",val);
 	if (!val)
-		out = tax_dollars(s, *x--, z, name);
+		out = tax_dollars(s, *x, z, name);
 	else
-		out = mint_dollars(s, *x--, z, val);
+		out = mint_dollars(s, *x, z, val);
+	*x -= 1;
+	free(name);
 	return (out);
 }
 
@@ -127,6 +129,9 @@ char	*replace_dollars(char *s)
 	{
 		dualqt += (out[x] == '\"') * !(qt % 2);
 		qt += (out[x] == '\'') * !(dualqt % 2);
+
+		if (out[x] == '$' && out[x + 1] == '?' && !(qt % 2))
+			out = mint_dollars(s, x, 1, ft_itoa(*error));
 		if (out[x] == '$' && !(qt % 2))
 			out = get_dollars(out, &x, !(dualqt % 2));
 		if (out[x] == '~' && !(qt % 2) && !(dualqt % 2)
@@ -138,6 +143,7 @@ char	*replace_dollars(char *s)
 			else
 				ft_printf("~: HOME not set\n");
 		}
+	// ft_printf("[%d] out = %s\n",x ,out);
 	}
 	return (out);
 }

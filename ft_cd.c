@@ -25,12 +25,38 @@ int	ft_pwd()
 	return (0);
 }
 
+int	change_pwd()
+{
+	char	*dir;
+
+	dir = (char *)malloc(PATH_MAX);
+	if (!dir)
+		return (1);
+	getcwd(dir, PATH_MAX);
+	replace_var("PWD", dir);
+	free(dir);
+	return (0);
+}
+
+int	change_oldpwd()
+{
+	char	*dir;
+
+	dir = (char *)malloc(PATH_MAX);
+	if (!dir)
+		return (1);
+	getcwd(dir, PATH_MAX);
+	replace_var("OLDPWD", dir);
+	free(dir);
+	return (0);
+}
+
 char	*extra_cd(char *path)
 {
 	if (path[0] == '-' && !path[1])
 	{
 		path = getenv("OLDPWD");
-		if (!path)
+		if (!path || !path[0])
 		{
 			ft_printf("cd: OLDPWD not set\n");
 			return (0);
@@ -49,6 +75,7 @@ int	change_dir(char *path)
 	if (dir)
 	{
 		closedir(dir);
+		change_oldpwd();
 		if (chdir(path) < 0)
 		{
 			ft_printf("cd: couldnt change working directory\n");
@@ -84,8 +111,6 @@ int	ft_cd(int ac, char **av)
 			return (1);
 	}
 	out = change_dir(path);
-	// ft_printf(" cd %s \n", path);
-	// if (path)
-	// 	free(path);
+	change_pwd();
 	return (out);
 }

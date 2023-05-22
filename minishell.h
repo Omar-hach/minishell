@@ -76,7 +76,7 @@ int		fork1();
 int		ft_dup(int fd, int new_fd);
 // char		*find_path(char *file);
 char		*find_path(char *file, int x, int y, int z);
-char		**arg_split(char const *s, char *c);
+char		**arg_split(char *s, char *c);
 void		ft_skip(t_token *tokens, int i);
 
 int		ft_isvarname(char *var);

@@ -122,7 +122,7 @@ static char	*split_word(char const *s, int *start, int end)
 	return (word);
 }
 
-char	**arg_split(char const *s, char *c)
+char	**arg_split(char *s, char *c)
 {
 	char	**tbl;
 	int		x;

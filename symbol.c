@@ -16,14 +16,7 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 {
 	int		fd;
 	int		x;
-	// t_tree	*cmd;
 
-	// ft_printf("< %d\n", tree->token_index);
-	// cmd = tree->right_son;
-	// while (tokens[cmd->token_index].type > 21)
-	// 	cmd = cmd->right_son;
-	// if (fork1() == 0)
-	// {
 	x = tree->token_index;
 	fd = open(tokens[x].args[0], O_RDONLY, 0600);
 	if (fd < 0)
@@ -33,12 +26,7 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 	}
 	if (ft_dup(fd, STDIN_FILENO) < 0)
 		return (1);
-	// exec_node(cmd, tokens);
 	close(fd);
-	// }
-	// else if (tree->father && tokens[tree->father->token_index].type == 20)
-	// 	exec_node(tree->right_son, tokens);
-	// wait(NULL);
 	return (0);
 }
 
