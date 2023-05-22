@@ -12,23 +12,90 @@
 
 #include"minishell.h"
 
-int	ft_piped_end(int *fd, int io, t_tree *tree, t_token *tokens)
+// int	here_doc_pipe(int *bibe, int io, t_tree *tree, t_token *tokens)
+// {
+// 	if (io == 0 && tokens[tree->token_index].type == 22)
+// 	{
+// 		if (ft_dup(bibe[0], tokens[tree->token_index].redir[0]) < 0)
+// 			exit (1);
+// 	}
+// 	else if (io == 1 && tokens[tree->token_index].type == 22)
+// 	{
+// 		if (ft_dup(bibe[1], tokens[tree->token_index].redir[1]) < 0)
+// 			exit (1);
+// 	}
+// 	return (0);
+// }
+
+int	pipe_out(int *bibe, t_tree *tree, t_token *tokens)
+{
+	int		out;
+	int		pid;
+
+	pid = fork1();
+	if (pid == 0)
+	{
+		// if (tokens[tree->token_index].type > 21)
+		close(bibe[1]);
+			out = exec_redir(tree, tokens, 0, 1);
+		if (ft_dup(bibe[0], STDIN_FILENO) < 0)
+			exit (1);
+
+			out = exec_redir(tree, tokens, 1, 1);
+		close(bibe[0]);
+		// out = exec_node(tree, tokens);
+		// printf(" pout = %d \n", out);
+		exit(out);
+	}
+	// wait(NULL);
+	return (pid);
+}
+
+int	pipe_in(int *bibe, t_tree *tree, t_token *tokens)
+{
+	int		out;
+	int		pid;
+
+	pid = fork1();
+	if (pid == 0)
+	{
+		close(bibe[0]);
+		// if (tokens[tree->token_index].type > 21)
+			out = exec_redir(tree, tokens, 0, 1);
+		if (ft_dup(bibe[1], STDOUT_FILENO) < 0)
+			exit (1);
+
+			out = exec_redir(tree, tokens, 1, 0);
+		// out = exec_node(tree, tokens);
+		close(bibe[1]);
+		// printf(" pout = %d \n", out);
+		exit(out);
+	}
+	return (pid);
+}
+
+int	ft_piped_end(int *bibe, int io, t_tree *tree, t_token *tokens)
 {
 	int	out;
 
+	// if (tokens[tree->token_index].type > 21)
+	out = exec_redir(tree, tokens, 0, 1);
+	// printf("pipe \n");
 	if (io == 0)
 	{
-		if (ft_dup(fd[0], STDIN_FILENO) < 0)
+		if (ft_dup(bibe[0], STDIN_FILENO) < 0)
 			exit (1);
 	}
 	else
 	{
-		if (ft_dup(fd[1], STDOUT_FILENO) < 0)
+		if (ft_dup(bibe[1], STDOUT_FILENO) < 0)
 			exit (1);
 	}
-	close(fd[0]);
-	close(fd[1]);
-	out = exec_node(tree, tokens);
+	close(bibe[1]);
+	// if (tokens[tree->token_index].type <= 21)
+		out = exec_redir(tree, tokens, 1, 0);
+	close(bibe[0]);
+		// out = exec_node(tree, tokens);
 	// printf(" pout = %d \n", out);
 	exit(out);
 }
@@ -39,28 +106,30 @@ int	ft_piped_end(int *fd, int io, t_tree *tree, t_token *tokens)
 int	ft_pipe(t_tree *tree, t_token *tokens)
 {
 	int		*pid;
-	int		*fd;
+	int		*bibe;
 	int		out;
 	int		out2;
 
 	out = 0;
 	out2 = 0;
 	pid = (int *) malloc(2 * sizeof(int));
-	fd = (int *) malloc(2 * sizeof(int));
-	if (pipe(fd) < 0)
+	bibe = (int *) malloc(2 * sizeof(int));
+	if (pipe(bibe) < 0)
 		return (1);
-	pid[1] = fork1();
-	if (pid[1] == 0)
-		ft_piped_end(fd, 0, tree->left_son, tokens);
-	pid[2] = fork1();
-	if (pid[2] == 0)
-		ft_piped_end(fd, 1, tree->right_son, tokens);
-	close(fd[1]);
-	close(fd[0]);
-	waitpid(pid[2], &out, 0);
-	waitpid(pid[1], &out2, 0);
+	// pid[2] = fork1();
+	// if (pid[2] == 0)
+	// 	ft_piped_end(bibe, 1, tree->right_son, tokens);
+	// pid[1] = fork1();
+	// if (pid[1] == 0)
+	// 	ft_piped_end(bibe, 0, tree->left_son, tokens);
+	pid[2] = pipe_in(bibe, tree->right_son, tokens);
+	waitpid(pid[2], &out2, 0);
+	pid[1] = pipe_out(bibe, tree->left_son, tokens);
+	close(bibe[1]);
+	close(bibe[0]);
+	waitpid(pid[1], &out, 0);
 	// printf("\n out = %d | out2 = %d \n", out, out2);
-	free(fd);
+	free(bibe);
 	free(pid);
-	return (out2 >> 8);
+	return (out >> 8);
 }

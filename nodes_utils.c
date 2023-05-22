@@ -23,7 +23,15 @@ t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex)
 	{
 		nodes[i].type = 0;
 		nodes[i].arg = NULL;
-		nodes[i].redir = -1;
+		nodes[i].in = 0;
+		nodes[i].out = 1;
+		// nodes[i].redir = (int *) malloc(2 * sizeof(int));
+		// if (pipe(nodes[i].redir) < 0)
+		// {
+			// free(nodes[i].redir);
+			// nodes[i].redir = NULL;
+		// }
+		nodes[i].qt = -1;
 	}
 	return (nodes);
 }

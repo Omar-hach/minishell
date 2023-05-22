@@ -180,7 +180,7 @@ t_token	*split_input(char *input, int *len)
 		*error = 127;
 		return (free_struct_array(NULL, &lex, nodes, *len));
 	}
-	// free_struct_array(words, &lex, NULL, -1);
+	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
 }
 
@@ -196,7 +196,6 @@ void shvlvl()
 	lvlv++;
 	shlvl = ft_itoa(lvlv); 
 	replace_var("SHLVL", shlvl);
-	// shlvl = getenv("SHLVL");
 	ft_putenv("OLDPWD=");
 }
 
@@ -257,17 +256,16 @@ int	main(int ac, char **av)
 		{
 			shvlvl();
 			nodes = split_input(in, &ex);
-				// ft_printf("\n------EXEC-----\n");
 			if (!nodes)
 				return (*error);
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
 				//treeprint(tree, 0, nodes);
-				out = exec_node(tree, nodes);
+				// ft_printf("\n------EXEC-----\n");
+				exec_node(tree, nodes);
 				free_struct_array(NULL, NULL, nodes, ex);
 				ex = 1;
-				*error = out;
 			}
 		}
 		return (*error);

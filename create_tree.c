@@ -37,7 +37,7 @@ void	treeprint(t_tree *root, int level, t_token *nodes)
 	{
 		ft_printf(" ");
 	}
-	ft_printf("%d=%s-->left=%p-->right=%p\n", nodes[root->token_index].type, nodes[root->token_index].arg, root->left_son, root->right_son);
+	ft_printf("[%d] %d=%s-->left=%p-->right=%p\n",root->token_index, nodes[root->token_index].type, nodes[root->token_index].arg, root->left_son, root->right_son);
 	treeprint(root->left_son, level, nodes);
 	//free(root);
 }
@@ -71,7 +71,7 @@ t_tree	*create_tree(t_token *nodes, int len)
 			branch->father = root;
 		}
 		if (list[i] == 22 || list[i] == 23)
-		// if (list[i] > 21)
+		// if (list[i] > 21)                   // make all redirect father of there command pls
 		{
 			while (root->father && list[root->father->token_index] == 21)
 				root = root->father;

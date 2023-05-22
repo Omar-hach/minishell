@@ -16,8 +16,8 @@ CC = gcc
 
 CFLAGS = -Werror -Wall -Wextra 
 
-FLAGS = -lreadline -lcurses
-# -fsanitize=address
+FLAGS = -lreadline -lcurses 
+#-fsanitize=address
 
 SRC = 	minishell.c\
 		symbole_parcing.c\
@@ -26,7 +26,7 @@ SRC = 	minishell.c\
 		nodes_utils.c trim_word.c\
 		exec_tree.c symbol.c commands.c dollars.c\
 		ft_cd.c ft_echo.c ft_pipe.c arg_split.c\
-		utils_y.c utils_o.c utils_var.c utils_free.c
+		utils_y.c utils_o.c utils_var.c utils_free.c utils_check.c
 
 OBJ = $(SRC:.c=.o)
 
