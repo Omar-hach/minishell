@@ -183,10 +183,7 @@ char	**expr_split(char *input, char **sym, int part)
 	while (++i < part)
 		array[i] = (char *)ft_calloc(len_array[i] + 1, sizeof(char));
 	array = words_cutter(s + count_space(s), len_array, array, part);
-<<<<<<<<< Temporary merge branch 1
 	array[part] = NULL;
-=========
->>>>>>>>> Temporary merge branch 2
 	if (s)
 		free(s);
 	free(len_array);
