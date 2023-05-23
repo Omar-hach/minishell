@@ -39,10 +39,12 @@ int		*error;
 
 typedef struct s_token
 {
-	int	type;
+	int		type;
 	char	*arg;
 	char	**args;
-	int	redir;
+	int		in;
+	int		out;
+	int		qt;
 }t_token;
 
 typedef struct s_tree
@@ -70,14 +72,13 @@ lexixe{
 }
 */
 
-char		*ft_strdup_newline(char *s);
-char		*join_args(char **args, char between);
 int		fork1();
 int		ft_dup(int fd, int new_fd);
 // char		*find_path(char *file);
 char		*find_path(char *file, int x, int y, int z);
 char		**arg_split(char *s, char *c);
 void		ft_skip(t_token *tokens, int i);
+int		check_file(char *file);
 
 int		ft_isvarname(char *var);
 int 		ft_isvar(char *var);
@@ -86,15 +87,22 @@ void		ft_putenv(char *var);
 void		ft_unputenv(char *name);
 int		replace_var(char *var, char *value);
 char		*mint_dollars(char *s, int start, int name_len, char *val);
+char		*get_dollars(char *s, int *x, int qt);
 char		*replace_dollars(char *s);
+int		money_end(char c);
+char		*is_money(char *s, int *x, int qt, int dualqt);
 
+int		change_oldpwd(void);
 char		*extra_cd(char *path);
 int		ft_cd(int ac, char **av);
 int		ft_echo(int ac, char **av);
 int		ft_pwd();
 int		ft_pipe(t_tree *tree, t_token *tokens);
+int		here_doc(char *s, int qt);
+int		ft_env_declare(void);
 
 int		exec_token(t_tree *tree, t_token *tokens);
+int		exec_redir(t_tree *tree, t_token *tokens, int xcmd, int xredir);
 int		exec_cmd(t_token token);
 int		exec_symbol(t_tree *tree, t_token *tokens);
 int		exec_node(t_tree *tree, t_token *tokens);

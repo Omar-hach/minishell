@@ -18,7 +18,7 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 	int		x;
 
 	x = tree->token_index;
-	fd = open(tokens[x].args[0], O_RDONLY, 0600);
+	fd = open(tokens[x].args[0], O_RDONLY, 0644);
 	if (fd < 0)
 	{
 		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
@@ -30,46 +30,43 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 	return (0);
 }
 
-char	*here_doc(char *s, int *fd_out, int qt)
+int	here_doc(char *s, int qt)
 {
 	int		*bibe;
 	char	*input;
 
 	bibe = (int *) malloc(2 * sizeof(int));
-	if (pipe(bibe) < 0)
+	if (pipe(bibe) < -1)
 		return (0);
 	while (1)
 	{
 		input = readline("> ");
 		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-		{
-			// close(bibe[0]);
 			break ;
-		}
 		if (*(input + count_space(input)))
 		{
 			if (qt == 0)
 				input = replace_dollars(input);
-			// printf("%s\n", input);
 	        write(bibe[1], input, ft_strlen(input));
 	        write(bibe[1], "\n", 1);
 		}
-		*fd_out = bibe[0];
 		free(input);
 	}
 	close(bibe[1]);
-	return (0);
+	// printf("<< end\n");
+	return (bibe[0]);
 }
 
 int	ft_redirect_in_append(t_tree *tree, t_token *tokens)
 {
 	int		fd;
 	int		x;
-	char	*in;
 
+	// printf("<<\n");
 	x = tree->token_index;
-	in = here_doc(tokens[x].args[0], &fd, tokens[x].redir);
-	// fd = open(tokens[x].args[0], O_RDONLY | O_APPEND, 0600);
+	fd = here_doc(tokens[x].args[0], tokens[x].qt);
+	// tokens[x].redir[1] = fd;
+	// fd = open(tokens[x].args[0], O_RDONLY | O_APPEND, 0644);
 	if (fd < 0)
 	{
 		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
@@ -87,7 +84,7 @@ int	ft_redirect_out(t_tree *tree, t_token *tokens)
 	int		x;
 
 	x = tree->token_index;
-	fd = open(tokens[x].args[0], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	fd = open(tokens[x].args[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 	{	
 		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
@@ -105,7 +102,7 @@ int	ft_redirect_out_append(t_tree *tree, t_token *tokens)
 	int	x;
 
 	x = tree->token_index;
-	fd = open(tokens[x].args[0], O_WRONLY | O_CREAT | O_APPEND, 0600);
+	fd = open(tokens[x].args[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd < 0)
 	{
 		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
@@ -122,9 +119,8 @@ int	exec_symbol(t_tree *tree, t_token *tokens)
 	int	x;
 	int	out;
 
-	out = 1;
+	out = 0;
 	x = tree->token_index;
-	// ft_printf("x = %d\n", x);
 	if (tokens[x].type == 21)
 		out = ft_pipe(tree, tokens);
 	else if (tokens[x].type == 22)

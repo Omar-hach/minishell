@@ -12,7 +12,7 @@
 
 #include"minishell.h"
 
-int	ft_pwd()
+int	ft_pwd(void)
 {
 	char	*dir;
 
@@ -25,7 +25,7 @@ int	ft_pwd()
 	return (0);
 }
 
-int	change_pwd()
+int	change_pwd(void)
 {
 	char	*dir;
 
@@ -34,19 +34,6 @@ int	change_pwd()
 		return (1);
 	getcwd(dir, PATH_MAX);
 	replace_var("PWD", dir);
-	free(dir);
-	return (0);
-}
-
-int	change_oldpwd()
-{
-	char	*dir;
-
-	dir = (char *)malloc(PATH_MAX);
-	if (!dir)
-		return (1);
-	getcwd(dir, PATH_MAX);
-	replace_var("OLDPWD", dir);
 	free(dir);
 	return (0);
 }

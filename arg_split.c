@@ -12,6 +12,22 @@
 
 #include "minishell.h"
 
+	// ft_printf("%d" , (qt % 2));
+	// ft_printf("%d" , (dualqt % 2));
+
+	// skip = (s[y] == '\'') * !(dualqt % 2);
+	// qt += (s[y] == '\'') * !(dualqt % 2);
+
+	// skip = (s[y] == '\"') * !(qt % 2);
+	// dualqt += (s[y] == '\"') * !(qt % 2);
+
+	// if ((s[y] != '\"' && s[y] != '\'') || ((s[y] == '\"' || s[y] == '\'')
+	// 	&& (!(qt % 2) || !(dualqt % 2)) && skip == 0))
+	// {
+	// 	s[z] = s[y];
+	// 	z++;
+	// }
+
 int	skip_quote(char *s, int y, int z)
 {
 	int		skip;
@@ -25,18 +41,6 @@ int	skip_quote(char *s, int y, int z)
 	while (s[y])
 	{
 		skip = 0;
-		// ft_printf("%d" , (qt % 2));
-		// ft_printf("%d" , (dualqt % 2));
-		// skip = (s[y] == '\'') * !(dualqt % 2);
-		// qt += (s[y] == '\'') * !(dualqt % 2);
-		// skip = (s[y] == '\"') * !(qt % 2);
-		// dualqt += (s[y] == '\"') * !(qt % 2);
-		// if ((s[y] != '\"' && s[y] != '\'') || ((s[y] == '\"' || s[y] == '\'')
-		// 	&& (!(qt % 2) || !(dualqt % 2)) && skip == 0))
-		// {
-		// 	s[z] = s[y];
-		// 	z++;
-		// }
 		if ((s[y] == '\'') && !(dualqt % 2))
 		{	
 			qt++;
@@ -49,8 +53,9 @@ int	skip_quote(char *s, int y, int z)
 			skip = 1;
 			QQQ = 1;
 		}
-		if ((s[y] != '\"' && s[y] != '\'') || ((s[y] == '\"') && !(dualqt % 2)
-			&& skip == 0) || ((s[y] == '\'') && !(qt % 2) && skip == 0))
+		if ((s[y] != '\"' && s[y] != '\'')
+			|| ((s[y] == '\"') && !(dualqt % 2) && skip == 0)
+			|| ((s[y] == '\'') && !(qt % 2) && skip == 0))
 		{
 			s[z] = s[y];
 			z++;
@@ -73,8 +78,8 @@ void	ft_skip(t_token *token, int i)
 		// ft_printf("so SQiping %d = ", x); 
 		z = 0;
 		y = 0;
-		token[i].redir = 0;
-		token[i].redir = skip_quote(token[i].args[x], 0, 0);
+		token[i].qt = 0;
+		token[i].qt = skip_quote(token[i].args[x], 0, 0);
 		// ft_printf("\n");
 		x++;
 	}

@@ -12,36 +12,18 @@
 
 #include"minishell.h"
 
-// int	ft_findvar2(char *var)
-// {
-// 	int			x;
-// 	int 		size;
-// 	extern char	**environ;
+int	change_oldpwd(void)
+{
+	char	*dir;
 
-// 	x = 0;
-// 	while (environ[x])
-// 	{
-// 		size = 0;
-// 		while (environ[x][size] != '=')
-// 			size++;
-// 		if (size == ft_strlen(var) && ft_strncmp(environ[x], var, size) == 0)
-// 			return (x);
-// 		x++;
-// 	}
-// 	return (-1);
-// }
-
-// void	ft_setenv(char *name)
-// {
-// 	int			x;
-// 	extern char	**environ;
-
-// 	x = ft_findvar(environ, name);
-// 	if (x == -1)
-// 		ft_putenv(name);
-// 	else
-// 		environ[x] = ft_strdup(name);
-// }
+	dir = (char *)malloc(PATH_MAX);
+	if (!dir)
+		return (1);
+	getcwd(dir, PATH_MAX);
+	replace_var("OLDPWD", dir);
+	free(dir);
+	return (0);
+}
 
 int	ft_findvar(char *var)
 {
@@ -89,59 +71,6 @@ int	replace_var(char *name, char *value)
 	}
 	else
 		return (-1);
-}
-
-int	ft_isvarname(char *var)
-{
-	int	x;
-
-	if (var[0] == '-')
-		return (-3);
-	if (ft_isdigit(var[0]) == 1)
-		return (-2);
-	x = -1;
-	while (var[++x] && (var[x] != '='))
-	{
-		if (ft_isalnum(var[x]) == 0 && var[x] != '_' && var[x] != '\"' && var[x] != '\''
-			&& !(var[x] == '+' && var[x + 1] == '='))
-			return (-1);
-		if (var[x] == '\\')
-			return (-4);
-		if (var[x] == ';')
-			return (-5);
-	}
-	return (0);
-}
-
-int	ft_isvar(char *var)
-{
-	int	x;
-	int	y;
-	int	val;
-
-	val = ft_isvarname(var);
-	if (val != 0)
-		return (val);
-	x = -1;
-	while (var[++x])
-	{
-		if (var[x] == '=')
-		{
-			if (var[x - 1] == '+')
-				return (2);
-			val = 1;
-			y = x - 1;
-			while (var[y] && (ft_isalnum(var[y]) == 1 || var[y] == '_'))
-			{
-				y--;
-				if (y == -1)
-					return (1);
-			}
-		}
-	}
-	if (val == 0)
-		return (3);
-	return (0);
 }
 
 void	ft_putenv(char *var)
