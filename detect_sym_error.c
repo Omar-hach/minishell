@@ -42,13 +42,14 @@ int	detect_sym_error(char *s, char **sym, int *part)
 	int	double_qu;
 
 	s += count_space(s);
+	queot = (*s == 34);
+	double_qu = (*s == 39);
 	if (ft_find(s, sym) == 1)
 		return (error_print("minshell: error unexpected token",
 				sym[ft_find(s, sym) - 1], 2));
 	if (last_char(s + ft_strlen(s) - 1, 0, 0))
 		return (1);
-	queot = (*s == 34);
-	double_qu = (*s == 39);
+	s++;
 	while (*s)
 	{
 		// if (*(++s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))

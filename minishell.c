@@ -134,7 +134,7 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	cmd = NULL;
 	word += count_space(word);
 	word = replace_dollars(word);
-	// ft_printf("word=%s , %p\n", word , word);
+	ft_printf("word=%s , %p\n", word , word);
 	if (ft_find(word, lex.l_symb))
 		cmd = fill_symb(word, &i, token, ft_find(word, lex.l_symb));
 	else
@@ -142,7 +142,7 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	if (!cmd || *token == 21)
 		return (NULL);
 	arg = set_cmd(word, token, cmd, lex);
-	// ft_printf("arg = %s , %p ,cmd=%s , %p. word=%s , %p\n", arg, arg, cmd, cmd, word , word);
+	ft_printf("arg = %s , %p ,cmd=%s , %p. word=%s , %p\n", arg, arg, cmd, cmd, word , word);
 	if (*token < 1)
 	{
 		*error = 127;
