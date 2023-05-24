@@ -14,7 +14,7 @@ NAME = minishell
 
 CC = gcc 
 
-CFLAGS = -Werror -Wall -Wextra 
+CFLAGS = -Werror -Wall -Wextra
 
 FLAGS = -lreadline -lcurses 
 #-fsanitize=address

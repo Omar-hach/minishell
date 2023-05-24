@@ -18,13 +18,13 @@ int	last_char(char *s, int queot, int double_qu)
 	if (queot % 2)
 	{
 		*error = 258;
-		ft_printf("minshell: error unexpected token %c\n", 34);
+		ft_printf("minshell: error unexpected token %c\n", 39);
 		return (0);
 	}
 	if (double_qu % 2)
 	{
 		*error = 258;
-		ft_printf("minshell: error unexpected token %c\n", 39);
+		ft_printf("minshell: error unexpected token %c\n", 34);
 		return (0);
 	}
 	if (*s == '>' || *s == '|' || *s == '<')
@@ -36,39 +36,40 @@ int	last_char(char *s, int queot, int double_qu)
 	return (0);
 }
 
-int	detect_sym_error(char *s, char **sym, int *part)
+int	detect_sym_error(char *s, char **sym, int *part, int type)
 {
 	int	queot;
 	int	double_qu;
 
 	s += count_space(s);
-	queot = (*s == 34);
-	double_qu = (*s == 39);
+	queot = (*s == '\'');
+	double_qu = (*s == '\"');
 	if (ft_find(s, sym) == 1)
 		return (error_print("minshell: error unexpected token",
 				sym[ft_find(s, sym) - 1], 2));
 	if (last_char(s + ft_strlen(s) - 1, 0, 0))
 		return (1);
 	s++;
+	//printf("=%s ; %d ; %d\n",s - 1,  queot, double_qu);
 	while (*s)
 	{
-		// if (*(++s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
+		if ((*s == ';' || *s == '\\') && !(queot % 2) && !(double_qu % 2))
+			return (error_print("minshell: error unexpected token", s, 1));
 		if (*(s) && ft_find(s, sym) && !(queot % 2) && !(double_qu % 2))
 		{
-			queot = ft_find(s, sym);
+			type = ft_find(s, sym);
 			s += ft_strlen(sym[ft_find(s, sym) - 1]);
 			s += count_space(s);
-			if ((queot > 1 && ft_find(s, sym) > 0) || (queot == 1 && ft_find(s, sym) == 1))
+			if ((type > 1 && ft_find(s, sym) > 0) || (type == 1 && ft_find(s, sym) == 1))
 			// if (ft_find(s, sym))
 				return (error_print("minshell: error unexpected token",
 						sym[ft_find(s, sym) - 1], 2));
-			queot = 0;
 			*part += 2;
 		}
-		queot += (*s == 34) * !(double_qu % 2);
-		double_qu += (*s == 39) * !(queot % 2);
+		queot += (*s == '\'') * !(double_qu % 2);
+		double_qu += (*s == '\"') * !(queot % 2);
 		s++;
 	}
-	// printf("%s ; %d ; %d\n",s - 1 ,  queot, double_qu);
+	//printf("%s ; %d ; %d\n",s - 1 ,  queot, double_qu);
 	return (last_char(s - 1, queot, double_qu));
 }

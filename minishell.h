@@ -115,14 +115,13 @@ int		count_space(char *s);
 int		ft_find(char *s, char **token);
 int		error_print(char *mes, char *prob, int n);
 t_tree	*create_tree(t_token *nodes, int len);
-int		detect_sym_error(char *s, char **sym, int *part);
+int		detect_sym_error(char *s, char **sym, int *part, int type);
 void		*free_aray(char	**words);
 t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex);
 void		*free_struct_array(char **words, t_lexic *lex, t_token *nodes,  int len);
 int		nodes_count(char **word);
 t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes, int *len);
 char		*cmd_split(char *word, int *token, t_lexic lex);
-int		detect_sym_error(char *s, char **sym, int *part);
 
 void		free_tree(t_tree *root);
 void		treeprint(t_tree *root, int level, t_token *nodes);

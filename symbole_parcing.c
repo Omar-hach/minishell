@@ -68,9 +68,10 @@ char	*rearrange_input(char *s, char **sym, int i)
 	{
 		// if (count_space(s + i) > 1)
 		// 	i += count_space(s + i);
-		if(ft_find(s + i, sym) > 1 && is_outside_quoet(s, i))
+		//ft_printf("s[%d]=%s out=%d\n", i, s, is_outside_quoet(re, j));
+		if(ft_find(s + i, sym) > 1 && is_outside_quoet(re, j))
 			i += get_symb_len(ft_find(s + i, sym), s + i, sym) - 1;
-		else if (ft_find(s + i, sym) == 1 && is_outside_quoet(s, i))
+		else if (ft_find(s + i, sym) == 1 && is_outside_quoet(re, j))
 			j = put_inderect(s, i, re);
 		else
 		{
@@ -167,7 +168,7 @@ char	**expr_split(char *input, char **sym, int part)
 
 	array = NULL;
 	s = rearrange_input(input, sym, -1);//  printf("s=%s.\n",s);
-	if (detect_sym_error(s, sym, &part))
+	if (detect_sym_error(s, sym, &part, 0))
 	{
 		*error = 2;
 		return (NULL);

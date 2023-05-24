@@ -87,10 +87,10 @@ int	is_outside_quoet(char *s, int end)
 	queot = 0;
 	double_qu = 0;
 	i = -1;
-	while(s[++i] && i < end)
+	while(s[++i] && i <= end)
 	{
-		queot += (s[i] == 34) * !(double_qu % 2);
-		double_qu += (s[i] == 39) * !(queot % 2);
+		queot += (s[i] == '\'') * !(double_qu % 2);
+		double_qu += (s[i] == '\"') * !(queot % 2);
 	}
-	return(!(queot % 2) && !(double_qu % 2) && s[i]);
+	return(!(queot % 2) && !(double_qu % 2));
 }

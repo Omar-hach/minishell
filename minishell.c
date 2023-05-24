@@ -27,8 +27,8 @@ char	*fill_cmd(char *word, int j, int *i)
 	{
 		while (word[k] == 34 || word[k] == 39)
 			k++;
-		cmd[j] = word[k];
-		j++;
+		if(k < (*i))
+			cmd[j++] = word[k];
 	}
 	return (cmd);
 }
@@ -126,32 +126,34 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 {
 	int		i;
 	int		j;
+	char	*word_copy;
 	char	*cmd;
 	char	*arg;
 
 	i = 0;
 	j = 0;
 	cmd = NULL;
-	word += count_space(word);
-	word = replace_dollars(word);
-	ft_printf("word=%s , %p\n", word , word);
+	word_copy = word;
+	word_copy += count_space(word_copy);
+	word_copy = replace_dollars(word_copy);
+	//ft_printf("word=%s , %p\n", word , word);
 	if (ft_find(word, lex.l_symb))
-		cmd = fill_symb(word, &i, token, ft_find(word, lex.l_symb));
+		cmd = fill_symb(word_copy, &i, token, ft_find(word, lex.l_symb));
 	else
-		cmd = fill_cmd(word, j, &i);
+		cmd = fill_cmd(word_copy, j, &i);
 	if (!cmd || *token == 21)
 		return (NULL);
-	arg = set_cmd(word, token, cmd, lex);
-	ft_printf("arg = %s , %p ,cmd=%s , %p. word=%s , %p\n", arg, arg, cmd, cmd, word , word);
+	arg = set_cmd(word_copy, token, cmd, lex);
+	//ft_printf("arg = %s , %p ,cmd=%s , %p. word=%s , %p\n", arg, arg, cmd, cmd, word , word);
 	if (*token < 1)
 	{
 		*error = 127;
-		ft_printf("minshell: %s :command not found\n", cmd);
+		ft_printf("minshell: %s:command not found\n", cmd);
 		free(cmd);
 		return (NULL);
 	}
 	if (!arg)
-		arg = fill_arg(word, i);
+		arg = fill_arg(word_copy, i);
 	free(cmd);
 	return (arg);
 }
@@ -180,6 +182,9 @@ t_token	*split_input(char *input, int *len)
 		*error = 127;
 		return (free_struct_array(NULL, &lex, nodes, *len));
 	}
+	i = -1;
+	while (++i < (*len))
+		printf("word[%p]=%s=%p\ni =%d type=%d <%s>\n", words, words[i], words[i], i, nodes[i].type, nodes[i].arg);
 	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
 }
