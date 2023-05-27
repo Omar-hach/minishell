@@ -76,9 +76,9 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 	char	*arg;
 	char	*bin;
 
-	//ft_printf("arg = %s , %p ,cmd=%s , %p. word=%s , %p\n", arg, arg, cmd, cmd, word , word);
-	if(ft_strncmp(cmd, "..", 2))
+	if(ft_strncmp(cmd, "..", 2))//{
 		bin = find_path(cmd, -1, -1, -1);
+	//ft_printf(" ,cmd=%s , %p. word=%s , %p\n", cmd, cmd, word , word);}
 	if (ft_find(cmd, lex.l_cmd)
 		&& ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
 		*token = ft_find(cmd, lex.l_cmd) + 10;
@@ -134,9 +134,9 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	j = 0;
 	cmd = NULL;
 	word_copy = word;
-	word_copy += count_space(word_copy);
+	word_copy += count_space(word);
 	word_copy = replace_dollars(word_copy);
-	//ft_printf("word=%s , %p\n", word , word);
+	//ft_printf("word=%s , %p\n", word_copy , word_copy);
 	if (ft_find(word, lex.l_symb))
 		cmd = fill_symb(word_copy, &i, token, ft_find(word, lex.l_symb));
 	else
@@ -144,7 +144,6 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	if (!cmd || *token == 21)
 		return (NULL);
 	arg = set_cmd(word_copy, token, cmd, lex);
-	//ft_printf("arg = %s , %p ,cmd=%s , %p. word=%s , %p\n", arg, arg, cmd, cmd, word , word);
 	if (*token < 1)
 	{
 		*error = 127;
@@ -154,7 +153,9 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	}
 	if (!arg)
 		arg = fill_arg(word_copy, i);
+	//printf("-word[%p]=%s -word_copy[%p]=%s\n",word, word, word_copy, word_copy);
 	free(cmd);
+	free(word);
 	return (arg);
 }
 
@@ -182,10 +183,11 @@ t_token	*split_input(char *input, int *len)
 		*error = 127;
 		return (free_struct_array(NULL, &lex, nodes, *len));
 	}
+	/*
 	i = -1;
 	while (++i < (*len))
-		printf("word[%p]=%s=%p\ni =%d type=%d <%s>\n", words, words[i], words[i], i, nodes[i].type, nodes[i].arg);
-	free_struct_array(words, &lex, NULL, -1);
+		printf("word[%p]=%s=%p\ni =%d type=%d <%s>\n", words, words[i], words[i], i, nodes[i].type, nodes[i].arg);*/
+	free_struct_array(NULL, &lex, NULL, -1);
 	return (nodes);
 }
 
@@ -202,6 +204,7 @@ void shvlvl()
 	shlvl = ft_itoa(lvlv); 
 	replace_var("SHLVL", shlvl);
 	ft_putenv("OLDPWD=");
+	free(shlvl);
 }
 
 int	ft_minishell()

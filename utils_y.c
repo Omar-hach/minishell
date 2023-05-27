@@ -22,6 +22,7 @@ char	*find_path(char *file, int x, int y, int z)
 	if (!all_paths)
 		return (NULL);
 	path = NULL;
+	//ft_printf("ok \n");
 	while (all_paths[++x] && !path)
 	{
 		y = -1;
@@ -38,7 +39,7 @@ char	*find_path(char *file, int x, int y, int z)
 		free(path);
 		path = NULL;
 	}
-	// free_aray(all_paths);
+	free_aray(all_paths);
 	return (path);
 }
 

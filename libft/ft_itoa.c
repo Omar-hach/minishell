@@ -9,7 +9,6 @@
 /*   Updated: 2022/10/08 20:17:37 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdlib.h>
 #include "libft.h"
 
 static int	number_len(int n)

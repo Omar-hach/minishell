@@ -9,7 +9,6 @@
 /*   Updated: 2022/10/23 01:34:10 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <unistd.h>
 #include "libft.h"
 
 static void	nb_printer(int nb, int fd)

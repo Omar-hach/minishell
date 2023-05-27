@@ -9,7 +9,6 @@
 /*   Updated: 2022/10/23 01:31:57 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdlib.h>
 #include "libft.h"
 
 static int	part_count(char *s, char c)

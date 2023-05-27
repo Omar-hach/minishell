@@ -62,13 +62,14 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 		*len = -1;
 	while (words[++i] && nodes)
 	{
-		printf("*word[%p]=%s=%p\n",words, words[i], words[i]);
+		//printf("*word[%p]=%s=%p, i=%d\n",words, words[i], words[i], i);
 		nodes[j].arg = cmd_split(words[i], &nodes[j].type, *lex);
-		printf("*word[%p]=%s=%p\n",words, words[i], words[i]);
+		//printf("*word[%p]=%s=%p, i=%d\n",words, words[i], words[i], i);
 		if (!nodes[i].arg && nodes[j].type == 0)
 			return (NULL);
 		// printf("\n[%d] word = %s, arg = %s , type = %d\n", i, words[i], nodes[j].arg, nodes[j].type);
 		j++;
 	}
+	free(words);
 	return (nodes);
 }

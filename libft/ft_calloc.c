@@ -9,7 +9,6 @@
 /*   Updated: 2022/10/14 01:14:09 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdlib.h>
 #include "libft.h"
 
 void	*ft_calloc(size_t count, size_t size)
@@ -20,5 +19,6 @@ void	*ft_calloc(size_t count, size_t size)
 	if (!p)
 		return (NULL);
 	ft_bzero(p, count * size);
+	//printf("p[%zu][%zu] = %p\n",count, size, p);
 	return (p);
 }
