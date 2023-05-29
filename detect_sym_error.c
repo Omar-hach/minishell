@@ -17,19 +17,19 @@ int	last_char(char *s, int queot, int double_qu)
 		s--;
 	if (queot % 2)
 	{
-		*error = 258;
+		error = 258;
 		ft_printf("minshell: error unexpected token %c\n", 39);
 		return (1);
 	}
 	if (double_qu % 2)
 	{
-		*error = 258;
+		error = 258;
 		ft_printf("minshell: error unexpected token %c\n", 34);
 		return (1);
 	}
 	if (*s == '>' || *s == '|' || *s == '<')
 	{
-		*error = 258;
+		error = 258;
 		ft_printf("minshell: error unexpected token `\\n \n'");
 		return (1);
 	}

@@ -170,7 +170,7 @@ char	**expr_split(char *input, char **sym, int part)
 	s = rearrange_input(input, sym, -1);//  printf("s=%s.\n",s);
 	if (detect_sym_error(s, sym, &part, 0))
 	{
-		*error = 2;
+		error = 2;
 		return (NULL);
 	}
 	array = (char **)ft_calloc(part + 2, sizeof(char *));

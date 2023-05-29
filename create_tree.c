@@ -23,24 +23,25 @@ t_tree	*new_branch(int data)
 	return (tree);
 }
 
-void	treeprint(t_tree *root, int level, t_token *nodes)
+/*void	freeprint(t_tree *root, int level, t_token *nodes)
 {
 	int	i;
 
-	i = 7;
+	i = 8;
 	if (root == NULL)
 		return ;
 	level += 8;
 	treeprint(root->right_son, level, nodes);
-	ft_printf("\n");
-	while (++i < level)
+	//ft_printf("\n");
+	while (i < level)
 	{
-		ft_printf(" ");
+		//ft_printf(" ");
+		i++;
 	}
-	ft_printf("[%d] %d=%s-->left=%p-->right=%p\n",root->token_index, nodes[root->token_index].type, nodes[root->token_index].arg, root->left_son, root->right_son);
+	//ft_printf("[%d] %d=%s-->left=%p-->right=%p\n",root->token_index, nodes[root->token_index].type, nodes[root->token_index].arg, root->left_son, root->right_son);
+	free(root);
 	treeprint(root->left_son, level, nodes);
-	//free(root);
-}
+}*/
 
 t_tree	*create_tree(t_token *nodes, int len)
 {
@@ -53,7 +54,6 @@ t_tree	*create_tree(t_token *nodes, int len)
 	i = -1;
 	list = (int *)ft_calloc(len + 1, sizeof(int));
 	list[len] = -1;
-	list[len + 1] = -1;
 	while (list[++i] > -1)
 		list[i] = nodes[i].type;
 	i = 0;

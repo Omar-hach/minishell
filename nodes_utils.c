@@ -16,7 +16,7 @@ t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex)
 	int	i;
 
 	i = -1;
-	nodes = (t_token *)ft_calloc(len, sizeof(t_token));
+	nodes = (t_token *)ft_calloc(len + 1, sizeof(t_token));
 	if (!nodes)
 		return (free_struct_array(NULL, lex, nodes, len));
 	while (++i < len)

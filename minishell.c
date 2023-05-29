@@ -146,7 +146,7 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	arg = set_cmd(word_copy, token, cmd, lex);
 	if (*token < 1)
 	{
-		*error = 127;
+		error = 127;
 		ft_printf("minshell: %s:command not found\n", cmd);
 		free(cmd);
 		return (NULL);
@@ -172,15 +172,15 @@ t_token	*split_input(char *input, int *len)
 	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
 	if (!words)
 	{
-		*error = 2;
+		error = 2;
 		return (free_struct_array(NULL, &lex, NULL, -1));
 	}
-	*len = nodes_count(words);
+	*len = nodes_count(words) + 1;
 	nodes = NULL;
 	nodes = malloc_nodes(nodes, *len, &lex);
 	if (!fill_nodes(words, &lex, nodes, len))
 	{
-		*error = 127;
+		error = 127;
 		return (free_struct_array(NULL, &lex, nodes, *len));
 	}
 	/*
@@ -211,6 +211,7 @@ int	ft_minishell()
 {
 	char	*input;
 	int		ex;
+	int fd = open("text.txt", O_RDONLY);
 	t_token	*nodes;
 	t_tree	*tree;
 
@@ -218,54 +219,17 @@ int	ft_minishell()
 	tree = NULL;
 	nodes = NULL;
 	shvlvl();
-	*error = 0;
+	error = 0;
 	while (ex)
 	{
-		input = readline(">>> MiniShell $> ");
+		input = get_next_line(fd);
 		if (!input)
 			break ;
+		ft_printf(">>> MiniShell $> %s", input);
 		if (input[count_space(input)])
 		{
-			add_history(input);
+			input[ft_strlen(input) - 1] = '\0';
 			nodes = split_input(input, &ex);
-			if (nodes)
-			{
-				tree = create_tree(nodes, ex);
-				// treeprint(tree, 0, nodes);
-				// ft_printf("\n------EXEC-----\n");
-				exec_node(tree, nodes);
-				free_struct_array(NULL, NULL, nodes, ex);
-				ex = 1;
-			}
-		}
-		// free(input);
-		// system("leaks minishell");
-	}
-	return(*error);
-}
-
-int	main(int ac, char **av)
-{
-	char	*in;
-	int		out;
-	t_token	*nodes;
-	t_tree	*tree;
-	int		ex;
-
-	ex = 1;
-	tree = NULL;
-	nodes = NULL;
-	out = 0;
-	error = (int *) malloc(1 * sizeof(int));
-	if (ac >= 3 && !ft_strncmp(av[1], "-c", 3))
-	{
-		in = av[2];
-		if (*(in + count_space(in)))
-		{
-			shvlvl();
-			nodes = split_input(in, &ex);
-			if (!nodes)
-				return (*error);
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
@@ -276,7 +240,43 @@ int	main(int ac, char **av)
 				ex = 1;
 			}
 		}
-		return (*error);
+		// free(input);
+		// system("leaks minishell");
+	}
+	return(error);
+}
+
+int	main(int ac, char **av)
+{
+	char	*in;
+	t_token	*nodes;
+	t_tree	*tree;
+	int		ex;
+
+	ex = 1;
+	tree = NULL;
+	nodes = NULL;
+	error = 0;
+	if (ac >= 3 && !ft_strncmp(av[1], "-c", 3))
+	{
+		in = av[2];
+		if (*(in + count_space(in)))
+		{
+			shvlvl();
+			nodes = split_input(in, &ex);
+			if (!nodes)
+				return (error);
+			if (nodes)
+			{
+				tree = create_tree(nodes, ex);
+				//treeprint(tree, 0, nodes);
+				// ft_printf("\n------EXEC-----\n");
+				exec_node(tree, nodes);
+				free_struct_array(NULL, NULL, nodes, ex);
+				ex = 1;
+			}
+		}
+		return (error);
 	}
 	else
 	{

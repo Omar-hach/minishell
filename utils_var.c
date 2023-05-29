@@ -55,8 +55,8 @@ int	replace_var(char *name, char *value)
 	x = ft_findvar(name);
 	if (x >= 0)
 	{
-		size = ft_strlen(name) + ft_strlen(value) + 2;
-		val = (char *) malloc(size * sizeof(char));
+		size = ft_strlen(name) + ft_strlen(value);
+		val = (char *) ft_calloc(size + 1, sizeof(char));
 		y = -1;
 		while (++y < ft_strlen(name))
 			val[y] = name[y];
@@ -64,7 +64,6 @@ int	replace_var(char *name, char *value)
 		x = 0;
 		while (++y < size)
 			val[y] = value[x++];
-		val[y] = '\0';
 		x = ft_findvar(name);
 		environ[x] = val;
 		return (0);
@@ -95,6 +94,8 @@ void	ft_putenv(char *var)
 		new_env[x++] = var_;
 		new_env[x] = NULL;
 		environ = new_env;
+		free(environ);
+		//free(var_);
 	}
 	else
 		environ[x] = ft_strdup(var);

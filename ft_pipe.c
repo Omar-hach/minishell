@@ -35,14 +35,13 @@ int	pipe_out(int *bibe, t_tree *tree, t_token *tokens)
 	pid = fork1();
 	if (pid == 0)
 	{
+		out = exec_redir(tree, tokens, 0, 1);
 		// if (tokens[tree->token_index].type > 21)
 		close(bibe[1]);
-			out = exec_redir(tree, tokens, 0, 1);
 		if (ft_dup(bibe[0], STDIN_FILENO) < 0)
 			exit (1);
-
-			out = exec_redir(tree, tokens, 1, 1);
 		close(bibe[0]);
+		out = exec_redir(tree, tokens, 1, 1);
 		// out = exec_node(tree, tokens);
 		// printf(" pout = %d \n", out);
 		exit(out);
@@ -61,11 +60,10 @@ int	pipe_in(int *bibe, t_tree *tree, t_token *tokens)
 	{
 		close(bibe[0]);
 		// if (tokens[tree->token_index].type > 21)
-			out = exec_redir(tree, tokens, 0, 1);
+		out = exec_redir(tree, tokens, 0, 1);
 		if (ft_dup(bibe[1], STDOUT_FILENO) < 0)
 			exit (1);
-
-			out = exec_redir(tree, tokens, 1, 0);
+		out = exec_redir(tree, tokens, 1, 0);
 		// out = exec_node(tree, tokens);
 		close(bibe[1]);
 		// printf(" pout = %d \n", out);

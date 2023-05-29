@@ -40,7 +40,9 @@ int	here_doc(char *s, int qt)
 		return (0);
 	while (1)
 	{
-		input = readline("> ");
+		ft_printf(">>> MiniShell $> ");
+		input = get_next_line(0);
+		input[ft_strlen(input) - 1] = '\0';
 		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
 			break ;
 		if (*(input + count_space(input)))
