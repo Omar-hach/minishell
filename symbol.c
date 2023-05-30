@@ -30,33 +30,6 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 	return (0);
 }
 
-int	here_doc(char *s, int qt)
-{
-	int		*bibe;
-	char	*input;
-
-	bibe = (int *) malloc(2 * sizeof(int));
-	if (pipe(bibe) < -1)
-		return (0);
-	while (1)
-	{
-		input = readline("> ");
-		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-			break ;
-		if (*(input + count_space(input)))
-		{
-			if (qt == 0)
-				input = replace_dollars(input);
-	        write(bibe[1], input, ft_strlen(input));
-	        write(bibe[1], "\n", 1);
-		}
-		free(input);
-	}
-	close(bibe[1]);
-	// printf("<< end\n");
-	return (bibe[0]);
-}
-
 int	ft_redirect_in_append(t_tree *tree, t_token *tokens)
 {
 	int		fd;
@@ -64,9 +37,7 @@ int	ft_redirect_in_append(t_tree *tree, t_token *tokens)
 
 	// printf("<<\n");
 	x = tree->token_index;
-	fd = here_doc(tokens[x].args[0], tokens[x].qt);
-	// tokens[x].redir[1] = fd;
-	// fd = open(tokens[x].args[0], O_RDONLY | O_APPEND, 0644);
+	fd = open(tokens[x].args[0], O_RDONLY , 0644);
 	if (fd < 0)
 	{
 		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);

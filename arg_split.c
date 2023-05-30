@@ -33,11 +33,11 @@ int	skip_quote(char *s, int y, int z)
 	int		skip;
 	int		qt;
 	int		dualqt;
-	int		QQQ;
+	int		qted;
 
 	qt = 0;
 	dualqt = 0;
-	QQQ = 0;
+	qted = 0;
 	while (s[y])
 	{
 		skip = 0;
@@ -45,13 +45,13 @@ int	skip_quote(char *s, int y, int z)
 		{	
 			qt++;
 			skip = 1;
-			QQQ = 1;
+			qted = 1;
 		}
 		if ((s[y] == '\"') && !(qt % 2))
 		{
 			dualqt++;
 			skip = 1;
-			QQQ = 1;
+			qted = 1;
 		}
 		if ((s[y] != '\"' && s[y] != '\'')
 			|| ((s[y] == '\"') && !(dualqt % 2) && skip == 0)
@@ -63,7 +63,7 @@ int	skip_quote(char *s, int y, int z)
 		y++;
 	}
 	s[z] = '\0';
-	return (QQQ);
+	return (qted);
 }
 
 void	ft_skip(t_token *token, int i)

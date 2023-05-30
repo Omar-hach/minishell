@@ -15,9 +15,9 @@
 int	exec_prog(t_token token)
 {
 	int		out;
-	char	**prog_envp = NULL;
-	//char	*prog_envp[] = { "some", "environment", NULL };
+	char	**prog_envp;
 
+	prog_envp = NULL;
 	out = check_file(token.args[0]);
 	if (out)
 		return (out);
@@ -35,16 +35,44 @@ int	exec_token(t_tree *tree, t_token *tokens)
 
 	out = 0;
 	x = tree->token_index;
-	tokens[x].args = arg_split(tokens[x].arg, " 	");
-	if (tokens[x].args)
-		ft_skip(tokens, x);
-	// printf("node %d : type = %d , arg = %s out = %d\n",x,tokens[x].type, tokens[x].arg , out);
+	// printf("------ node %d : type = %d , arg = %s out = %d\n",x,tokens[x].type, tokens[x].arg , out);
 	if (tokens[x].type == 1)
 		out = exec_prog(tokens[x]);
 	else if (tokens[x].type / 10 == 1)
 		out = exec_cmd(tokens[x]);
 	else if (tokens[x].type / 10 == 2)
-		out = exec_symbol(tree ,tokens);
+		out = exec_symbol(tree, tokens);
+	return (out);
+}
+
+int	make_heredocs(t_tree *tree, t_token *tokens)
+{
+	int		out;
+	int		x;
+
+	out = 0;
+	x = tree->token_index;
+
+	if (tokens[tree->token_index].type == 22)
+		out = here_file(tokens[x].args[0], tokens[x].qt);
+	if (tree->right_son)
+		out = make_heredocs(tree->right_son, tokens);
+	if (tree->left_son)
+		out = make_heredocs(tree->left_son, tokens);
+	return (out);
+}
+
+int	remove_heredocs(t_tree *tree, t_token *tokens)
+{
+	int		out;
+
+	out = 0;
+	if (tokens[tree->token_index].type == 22)
+		unlink(tokens[tree->token_index].args[0]);
+	if (tree->right_son)
+		out = remove_heredocs(tree->right_son, tokens);
+	if (tree->left_son)
+		out = remove_heredocs(tree->left_son, tokens);
 	return (out);
 }
 
@@ -52,35 +80,59 @@ int	exec_redir(t_tree *tree, t_token *tokens, int xcmd, int xredir)
 {
 	t_tree	*cmd;
 	t_tree	*redir;
-	int		out = 0;
+	int		out;
 
-	// if (fork1() == 0)
-	// {
-		cmd = NULL;
-		redir = tree;
-		while (redir->right_son && tokens[redir->token_index].type > 21)
-			redir = redir->right_son;
-		if (tokens[redir->token_index].type <= 21)
-		{
-			cmd = redir;
-			if (redir->father)
-				redir = redir->father;
-		}
-		while (redir && tokens[redir->token_index].type > 21)
-		{
-			// printf("redir = %d > %s\n", redir->token_index, tokens[redir->token_index].arg);
-			if (xredir == 1)
-				out = exec_token(redir, tokens);
-			if (out)
-				exit(out);
+	out = 0;
+	cmd = NULL;
+	redir = tree;
+	// make_heredocs(tree, tokens);
+	while (redir->right_son && tokens[redir->token_index].type > 21)
+		redir = redir->right_son;
+	if (tokens[redir->token_index].type <= 21)
+	{
+		cmd = redir;
+		if (redir->father)
 			redir = redir->father;
-		}
-		if (cmd && xcmd == 1)
-			out = exec_token(cmd, tokens);
-		// exit(out);
-	// }
-	// wait(&out);
+	}
+	while (redir && tokens[redir->token_index].type > 21)
+	{
+		// printf("redir = %d > %s\n", redir->token_index, tokens[redir->token_index].arg);
+		if (xredir == 1)
+			out = exec_token(redir, tokens);
+		if (out)
+			exit(out);
+		redir = redir->father;
+	}
+	if (cmd && xcmd == 1)
+		out = exec_token(cmd, tokens);
 	return (out);
+}
+
+int	here_file(char *s, int qt)
+{
+	int		tmp;
+	char	*input;
+
+	tmp = open(s, O_WRONLY | O_CREAT, 0644);
+	if (tmp < 0)
+		return (-1);
+	while (1)
+	{
+		input = readline("> ");
+		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
+			break ;
+		if (*(input + count_space(input)))
+		{
+			if (qt == 0)
+				input = replace_dollars(input);
+	        write(tmp, input, ft_strlen(input));
+	        write(tmp, "\n", 1);
+		}
+		free(input);
+	}
+	close(tmp);
+	// printf("<< end\n");
+	return (0);
 }
 
 int	exec_node(t_tree *tree, t_token *tokens)
@@ -102,14 +154,22 @@ int	exec_node(t_tree *tree, t_token *tokens)
 	}
 	else
 		out = exec_token(tree, tokens);
-	*error = out;
+	// ft_printf("node %d finished = %d error = %d\n",x,out, *error);
+	return (out);
+}
+
+int	exec_tree(t_tree *tree, t_token *tokens)
+{
+	make_heredocs(tree, tokens);
+	*error = exec_node(tree, tokens);
+	remove_heredocs(tree, tokens);
 	// if (tokens[x].arg)
 	// 	free(tokens[x].arg);
-	if (tokens[x].args)
-		free_aray(tokens[x].args);
-	// ft_printf("node %d finished = %d error = %d\n",x,out, *error);
+	// if (tokens[x].args)
+	// 	free_aray(tokens[x].args);
 	return (*error);
 }
+//
 // ls | grep a < file1 > file2
 //
 //           4   file2    
@@ -122,7 +182,6 @@ int	exec_node(t_tree *tree, t_token *tokens)
 //                  \
 //                   \
 //                    2  grep
-//                 
 //   
 
 //		
@@ -139,7 +198,6 @@ int	exec_node(t_tree *tree, t_token *tokens)
 //                \
 //                 1 
 //
-//
 
 //
 // /bin/ls | /usr/bin/grep c | /usr/bin/grep o
@@ -152,8 +210,6 @@ int	exec_node(t_tree *tree, t_token *tokens)
 //               /   \
 //              3     4   ls
 //
-
-
 
 // int main() {
 // 	t_tree	*tree;
@@ -212,7 +268,6 @@ int	exec_node(t_tree *tree, t_token *tokens)
 // 	// tree->left_son->right_son->right_son->father = tree->left_son->left_son;
 // 	// tree->left_son->right_son->right_son->right_son = 0;
 // 	// tree->left_son->right_son->right_son->left_son = 0;
-
 
 // 	// tree->left_son->left_son->left_son = (t_tree *) malloc(sizeof(t_tree));
 // 	// tree->left_son->left_son->left_son->token_index = 4;

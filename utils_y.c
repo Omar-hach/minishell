@@ -72,6 +72,34 @@ int	ft_env_declare(void)
 	return (0);
 }
 
+int	here_doc(char *s, int qt)
+{
+	int		*bibe;
+	char	*input;
+
+	bibe = (int *) malloc(2 * sizeof(int));
+	if (pipe(bibe) < -1)
+		return (0);
+	while (1)
+	{
+		// printf("read<<\n");
+		input = readline("> ");
+		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
+			break ;
+		if (*(input + count_space(input)))
+		{
+			if (qt == 0)
+				input = replace_dollars(input);
+	        write(bibe[1], input, ft_strlen(input));
+	        write(bibe[1], "\n", 1);
+		}
+		free(input);
+	}
+	close(bibe[1]);
+	// printf("<< end\n");
+	return (bibe[0]);
+}
+
 // int	here_doc(char *s, int qt)
 // {
 // 	int		*bibe;

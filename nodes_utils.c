@@ -23,8 +23,8 @@ t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex)
 	{
 		nodes[i].type = 0;
 		nodes[i].arg = NULL;
-		nodes[i].in = 0;
-		nodes[i].out = 1;
+		// nodes[i].in = 0;
+		// nodes[i].out = 1;
 		// nodes[i].redir = (int *) malloc(2 * sizeof(int));
 		// if (pipe(nodes[i].redir) < 0)
 		// {
@@ -64,6 +64,9 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 	{
 		//printf("*word[%p]=%s=%p, i=%d\n",words, words[i], words[i], i);
 		nodes[j].arg = cmd_split(words[i], &nodes[j].type, *lex);
+		nodes[j].args = arg_split(nodes[j].arg, " 	");
+		if (nodes[j].args)
+			ft_skip(nodes, j);
 		//printf("*word[%p]=%s=%p, i=%d\n",words, words[i], words[i], i);
 		if (!nodes[i].arg && nodes[j].type == 0)
 			return (NULL);

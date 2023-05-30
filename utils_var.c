@@ -89,9 +89,9 @@ void	ft_putenv(char *var)
 		new_env = (char **) malloc((x + 2) * sizeof(char *));
 		x = -1;
 		while (environ[++x])
-			new_env[x] = ft_strdup(environ[x]);
-		var_ = ft_strdup(environ[--x]);
-		new_env[x++] = ft_strdup(var);
+			new_env[x] = environ[x];
+		var_ = environ[--x];
+		new_env[x++] = var;
 		new_env[x++] = var_;
 		new_env[x] = NULL;
 		environ = new_env;

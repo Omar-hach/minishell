@@ -27,23 +27,40 @@
 // 	return (0);
 // }
 
+int	is_heredoc(t_tree *tree, t_token *tokens)
+{
+	t_tree	*redir;
+	int		out;
+
+	out = 0;
+	redir = tree;
+	while (redir->right_son && tokens[redir->token_index].type > 21)
+	{
+		if (tokens[redir->token_index].type == 22)
+			out = 1;
+		redir = redir->right_son;
+	}
+	return (out);
+}
+
 int	pipe_out(int *bibe, t_tree *tree, t_token *tokens)
 {
-	int		out;
+	int		out = 0;
 	int		pid;
 
 	pid = fork1();
 	if (pid == 0)
 	{
-		// if (tokens[tree->token_index].type > 21)
 		close(bibe[1]);
-			out = exec_redir(tree, tokens, 0, 1);
-		if (ft_dup(bibe[0], STDIN_FILENO) < 0)
-			exit (1);
-
-			out = exec_redir(tree, tokens, 1, 1);
+		// out = exec_redir(tree, tokens, 0, 1);
+		// if (is_heredoc(tree, tokens) == 0)
+		// {
+			if (ft_dup(bibe[0], STDIN_FILENO) < 0)
+				exit (1);
+		// }
+		// out = exec_redir(tree, tokens, 1, 1);
+		out = exec_node(tree, tokens);
 		close(bibe[0]);
-		// out = exec_node(tree, tokens);
 		// printf(" pout = %d \n", out);
 		exit(out);
 	}
@@ -60,13 +77,12 @@ int	pipe_in(int *bibe, t_tree *tree, t_token *tokens)
 	if (pid == 0)
 	{
 		close(bibe[0]);
-		// if (tokens[tree->token_index].type > 21)
-			out = exec_redir(tree, tokens, 0, 1);
-		if (ft_dup(bibe[1], STDOUT_FILENO) < 0)
-			exit (1);
-
-			out = exec_redir(tree, tokens, 1, 0);
-		// out = exec_node(tree, tokens);
+		// if (is_heredoc(tree, tokens) == 0)
+		// out = exec_redir(tree, tokens, 0, 1);
+			if (ft_dup(bibe[1], STDOUT_FILENO) < 0)
+				exit (1);
+		// out = exec_redir(tree, tokens, 1, 0);
+		out = exec_node(tree, tokens);
 		close(bibe[1]);
 		// printf(" pout = %d \n", out);
 		exit(out);
@@ -123,10 +139,10 @@ int	ft_pipe(t_tree *tree, t_token *tokens)
 	// if (pid[1] == 0)
 	// 	ft_piped_end(bibe, 0, tree->left_son, tokens);
 	pid[2] = pipe_in(bibe, tree->right_son, tokens);
-	waitpid(pid[2], &out2, 0);
 	pid[1] = pipe_out(bibe, tree->left_son, tokens);
 	close(bibe[1]);
 	close(bibe[0]);
+	waitpid(pid[2], &out2, 0);
 	waitpid(pid[1], &out, 0);
 	// printf("\n out = %d | out2 = %d \n", out, out2);
 	free(bibe);

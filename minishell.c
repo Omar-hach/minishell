@@ -76,7 +76,7 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 	char	*arg;
 	char	*bin;
 
-	if(ft_strncmp(cmd, "..", 2))//{
+	if (ft_strncmp(cmd, "..", 2))//{
 		bin = find_path(cmd, -1, -1, -1);
 	//ft_printf(" ,cmd=%s , %p. word=%s , %p\n", cmd, cmd, word , word);}
 	if (ft_find(cmd, lex.l_cmd)
@@ -201,7 +201,7 @@ void shvlvl()
 	shlvl = getenv("SHLVL");
 	lvlv = ft_atoi(shlvl);
 	lvlv++;
-	shlvl = ft_itoa(lvlv); 
+	shlvl = ft_itoa(lvlv);
 	replace_var("SHLVL", shlvl);
 	ft_putenv("OLDPWD=");
 	free(shlvl);
@@ -233,7 +233,7 @@ int	ft_minishell()
 				tree = create_tree(nodes, ex);
 				// treeprint(tree, 0, nodes);
 				// ft_printf("\n------EXEC-----\n");
-				exec_node(tree, nodes);
+				exec_tree(tree, nodes);
 				free_struct_array(NULL, NULL, nodes, ex);
 				ex = 1;
 			}

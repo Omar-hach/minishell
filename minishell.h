@@ -42,8 +42,8 @@ typedef struct s_token
 	int		type;
 	char	*arg;
 	char	**args;
-	int		in;
-	int		out;
+	// int		in;
+	// int		out;
 	int		qt;
 }t_token;
 
@@ -79,6 +79,8 @@ char		*find_path(char *file, int x, int y, int z);
 char		**arg_split(char *s, char *c);
 void		ft_skip(t_token *tokens, int i);
 int		check_file(char *file);
+int		here_file(char *s, int qt);
+int		make_heredocs(t_tree *tree, t_token *tokens);
 
 int		ft_isvarname(char *var);
 int 		ft_isvar(char *var);
@@ -99,8 +101,10 @@ int		ft_echo(int ac, char **av);
 int		ft_pwd();
 int		ft_pipe(t_tree *tree, t_token *tokens);
 int		here_doc(char *s, int qt);
+int		here_file(char *s, int qt);
 int		ft_env_declare(void);
 
+int		exec_tree(t_tree *tree, t_token *tokens);
 int		exec_token(t_tree *tree, t_token *tokens);
 int		exec_redir(t_tree *tree, t_token *tokens, int xcmd, int xredir);
 int		exec_cmd(t_token token);
