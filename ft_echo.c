@@ -28,7 +28,7 @@ char	get_single_flag(char *s)
 			else
 			{
 				f = '0';
-				break;
+				break ;
 			}
 		}
 	}
@@ -55,9 +55,9 @@ char	get_flag(char **s, int *x)
 	return (flag);
 }
 
+		// ft_printf("%s = %c\n",av[x] , flag);
 int	ft_echo(int ac, char **av)
 {
-	// char	*txt;
 	char	flag;
 	int		x;
 	int		start;
@@ -67,18 +67,15 @@ int	ft_echo(int ac, char **av)
 		x = -1;
 		flag = get_flag(av, &x);
 		start = 1;
-		// ft_printf("%s = %c\n",av[x] , flag);
 		while (++x < ac)
 		{
 			if (start == 0)
 				printf(" ");
 			start = 0;
-			// av[x] = extra_cd(av[x]); 
 			if (flag == 'n')
-				printf("%s",av[x]);
+				printf("%s", av[x]);
 			else if (flag == '0')
-				printf("%s",av[x]);
-			// free(txt);
+				printf("%s", av[x]);
 		}
 	}
 	if (ac == 0 || flag == '0')

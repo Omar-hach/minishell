@@ -12,22 +12,20 @@
 
 #include"minishell.h"
 
-// find path of executable in $PATH (/bin : /usr/bin)
-char	*find_path(char *file, int x, int y, int z)
+char	*get_path(char **all_paths, char *file, int x)
 {
 	char	*path;
-	char	**all_paths;
+	int		y;
+	int		z;
 
-	all_paths = ft_split(getenv("PATH"), ':');
-	if (!all_paths)
-		return (NULL);
 	path = NULL;
-	//ft_printf("ok \n");
 	while (all_paths[++x] && !path)
 	{
 		y = -1;
 		z = -1;
 		path = (char *)malloc(ft_strlen(all_paths[x]) + ft_strlen(file) + 2);
+		if (!path)
+			return (NULL);
 		while (all_paths[x][++y])
 			path[y] = all_paths[x][y];
 		path[y++] = '/';
@@ -39,8 +37,50 @@ char	*find_path(char *file, int x, int y, int z)
 		free(path);
 		path = NULL;
 	}
+	return (path);
+}
+
+// find path of executable in $PATH (/bin : /usr/bin)
+char	*find_path(char *file)
+{
+	char	*path;
+	char	**all_paths;
+
+	all_paths = ft_split(getenv("PATH"), ':');
+	if (!all_paths)
+		return (NULL);
+	path = get_path(all_paths, file, -1);
 	free_aray(all_paths);
 	return (path);
+}
+
+int	check_file(char *file)
+{
+	int		len;
+	DIR		*dir;
+
+	len = ft_strlen(file) - 1;
+	if (file[len] == '.')
+	{
+		ft_printf(" .: filename argument required\n");
+		return (2);
+	}
+	else
+	{
+		dir = opendir(file);
+		if (dir)
+		{
+			closedir(dir);
+			ft_printf(" %s: is a directory\n", file);
+			return (126);
+		}
+	}
+	if (access(file, X_OK) != 0)
+	{
+		ft_printf(" %s: No such file or directory\n", file);
+		return (127);
+	}
+	return (0);
 }
 
 int	ft_env_declare(void)
@@ -71,60 +111,6 @@ int	ft_env_declare(void)
 	}
 	return (0);
 }
-
-int	here_doc(char *s, int qt)
-{
-	int		*bibe;
-	char	*input;
-
-	bibe = (int *) malloc(2 * sizeof(int));
-	if (pipe(bibe) < -1)
-		return (0);
-	while (1)
-	{
-		// printf("read<<\n");
-		input = readline("> ");
-		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-			break ;
-		if (*(input + count_space(input)))
-		{
-			if (qt == 0)
-				input = replace_dollars(input);
-	        write(bibe[1], input, ft_strlen(input));
-	        write(bibe[1], "\n", 1);
-		}
-		free(input);
-	}
-	close(bibe[1]);
-	// printf("<< end\n");
-	return (bibe[0]);
-}
-
-// int	here_doc(char *s, int qt)
-// {
-// 	int		*bibe;
-// 	char	*input;
-
-// 	bibe = (int *) malloc(2 * sizeof(int));
-// 	if (pipe(bibe) < -1)
-// 		return (0);
-// 	while (1)
-// 	{
-// 		input = readline("> ");
-// 		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-// 			break ;
-// 		if (*(input + count_space(input)))
-// 		{
-// 			if (qt == 0)
-// 				input = replace_dollars(input);
-// 	        write(bibe[1], input, ft_strlen(input));
-// 	        write(bibe[1], "\n", 1);
-// 		}
-// 		free(input);
-// 	}
-// 	close(bibe[1]);
-// 	return (bibe[0]);
-// }
 
 int	fork1(void)
 {

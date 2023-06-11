@@ -24,10 +24,10 @@ int	exec_prog(t_token token)
 	if (fork1() == 0)
 		out = execve(token.args[0], token.args, prog_envp);
 	wait(&out);
-	// printf("ooo %d %d\n", out, *error);
 	return (out >> 8);
 }
 
+// printf("node %d : type = %d , arg = %s out = %d\n",x, tokens[x].type, tokens[x].arg , out);
 int	exec_token(t_tree *tree, t_token *tokens)
 {
 	int	x;
@@ -35,7 +35,6 @@ int	exec_token(t_tree *tree, t_token *tokens)
 
 	out = 0;
 	x = tree->token_index;
-	// printf("------ node %d : type = %d , arg = %s out = %d\n",x,tokens[x].type, tokens[x].arg , out);
 	if (tokens[x].type == 1)
 		out = exec_prog(tokens[x]);
 	else if (tokens[x].type / 10 == 1)
@@ -45,38 +44,8 @@ int	exec_token(t_tree *tree, t_token *tokens)
 	return (out);
 }
 
-int	make_heredocs(t_tree *tree, t_token *tokens)
-{
-	int		out;
-	int		x;
-
-	out = 0;
-	x = tree->token_index;
-
-	if (tokens[tree->token_index].type == 22)
-		out = here_file(tokens[x].args[0], tokens[x].qt);
-	if (tree->right_son)
-		out = make_heredocs(tree->right_son, tokens);
-	if (tree->left_son)
-		out = make_heredocs(tree->left_son, tokens);
-	return (out);
-}
-
-int	remove_heredocs(t_tree *tree, t_token *tokens)
-{
-	int		out;
-
-	out = 0;
-	if (tokens[tree->token_index].type == 22)
-		unlink(tokens[tree->token_index].args[0]);
-	if (tree->right_son)
-		out = remove_heredocs(tree->right_son, tokens);
-	if (tree->left_son)
-		out = remove_heredocs(tree->left_son, tokens);
-	return (out);
-}
-
-int	exec_redir(t_tree *tree, t_token *tokens, int xcmd, int xredir)
+// printf("redir = %d > %s\n",redir->token_index, tokens[redir->token_index].arg);
+int	exec_redir(t_tree *tree, t_token *tokens)
 {
 	t_tree	*cmd;
 	t_tree	*redir;
@@ -85,7 +54,6 @@ int	exec_redir(t_tree *tree, t_token *tokens, int xcmd, int xredir)
 	out = 0;
 	cmd = NULL;
 	redir = tree;
-	// make_heredocs(tree, tokens);
 	while (redir->right_son && tokens[redir->token_index].type > 21)
 		redir = redir->right_son;
 	if (tokens[redir->token_index].type <= 21)
@@ -96,43 +64,14 @@ int	exec_redir(t_tree *tree, t_token *tokens, int xcmd, int xredir)
 	}
 	while (redir && tokens[redir->token_index].type > 21)
 	{
-		// printf("redir = %d > %s\n", redir->token_index, tokens[redir->token_index].arg);
-		if (xredir == 1)
-			out = exec_token(redir, tokens);
+		out = exec_token(redir, tokens);
 		if (out)
 			exit(out);
 		redir = redir->father;
 	}
-	if (cmd && xcmd == 1)
+	if (cmd)
 		out = exec_token(cmd, tokens);
 	return (out);
-}
-
-int	here_file(char *s, int qt)
-{
-	int		tmp;
-	char	*input;
-
-	tmp = open(s, O_WRONLY | O_CREAT, 0644);
-	if (tmp < 0)
-		return (-1);
-	while (1)
-	{
-		input = readline("> ");
-		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-			break ;
-		if (*(input + count_space(input)))
-		{
-			if (qt == 0)
-				input = replace_dollars(input);
-	        write(tmp, input, ft_strlen(input));
-	        write(tmp, "\n", 1);
-		}
-		free(input);
-	}
-	close(tmp);
-	// printf("<< end\n");
-	return (0);
 }
 
 int	exec_node(t_tree *tree, t_token *tokens)
@@ -146,7 +85,7 @@ int	exec_node(t_tree *tree, t_token *tokens)
 	{
 		if (fork1() == 0)
 		{
-			out = exec_redir(tree, tokens, 1, 1);
+			out = exec_redir(tree, tokens);
 			exit(out);
 		}
 		wait(&out);
@@ -154,21 +93,18 @@ int	exec_node(t_tree *tree, t_token *tokens)
 	}
 	else
 		out = exec_token(tree, tokens);
-	// ft_printf("node %d finished = %d error = %d\n",x,out, *error);
 	return (out);
 }
+// ft_printf("node %d finished = %d error = %d\n",x,out, *error);
 
 int	exec_tree(t_tree *tree, t_token *tokens)
 {
 	make_heredocs(tree, tokens);
-	*error = exec_node(tree, tokens);
+	*g_error = exec_node(tree, tokens);
 	remove_heredocs(tree, tokens);
-	// if (tokens[x].arg)
-	// 	free(tokens[x].arg);
-	// if (tokens[x].args)
-	// 	free_aray(tokens[x].args);
-	return (*error);
+	return (*g_error);
 }
+
 //
 // ls | grep a < file1 > file2
 //
@@ -218,14 +154,14 @@ int	exec_tree(t_tree *tree, t_token *tokens)
 // 	tree = (t_tree *) malloc(sizeof(t_tree));
 // 	tree->token_index = 0;
 // 	tree->father = NULL;
-// 	// tree->right_son = NULL;
-// 	// tree->left_son = NULL;
+// 	tree->right_son = NULL;
+// 	tree->left_son = NULL;
 
 // 	tree->right_son = (t_tree *) malloc(sizeof(t_tree));
 // 	tree->right_son->token_index = 1;
 // 	tree->right_son->father = tree;
-// 	// tree->right_son->right_son = 0;
-// 	// tree->right_son->left_son = 0;
+// 	tree->right_son->right_son = 0;
+// 	tree->right_son->left_son = 0;
 
 // 	tree->left_son = (t_tree *) malloc(sizeof(t_tree));
 // 	tree->left_son->token_index = 2;
@@ -245,41 +181,17 @@ int	exec_tree(t_tree *tree, t_token *tokens)
 // 	tree->right_son->left_son->right_son = 0;
 // 	tree->right_son->left_son->left_son = 0;
 
-// 	// tree->right_son->right_son->left_son = (t_tree *) malloc(sizeof(t_tree));
-// 	// tree->right_son->right_son->left_son->token_index = 3;
-// 	// tree->right_son->right_son->left_son->father = tree->left_son->left_son;
-// 	// tree->right_son->right_son->left_son->right_son = 0;
-// 	// tree->right_son->right_son->left_son->left_son = 0;
-
-// 	// tree->right_son->left_son->left_son = (t_tree *) malloc(sizeof(t_tree));
-// 	// tree->right_son->left_son->left_son->token_index = 4;
-// 	// tree->right_son->left_son->left_son->father = tree->right_son->left_son->left_son;
-// 	// tree->right_son->left_son->left_son->right_son = 0;
-// 	// tree->right_son->left_son->left_son->left_son = 0;
-
-// 	// tree->left_son->right_son->left_son = (t_tree *) malloc(sizeof(t_tree));
-// 	// tree->left_son->right_son->left_son->token_index = 5;
-// 	// tree->left_son->right_son->left_son->father = tree->left_son->left_son;
-// 	// tree->left_son->right_son->left_son->right_son = 0;
-// 	// tree->left_son->right_son->left_son->left_son = 0;
+// 	// tree->right_son->right_son->right_son = (t_tree *) malloc(sizeof(t_tree));
+// 	// tree->right_son->right_son->right_son->token_index = 3;
+// 	// tree->right_son->right_son->right_son->father = tree->left_son->left_son;
+// 	// tree->right_son->right_son->right_son->right_son = 0;
+// 	// tree->right_son->right_son->right_son->left_son = 0;
 
 // 	// tree->left_son->right_son->right_son = (t_tree *) malloc(sizeof(t_tree));
 // 	// tree->left_son->right_son->right_son->token_index = 3;
 // 	// tree->left_son->right_son->right_son->father = tree->left_son->left_son;
 // 	// tree->left_son->right_son->right_son->right_son = 0;
 // 	// tree->left_son->right_son->right_son->left_son = 0;
-
-// 	// tree->left_son->left_son->left_son = (t_tree *) malloc(sizeof(t_tree));
-// 	// tree->left_son->left_son->left_son->token_index = 4;
-// 	// tree->left_son->left_son->left_son->father = tree->left_son->left_son;
-// 	// tree->left_son->left_son->left_son->right_son = 0;
-// 	// tree->left_son->left_son->left_son->left_son = 0;
-
-// 	// tree->left_son->left_son->right_son = (t_tree *) malloc(sizeof(t_tree));
-// 	// tree->left_son->left_son->right_son->token_index = 4;
-// 	// tree->left_son->left_son->right_son->father = tree->left_son->left_son;
-// 	// tree->left_son->left_son->right_son->right_son = 0;
-// 	// tree->left_son->left_son->right_son->left_son = 0;
 
 // 	// ft_printf("treeed");
 

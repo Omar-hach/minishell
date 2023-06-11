@@ -91,7 +91,7 @@ void	ft_putenv(char *var)
 		while (environ[++x])
 			new_env[x] = environ[x];
 		var_ = environ[--x];
-		new_env[x++] = var;
+		new_env[x++] = ft_strdup(var);
 		new_env[x++] = var_;
 		new_env[x] = NULL;
 		environ = new_env;

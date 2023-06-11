@@ -37,7 +37,7 @@ void	treeprint(t_tree *root, int level, t_token *nodes)
 	{
 		ft_printf(" ");
 	}
-	ft_printf("[%d] %d=%s-->left=%p-->right=%p\n",root->token_index, nodes[root->token_index].type, nodes[root->token_index].arg, root->left_son, root->right_son);
+	// ft_printf("[%d] %d=%s-->left=%p-->right=%p\n",root->token_index, nodes[root->token_index].type, nodes[root->token_index].arg, root->left_son, root->right_son);
 	treeprint(root->left_son, level, nodes);
 	//free(root);
 }

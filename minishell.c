@@ -9,155 +9,8 @@
 /*   Updated: 2023/03/26 23:14:59 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "minishell.h"
-
-char	*fill_cmd(char *word, int j, int *i)
-{
-	char	*cmd;
-	int		k;
-
-	while ((((word[(*i)] != ' ' && word[(*i)] != '\t'))
-		|| !is_outside_quoet(word, *i)) && word[(*i)])
-		(*i)++;
-	cmd = (char *)ft_calloc((*i) + 1, sizeof(char));
-	if (!cmd)
-		return (NULL);
-	k = -1;
-	while (++k < (*i))
-	{
-		while (word[k] == 34 || word[k] == 39)
-			k++;
-		if(k < (*i))
-			cmd[j++] = word[k];
-	}
-	return (cmd);
-}
-
-char	*fill_symb(char *word, int *i, int *token, int type)
-{
-	char	*sym;
-	int		j;
-
-	(*i) = -1;
-	j = 1;
-	if ((word[0] == '>' && word[1] == '>')
-		|| (word[0] == '<' && word[1] == '<'))
-		j = 2;
-	sym = (char *)ft_calloc(j + 1, sizeof(char));
-	while (++(*i) < j)
-		sym[(*i)] = word[(*i)];
-	sym[j] = '\0';
-	*token = type + 20;
-	return (sym);
-}
-
-char	*expand_cmd(char *cmd, char *bin, char *word)
-{
-	int		i;
-	int		j;
-	char	*arg;
-
-	arg = (char *)ft_calloc(ft_strlen(bin) + ft_strlen(word) + 1, sizeof(char));
-	i = ft_strlen(bin) - ft_strlen(cmd);
-	j = -1;
-	while (++j < i)
-		arg[j] = bin[j];
-	i = 0;
-	while(j <  word[i])
-		arg[j++] = word[i++];
-	arg[j] = '\0';
-	// ft_memcpy(&arg[j], word, ft_strlen(word) + 1);
-	return (arg);
-}
-	// ft_printf("path=%s.  %s\n",  arg, cmd);
-
-char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
-{
-	char	*arg;
-	char	*bin;
-
-	if (ft_strncmp(cmd, "..", 2))//{
-		bin = find_path(cmd, -1, -1, -1);
-	//ft_printf(" ,cmd=%s , %p. word=%s , %p\n", cmd, cmd, word , word);}
-	if (ft_find(cmd, lex.l_cmd)
-		&& ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
-		*token = ft_find(cmd, lex.l_cmd) + 10;
-	else if (ft_strchr(cmd, '/'))
-	{
-		*token = 1;
-		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
-		ft_memcpy(arg, word, ft_strlen(word) + 1);
-		return (arg);
-	}
-	else if (bin)
-	{
-		*token = 1;	
-		arg = expand_cmd(cmd, bin, word);
-		free(bin);
-		return (arg);
-	}
-	if (bin)
-		free(bin);
-	return (NULL);
-}
-
-//handle arg to **arg with no ""
-char	*fill_arg(char *word, int i)
-{
-	char	*arg;
-	int		shift;
-
-	arg = (char *)ft_calloc(ft_strlen(word + i) - count_space(word + i) + 1,
-			sizeof(char));
-	if (!arg)
-		return (NULL);
-	shift = count_space(word + i) + i;
-	word += shift;
-	i = -1;
-	while (word[++i]) 
-		arg[i] = word[i];
-	arg[i] = '\0';
-	word -= shift;
-	return (arg);
-}
-
-//echo "hello    ">a   b   c --> cat a : helo b c
-char	*cmd_split(char *word, int *token, t_lexic lex)
-{
-	int		i;
-	int		j;
-	char	*word_copy;
-	char	*cmd;
-	char	*arg;
-
-	i = 0;
-	j = 0;
-	cmd = NULL;
-	word_copy = word;
-	word_copy += count_space(word);
-	word_copy = replace_dollars(word_copy);
-	//ft_printf("word=%s , %p\n", word_copy , word_copy);
-	if (ft_find(word, lex.l_symb))
-		cmd = fill_symb(word_copy, &i, token, ft_find(word, lex.l_symb));
-	else
-		cmd = fill_cmd(word_copy, j, &i);
-	if (!cmd || *token == 21)
-		return (NULL);
-	arg = set_cmd(word_copy, token, cmd, lex);
-	if (*token < 1)
-	{
-		*error = 127;
-		ft_printf("minshell: %s:command not found\n", cmd);
-		free(cmd);
-		return (NULL);
-	}
-	if (!arg)
-		arg = fill_arg(word_copy, i);
-	//printf("-word[%p]=%s -word_copy[%p]=%s\n",word, word, word_copy, word_copy);
-	free(cmd);
-	free(word);
-	return (arg);
-}
 
 t_token	*split_input(char *input, int *len)
 {
@@ -172,7 +25,7 @@ t_token	*split_input(char *input, int *len)
 	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
 	if (!words)
 	{
-		*error = 2;
+		*g_error = 2;
 		return (free_struct_array(NULL, &lex, NULL, -1));
 	}
 	*len = nodes_count(words);
@@ -180,8 +33,8 @@ t_token	*split_input(char *input, int *len)
 	nodes = malloc_nodes(nodes, *len, &lex);
 	if (!fill_nodes(words, &lex, nodes, len))
 	{
-		*error = 127;
-		return (free_struct_array(NULL, &lex, nodes, *len));
+		*g_error = 127;
+		return (free_struct_array(NULL, &lex, NULL, -1));//nodes, *len));
 	}
 	/*
 	i = -1;
@@ -192,7 +45,6 @@ t_token	*split_input(char *input, int *len)
 }
 
 //<cmd><|><exp>
-
 void shvlvl()
 {
 	char	*shlvl;
@@ -207,6 +59,46 @@ void shvlvl()
 	free(shlvl);
 }
 
+
+// int	ft_minishell_valgrind()
+// {
+// 	char	*input;
+// 	int		ex;
+// 	int fd = open("text.txt", O_RDONLY);
+// 	t_token	*nodes;
+// 	t_tree	*tree;
+
+// 	ex = 1;
+// 	tree = NULL;
+// 	nodes = NULL;
+// 	shvlvl();
+// 	*g_error = 0;
+// 	while (ex)
+// 	{
+// 		input = get_next_line(fd);
+// 		if (!input)
+// 			break ;
+// 		ft_printf(">>> MiniShell $> %s", input);
+// 		if (input[count_space(input)])
+// 		{
+// 			input[ft_strlen(input) - 1] = '\0';
+// 			nodes = split_input(input, &ex);
+// 			if (nodes)
+// 			{
+// 				tree = create_tree(nodes, ex);
+// 				//treeprint(tree, 0, nodes);
+// 				// ft_printf("\n------EXEC-----\n");
+// 				exec_node(tree, nodes);
+// 				free_struct_array(NULL, NULL, nodes, ex);
+// 				ex = 1;
+// 			}
+// 		}
+// 		// free(input);
+// 		// system("leaks minishell");
+// 	}
+// 	return(g_error);
+// }
+
 int	ft_minishell()
 {
 	char	*input;
@@ -218,7 +110,7 @@ int	ft_minishell()
 	tree = NULL;
 	nodes = NULL;
 	shvlvl();
-	*error = 0;
+	*g_error = 0;
 	while (ex)
 	{
 		input = readline(">>> MiniShell $> ");
@@ -241,7 +133,7 @@ int	ft_minishell()
 		// free(input);
 		// system("leaks minishell");
 	}
-	return(*error);
+	return(*g_error);
 }
 
 int	main(int ac, char **av)
@@ -256,7 +148,7 @@ int	main(int ac, char **av)
 	tree = NULL;
 	nodes = NULL;
 	out = 0;
-	error = (int *) malloc(1 * sizeof(int));
+	g_error = (int *) malloc(1 * sizeof(int));
 	if (ac >= 3 && !ft_strncmp(av[1], "-c", 3))
 	{
 		in = av[2];
@@ -265,7 +157,7 @@ int	main(int ac, char **av)
 			shvlvl();
 			nodes = split_input(in, &ex);
 			if (!nodes)
-				return (*error);
+				return (*g_error);
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
@@ -276,12 +168,12 @@ int	main(int ac, char **av)
 				ex = 1;
 			}
 		}
-		return (*error);
+		return (*g_error);
 	}
 	else
 	{
-		int exit_status = ft_minishell();
-		exit(exit_status);
+		ft_minishell();
+		exit(*g_error);
 	}
 	return (0);
 }

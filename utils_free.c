@@ -17,10 +17,7 @@ void	*free_aray(char	**words)
 
 	i = -1;
 	while (words[++i])
-	{
-		// printf("[%d] words = %p, %s\n",i, words[i], words[i]);
 		free(words[i]);
-	}
 	free(words);
 	return (NULL);
 }
@@ -30,14 +27,14 @@ void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
 	int	i;
 
 	i = -1;
-	while (nodes && nodes[++i].arg && i < len)
-		free(nodes[i].arg);
-	if (nodes)
-		free(nodes);
-	if (words){
-		free_aray(words);}
+	while (nodes && nodes[++i].args && i < len)
+		free_aray(nodes[i].args);
+	if (words)
+		free_aray(words);
 	if (lex && lex->l_cmd)
 		free_aray(lex->l_cmd);
+	if (nodes)
+		free(nodes);
 	if (lex && lex->l_symb)
 		free_aray(lex->l_symb);
 	return (NULL);

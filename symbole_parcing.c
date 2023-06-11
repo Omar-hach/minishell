@@ -47,7 +47,6 @@ int put_inderect(char *s, int end, char *re)
 	{
 		if(count_space(s + k) == ft_strlen(s))
 			return (0);
-
 		k += count_space(s + k);
 		re[j++] = s[k];
 		s[k] = ' ';
@@ -69,7 +68,7 @@ char	*rearrange_input(char *s, char **sym, int i)
 		// if (count_space(s + i) > 1)
 		// 	i += count_space(s + i);
 		//ft_printf("s[%d]=%s out=%d\n", i, s, is_outside_quoet(re, j));
-		if(ft_find(s + i, sym) > 1 && is_outside_quoet(re, j))
+		if (ft_find(s + i, sym) > 1 && is_outside_quoet(re, j))
 			i += get_symb_len(ft_find(s + i, sym), s + i, sym) - 1;
 		else if (ft_find(s + i, sym) == 1 && is_outside_quoet(re, j))
 			j = put_inderect(s, i, re);
@@ -167,10 +166,10 @@ char	**expr_split(char *input, char **sym, int part)
 	int		i;
 
 	array = NULL;
-	s = rearrange_input(input, sym, -1);//  printf("s=%s.\n",s);
+	s = rearrange_input(input, sym, -1);
 	if (detect_sym_error(s, sym, &part, 0))
 	{
-		*error = 2;
+		*g_error = 2;
 		return (NULL);
 	}
 	array = (char **)ft_calloc(part + 2, sizeof(char *));
@@ -187,5 +186,7 @@ char	**expr_split(char *input, char **sym, int part)
 	if (s)
 		free(s);
 	free(len_array);
+	free(input);
+	// printf("array=%s.\n",array[0]);
 	return (array);
 }

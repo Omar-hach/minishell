@@ -12,23 +12,25 @@
 
 #include"minishell.h"
 
-void	boom()
+void	boom(void)
 {
-	int x;
+	int	x;
 
 	x = 4;
 	printf("explode in\n");
-	while(--x > 0)
+	while (--x > 0)
 	{
-		printf("%d...\n",x);
+		printf("%d...\n", x);
 		sleep(1);
 	}
 	printf("BOOOM!!\n\n");
 }
 
-void	start_shell()
+void	start_shell(void)
 {
-	char *sh = " \n\
+	char	*sh;
+
+	sh = " \n\
                     ++                        \n\
                   ++  ++                      \n\
                   ++    ++                    \n\
@@ -49,7 +51,13 @@ void	start_shell()
   ::          ..::::..::++....::++++++++      \n\
 ::..  ....::::::::++++::::++++++++++          \n\
 ::::::::::      ++++++++++++++++              \n";
-// char sh = "     
+	printf("\033[H\033[J");
+	printf("%s\n******************************************************\n", sh);
+	printf("\n************\t Welcome to new shell \t************\n\n");
+	boom();
+}
+
+// sh = "     
 //            _.---._
 //        .'"".'/|\`.""'.
 //       :  .' / | \ `.  :
@@ -57,9 +65,3 @@ void	start_shell()
 //        `. /   |   \ .'
 //   SHELL  `-.__|__.-'
 // "
-
-	printf("\033[H\033[J");
-	printf("%s\n**********************************************************\n",sh);
-	printf("\n**************\t Welcome to new shell \t**************\n\n");
-	boom();
-}

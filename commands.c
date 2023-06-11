@@ -36,13 +36,13 @@ int	ft_unset(int ac, char **av)
 		x = -1;
 		while (av[++x])
 		{
-			r = ft_isvar(av[x]);
+			r = is_var(av[x]);
 			if (r == -1 || r == 1 || r == 0)
 				return (ft_printf("unset: '%s': not a valid identifier\n",
-					av[x]), 1);
+						av[x]), 1);
 			if (r == -3)
 				return (ft_printf("unset: '%s': not a valid identifier\n",
-					av[x]), 2);
+						av[x]), 2);
 			else
 				ft_unputenv(av[x]);
 		}
@@ -63,13 +63,13 @@ int	ft_export(int ac, char **av)
 		x = -1;
 		while (av[++x])
 		{
-			r = ft_isvar(av[x]);
+			r = is_var(av[x]);
 			if (r == -1 || r == -2 || r == 0)
 				return (ft_printf("export: '%s': not a valid identifier\n",
-					av[x]), 1);
+						av[x]), 1);
 			else if (r == -3 || r == -4)
 				return (ft_printf("export: '%s': not a valid identifier\n",
-					av[x]), 2);
+						av[x]), 2);
 			else if (r == 3 || r == 2)
 				return (0);
 			else

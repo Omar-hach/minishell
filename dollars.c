@@ -23,6 +23,8 @@ char	*mint_dollars(char *s, int start, int name_len, char *val)
 
 	size = ft_strlen(s) - name_len + ft_strlen(val) + 1;
 	no_money = (char *) malloc (size * sizeof(char));
+	if (!no_money)
+		return (s);
 	x = -1;
 	while (++x < start)
 		no_money[x] = s[x];
@@ -52,15 +54,18 @@ char	*tax_dollars(char *s, int start, int name_len)
 	return (s);
 }
 
+// get the name after $ sign
 char	*get_dollar_name(char *s, int x, int z)
 {
 	int		y;
 	char	*name;
 
 	name = (char *) malloc ((z + 1) * sizeof(char));
+	if (!name)
+		return (NULL);
 	y = x;
 	z = 0;
-	while (s[++y] && money_end(s[y]))
+	while (s[++y] && is_money_end(s[y]))
 	{
 		name[z++] = s[y];
 		if (y == x + 1 && ft_isdigit(s[y]))
@@ -81,7 +86,7 @@ char	*get_dollars(char *s, int *x, int qt)
 
 	y = *x;
 	z = 0;
-	while (s[++y] && money_end(s[y]))
+	while (s[++y] && is_money_end(s[y]))
 	{
 		z++;
 		if (y == (*x) + 1 && ft_isdigit(s[y]))
@@ -99,6 +104,7 @@ char	*get_dollars(char *s, int *x, int qt)
 	free(name);
 	return (out);
 }
+
 
 // search for all  dolar var
 char	*replace_dollars(char *s)
@@ -123,4 +129,4 @@ char	*replace_dollars(char *s)
 	}
 	return (s);
 }
-		// ft_printf("[%d] s = %s\n",x ,s);
+// ft_printf("[%d] s = %s\n",x ,s);

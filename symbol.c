@@ -30,14 +30,14 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 	return (0);
 }
 
+//<<
 int	ft_redirect_in_append(t_tree *tree, t_token *tokens)
 {
 	int		fd;
 	int		x;
 
-	// printf("<<\n");
 	x = tree->token_index;
-	fd = open(tokens[x].args[0], O_RDONLY , 0644);
+	fd = open(tokens[x].args[0], O_RDONLY, 0644);
 	if (fd < 0)
 	{
 		ft_printf("%s: No such file or directory\n", tokens[x].args[0]);
