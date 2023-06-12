@@ -55,7 +55,7 @@ void	ft_skip(t_token *token, int i)
 	}
 }
 
-static int	count_words(char const *s, char *c)
+int	count_words(char const *s, char *c)
 {
 	int	count;
 	int	i;
@@ -78,13 +78,13 @@ static int	count_words(char const *s, char *c)
 	return (count +1);
 }
 
-static char	*split_word(char const *s, int *start, int end)
+char	*split_word(char const *s, int *start, int end)
 {
 	char	*word;
 	int		i;
 
 	i = 0;
-	word = malloc((end - *start + 1));
+	word = malloc((end - *start + 1) * sizeof(char));
 	if (!word)
 		return (0);
 	while (i < (end - *start) && s[i])

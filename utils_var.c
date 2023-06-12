@@ -57,6 +57,8 @@ int	replace_var(char *name, char *value)
 	{
 		size = ft_strlen(name) + ft_strlen(value) + 2;
 		val = (char *) malloc(size * sizeof(char));
+		if (!val)
+			return (-1);
 		y = -1;
 		while (++y < ft_strlen(name))
 			val[y] = name[y];
@@ -87,6 +89,8 @@ void	ft_putenv(char *var)
 		while (environ[x])
 			x++;
 		new_env = (char **) malloc((x + 2) * sizeof(char *));
+		if (new_env)
+			return (0);
 		x = -1;
 		while (environ[++x])
 			new_env[x] = environ[x];
