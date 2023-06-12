@@ -63,6 +63,6 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 		// 	printf("\n[%d] word = %s, args[%p] = %s, type = %d\n", i, words[i], nodes[j].args, nodes[j].args[0], nodes[j].type);
 		j++;
 	}
-	free(words);
+	// free(words);
 	return (nodes);
 }

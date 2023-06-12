@@ -86,24 +86,24 @@ int	is_var(char *var)
 	return (0);
 }
 
-char	*is_money(char *s, int *x, int qt, int dualqt)
+char	*get_dollar_name(char *s, int x, int z)
 {
-	char	*home;
+	int		y;
+	char	*name;
 
-	if (s[*x] == '$' && s[(*x) + 1] == '?' && !(qt % 2))
-		s = mint_dollars(s, *x, 1, ft_itoa(*g_error));
-	if (s[*x] == '$' && !(qt % 2))
-		s = get_dollars(s, x, !(dualqt % 2));
-	if (s[*x] == '~' && !(qt % 2) && !(dualqt % 2)
-		&& ft_isdigit(s[(*x) + 1]) == 0 && ft_isdigit(s[(*x) - 1]) == 0)
+	name = (char *) malloc ((z + 1) * sizeof(char));
+	if (!name)
+		return (NULL);
+	y = x;
+	z = 0;
+	while (s[++y] && is_money_end(s[y]))
 	{
-		home = getenv("HOME");
-		if (home)
-			s = mint_dollars(s, *x, 0, home);
-		else
-			ft_printf("~: HOME not set\n");
+		name[z++] = s[y];
+		if (y == x + 1 && ft_isdigit(s[y]))
+			break ;
 	}
-	return (s);
+	name[z] = '\0';
+	return (name);
 }
 
 int	is_money_end(char c)

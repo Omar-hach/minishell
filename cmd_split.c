@@ -29,7 +29,7 @@ char	*fill_cmd(char *word, int j, int *i)
 		while (word[k] == 34 || word[k] == 39)
 			k++;
 		if (k < (*i))
-			cmd[j++] = word[k];
+			cmd[j++] = ft_tolower(word[k]);
 	}
 	return (cmd);
 }
@@ -78,7 +78,8 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 	char	*arg;
 	char	*bin;
 
-	if (ft_strncmp(cmd, "..", 2))//{
+	arg = NULL;
+	// if (ft_strncmp(cmd, "..", 2))
 		bin = find_path(cmd);
 	if (ft_find(cmd, lex.l_cmd)
 		&& ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
@@ -88,18 +89,15 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 		*token = 1;
 		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
 		ft_memcpy(arg, word, ft_strlen(word) + 1);
-		return (arg);
 	}
 	else if (bin)
 	{
 		*token = 1;	
 		arg = expand_cmd(cmd, bin, word);
-		free(bin);
-		return (arg);
 	}
-	if (bin)
+	// if (bin)
 		free(bin);
-	return (NULL);
+	return (arg);
 }
 
 //handle arg to **arg with no ""
@@ -134,16 +132,16 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	i = 0;
 	j = 0;
 	cmd = NULL;
-	word_copy = word + count_space(word);
-	if (ft_find(word, lex.l_symb) != 2)
-		word_copy = replace_dollars(word_copy);
+	if (word && ft_find(word, lex.l_symb) != 2)
+		word_copy = replace_dollars(word);
 	if (ft_find(word, lex.l_symb))
-		cmd = fill_symb(word_copy, &i, token, ft_find(word, lex.l_symb));
+		cmd = fill_symb(word_copy, &i, token, ft_find(word_copy, lex.l_symb));
 	else
 		cmd = fill_cmd(word_copy, j, &i);
 	if (!cmd || *token == 21)
 	{
-		// free(word);
+		free(cmd);
+		free(word_copy);
 		return (NULL);
 	}
 	arg = set_cmd(word_copy, token, cmd, lex);
@@ -151,14 +149,11 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	{
 		*g_error = 127;
 		ft_printf("minshell: %s: command not found\n", cmd);
-		free(word);
-		free(cmd);
-		return (NULL);
 	}
-	if (!arg)
+	if (!arg && *token > 1)
 		arg = fill_arg(word_copy, i);
 	// printf("-word[%p]=%s -word_copy[%p]=%s\n",word, word, word_copy, word_copy);
 	free(cmd);
-	free(word);
+	free(word_copy);
 	return (arg);
 }

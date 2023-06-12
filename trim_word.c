@@ -18,9 +18,9 @@ char	**trim_word(char *words, int type)
 //	int		i = -1;
 	int		queot = 0;
 	int		double_qu = 0;
-	char	*sepr;
+	// char	*sepr;
 
-	sepr = ft_strdup(" 	");
+	// sepr = ft_strdup(" 	");
     words += count_space(words);
 	while (*words)
 	{

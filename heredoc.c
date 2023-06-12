@@ -45,28 +45,29 @@ int	remove_heredocs(t_tree *tree, t_token *tokens)
 int	here_file(char *s, int qt)
 {
 	int		tmp;
-	char	*input;
+	// char	*input;
 
+	(void)(qt);
 	tmp = open(s, O_WRONLY | O_CREAT | O_EXCL| O_TRUNC, 0644);
 	if (tmp < 0)
 		return (-1);
-	while (1)
-	{
-		input = readline("> ");
-		if (!input[0] || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-		{
-			free(input);
-			break ;
-		}
-		if (*(input + count_space(input)))
-		{
-			if (qt == 0)
-				input = replace_dollars(input);
-			write(tmp, input, ft_strlen(input));
+	// while (1)
+	// {
+	// 	input = readline("> ");
+	// 	if (!input[0] || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
+	// 	{
+	// 		free(input);
+	// 		break ;
+	// 	}
+	// 	if (*(input + count_space(input)))
+	// 	{
+	// 		if (qt == 0)
+				// input = replace_dollars(input);
+			write(tmp, "AAAAAAAAAAA", 11);
 			write(tmp, "\n", 1);
-		}
-		free(input);
-	}
+	// 	}
+	// 	free(input);
+	// }
 	close(tmp);
 	return (0);
 }

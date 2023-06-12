@@ -97,14 +97,24 @@ int	exec_node(t_tree *tree, t_token *tokens)
 }
 // ft_printf("node %d finished = %d error = %d\n",x,out, *error);
 
+void	free_args(t_tree *tree, t_token *tokens)
+{
+	free_aray(tokens[tree->token_index].args);
+	if (tree->right_son)
+		free_args(tree->right_son, tokens);
+	if (tree->left_son)
+		free_args(tree->left_son, tokens);
+}
+
 int	exec_tree(t_tree *tree, t_token *tokens)
 {
 	make_heredocs(tree, tokens);
 	*g_error = exec_node(tree, tokens);
 	remove_heredocs(tree, tokens);
+	free_args(tree, tokens);
 	return (*g_error);
 }
-
+/*
 //
 // ls | grep a < file1 > file2
 //
@@ -235,3 +245,4 @@ int	exec_tree(t_tree *tree, t_token *tokens)
 
 // 	return (exec_node(tree, tokens));
 // }
+*/

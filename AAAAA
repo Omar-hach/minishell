@@ -1,0 +1,5 @@
+export T="echo segfault | grep segfault"
+$T
+echo $USER$TESTNOTFOUND$HOME$
+echo $PWD
+cd ..$PWD

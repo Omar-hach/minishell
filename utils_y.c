@@ -45,7 +45,19 @@ char	*find_path(char *file)
 {
 	char	*path;
 	char	**all_paths;
+	// int		len;
 
+	// len = ft_strlen(file) - 1;
+	// if (file[len] == '.')
+	// {
+	// 	ft_printf(" . : filename argument required\n");
+	// 	return (2);
+	// }
+	// if (len >1 && file[len] == '.' && file[len - 1] == '.')
+	// {
+	// 	ft_printf(" .. : filename argument required\n");
+	// 	return (2);
+	// }
 	all_paths = ft_split(getenv("PATH"), ':');
 	if (!all_paths)
 		return (NULL);
