@@ -14,7 +14,7 @@ NAME = minishell
 
 CC = gcc 
 
-CFLAGS = -Werror -Wall -Wextra
+CFLAGS = -Werror -Wall -Wextra -L/Users/ohachami/.brew/opt/readline/include
 
 FLAGS = -lreadline -lcurses  -ggdb3
 #-fsanitize=address
@@ -34,7 +34,7 @@ all:$(NAME)
 
 $(NAME):$(OBJ)
 	make -C libft
-	$(CC) $(FLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
+	$(CC) $(FLAGS) $(OBJ) $(LIBFT) -L/Users/ohachami/.brew/opt/readline/lib -o $(NAME) 
 
 clean:
 	make -C libft clean
