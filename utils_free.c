@@ -22,6 +22,16 @@ void	*free_aray(char	**words)
 	return (NULL);
 }
 
+// void	free_args(t_tree *tree, t_token *tokens)
+// {
+// 	if (tree == NULL)
+// 		return ;
+// 	free_args(tree->right_son, tokens);
+// 	free_args(tree->left_son, tokens);
+// 	if (tokens[tree->token_index].args)
+// 		free_aray(tokens[tree->token_index].args);
+// }
+
 void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
 {
 	int	i;

@@ -65,9 +65,6 @@ char	*rearrange_input(char *s, char **sym, int i)
 	j = 0;
 	while (s[++i])
 	{
-		// if (count_space(s + i) > 1)
-		// 	i += count_space(s + i);
-		//ft_printf("s[%d]=%s out=%d\n", i, s, is_outside_quoet(re, j));
 		if (ft_find(s + i, sym) > 1 && is_outside_quoet(re, j))
 			i += get_symb_len(ft_find(s + i, sym), s + i, sym) - 1;
 		else if (ft_find(s + i, sym) == 1 && is_outside_quoet(re, j))
@@ -79,7 +76,9 @@ char	*rearrange_input(char *s, char **sym, int i)
 		}
 	}
 	put_inderect(s, i, re);
-	return (re);
+	ft_memcpy(s, re, ft_strlen(re));
+	free(re);
+	return (s);
 }
 
 int	get_token_len(char *s, char **sym)
@@ -152,22 +151,20 @@ char	**words_cutter(char *s, int *len_array, char **array, int part)
 			j = -1;
 			l += len_array[i];
 		}
-		// printf("cutted %s\n", array[i]);
 	}
-		// array[i] = NULL;
+	// array[i] = NULL;
 	return (array);
 }
 
 char	**expr_split(char *input, char **sym, int part)
 {
 	char	**array;
-	char	*s;
 	int		*len_array;
 	int		i;
 
 	array = NULL;
-	s = rearrange_input(input, sym, -1);
-	if (detect_sym_error(s, sym, &part, 0))
+	input = rearrange_input(input, sym, -1);
+	if (detect_sym_error(input, sym, &part, 0))
 	{
 		*g_error = 2;
 		return (NULL);
@@ -175,18 +172,16 @@ char	**expr_split(char *input, char **sym, int part)
 	array = (char **)ft_calloc(part + 2, sizeof(char *));
 	if (!array)
 		return (NULL);
-	len_array = words_len(s + count_space(s), sym, part, array);
+	len_array = words_len(input + count_space(input), sym, part, array);
 	if (!len_array)
 		return (NULL);
 	i = -1;
 	while (++i < part)
 		array[i] = (char *)ft_calloc(len_array[i] + 1, sizeof(char));
-	array = words_cutter(s + count_space(s), len_array, array, part);
+	array = words_cutter(input + count_space(input), len_array, array, part);
 	array[part] = NULL;
-	if (s)
-		free(s);
 	free(len_array);
-	free(input);
+	// free(input);
 	// printf("array=%s.\n",array[0]);
 	return (array);
 }

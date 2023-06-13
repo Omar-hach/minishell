@@ -51,7 +51,7 @@ t_tree	*create_tree(t_token *nodes, int len)
 	int		i;
 
 	i = -1;
-	list = (int *)ft_calloc(len + 1, sizeof(int));
+	list = (int *)ft_calloc(len + 2, sizeof(int));
 	list[len] = -1;
 	list[len + 1] = -1;
 	while (list[++i] > -1)

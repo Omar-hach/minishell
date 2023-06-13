@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+//<cmd><|><exp>
 t_token	*split_input(char *input, int *len)
 {
 	int		i;
@@ -22,7 +23,7 @@ t_token	*split_input(char *input, int *len)
 	if (creat_lexic(&lex))
 		return (NULL);
 	i = 1;
-	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
+	words = expr_split(input, lex.l_symb, i);
 	if (!words)
 	{
 		*g_error = 2;
@@ -34,17 +35,12 @@ t_token	*split_input(char *input, int *len)
 	if (!fill_nodes(words, &lex, nodes, len))
 	{
 		*g_error = 127;
-		return (free_struct_array(NULL, &lex, NULL, -1));//nodes, *len));
+		return (free_struct_array(NULL, &lex, nodes, *len - 1));
 	}
-	/*
-	i = -1;
-	while (++i < (*len))
-		printf("word[%p]=%s=%p\ni =%d type=%d <%s>\n", words, words[i], words[i], i, nodes[i].type, nodes[i].arg);*/
-	free_struct_array(NULL, &lex, NULL, -1);
+	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
 }
 
-//<cmd><|><exp>
 void shvlvl()
 {
 	char	*shlvl;
@@ -64,7 +60,7 @@ void shvlvl()
 // {
 // 	char	*input;
 // 	int		ex;
-// 	int fd = open("text.txt", O_RDONLY);
+// 	int fd = open("AAAAA", O_RDONLY);
 // 	t_token	*nodes;
 // 	t_tree	*tree;
 
@@ -88,15 +84,15 @@ void shvlvl()
 // 				tree = create_tree(nodes, ex);
 // 				//treeprint(tree, 0, nodes);
 // 				// ft_printf("\n------EXEC-----\n");
-// 				exec_node(tree, nodes);
-// 				free_struct_array(NULL, NULL, nodes, ex);
+// 				exec_tree(tree, nodes);
+// 				free_struct_array(NULL, NULL, nodes, ex - 1);
 // 				ex = 1;
 // 			}
 // 		}
-// 		// free(input);
+// 		free(input);
 // 		// system("leaks minishell");
 // 	}
-// 	return(g_error);
+// 	return(*g_error);
 // }
 
 int	ft_minishell()
@@ -126,11 +122,11 @@ int	ft_minishell()
 				// treeprint(tree, 0, nodes);
 				// ft_printf("\n------EXEC-----\n");
 				exec_tree(tree, nodes);
-				free_struct_array(NULL, NULL, nodes, ex);
+				free_struct_array(NULL, NULL, nodes, ex - 1);
 				ex = 1;
 			}
 		}
-		// free(input);
+		free(input);
 		// system("leaks minishell");
 	}
 	return(*g_error);
@@ -139,15 +135,14 @@ int	ft_minishell()
 int	main(int ac, char **av)
 {
 	char	*in;
-	int		out;
 	t_token	*nodes;
 	t_tree	*tree;
 	int		ex;
+	int		out;
 
 	ex = 1;
 	tree = NULL;
 	nodes = NULL;
-	out = 0;
 	g_error = (int *) malloc(1 * sizeof(int));
 	if (ac >= 3 && !ft_strncmp(av[1], "-c", 3))
 	{
@@ -163,8 +158,8 @@ int	main(int ac, char **av)
 				tree = create_tree(nodes, ex);
 				//treeprint(tree, 0, nodes);
 				// ft_printf("\n------EXEC-----\n");
-				exec_node(tree, nodes);
-				free_struct_array(NULL, NULL, nodes, ex);
+				exec_tree(tree, nodes);
+				free_struct_array(NULL, NULL, nodes, ex - 1);
 				ex = 1;
 			}
 		}
@@ -173,9 +168,10 @@ int	main(int ac, char **av)
 	else
 	{
 		ft_minishell();
-		exit(*g_error);
+		out = *g_error;
+		free(g_error);
 	}
-	return (0);
+	return (out);
 }
 //"e""c""h""o" hello need to work,// DONE
 // error file name too long > 256

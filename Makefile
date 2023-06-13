@@ -16,7 +16,7 @@ CC = gcc
 
 CFLAGS = -Werror -Wall -Wextra
 
-FLAGS = -lreadline -lcurses 
+FLAGS = -lreadline -lcurses  -ggdb3
 #-fsanitize=address
 
 SRC = 	minishell.c trim_word.c\

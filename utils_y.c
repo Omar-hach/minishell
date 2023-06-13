@@ -45,12 +45,26 @@ char	*find_path(char *file)
 {
 	char	*path;
 	char	**all_paths;
+	// int		len;
 
+	// len = ft_strlen(file) - 1;
+	// if (file[len] == '.' && file[len + 1])
+	// {
+	// 	ft_printf(" . : filename argument required\n");
+	// 	return (0);
+	// }
+	// if (len >1 && file[len] == '.' && file[len - 1] == '.' && file[len + 1])
+	// {
+	// 	ft_printf(" .. : filename argument required\n");
+	// 	return (0);
+	// }
+	// printf("file=%s\n",file);
 	all_paths = ft_split(getenv("PATH"), ':');
 	if (!all_paths)
 		return (NULL);
 	path = get_path(all_paths, file, -1);
 	free_aray(all_paths);
+	// printf("path=%s\n",path);
 	return (path);
 }
 

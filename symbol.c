@@ -30,7 +30,6 @@ int	ft_redirect_in(t_tree *tree, t_token *tokens)
 	return (0);
 }
 
-//<<
 int	ft_redirect_in_append(t_tree *tree, t_token *tokens)
 {
 	int		fd;

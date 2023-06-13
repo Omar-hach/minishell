@@ -97,6 +97,7 @@ int	exec_node(t_tree *tree, t_token *tokens)
 }
 // ft_printf("node %d finished = %d error = %d\n",x,out, *error);
 
+
 int	exec_tree(t_tree *tree, t_token *tokens)
 {
 	make_heredocs(tree, tokens);
@@ -104,7 +105,7 @@ int	exec_tree(t_tree *tree, t_token *tokens)
 	remove_heredocs(tree, tokens);
 	return (*g_error);
 }
-
+/*
 //
 // ls | grep a < file1 > file2
 //
@@ -235,3 +236,4 @@ int	exec_tree(t_tree *tree, t_token *tokens)
 
 // 	return (exec_node(tree, tokens));
 // }
+*/

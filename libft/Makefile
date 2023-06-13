@@ -56,7 +56,9 @@ SRC = print/ft_strlen.c\
 	ft_tolower.c\
 	ft_toupper.c\
 	ft_strtrim.c\
-	ft_strmapi.c
+	ft_strmapi.c\
+	get_next_line_bonus.c\
+	get_next_line_utils_bonus.c\
 
 
 OBJ = $(SRC:.c=.o)

@@ -9,7 +9,6 @@
 /*   Updated: 2023/05/01 19:38:46 by yhachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include"minishell.h"
 
 int	change_oldpwd(void)
@@ -44,6 +43,29 @@ int	ft_findvar(char *var)
 	return (-1);
 }
 
+void	ft_setenv(char *var)
+{
+	extern char	**environ;
+	char		**new_env;
+	int			x;
+
+	x = ft_findvar(var);
+	if (x >= 0)
+	{
+		x = 0;
+		while (environ[x])
+			x++;
+		new_env = (char **) ft_calloc((x + 2), sizeof(char *));
+		if (new_env)
+			return ;
+		x = ft_findvar(var);
+		new_env[x] = var;
+		environ = new_env;	
+	}
+	else
+		ft_putenv(var);
+}
+
 int	replace_var(char *name, char *value)
 {
 	extern char	**environ;
@@ -55,20 +77,22 @@ int	replace_var(char *name, char *value)
 	x = ft_findvar(name);
 	if (x >= 0)
 	{
-		size = ft_strlen(name) + ft_strlen(value) + 2;
+		size = ft_strlen(name) + ft_strlen(value) + 1;
 		val = (char *) malloc(size * sizeof(char));
 		if (!val)
-			return (-1);
+			return (0);
 		y = -1;
-		while (++y < ft_strlen(name))
+		while (name[++y])
 			val[y] = name[y];
 		val[y] = '=';
 		x = 0;
-		while (++y < size)
+		while (value[x])
 			val[y] = value[x++];
 		val[y] = '\0';
-		x = ft_findvar(name);
-		environ[x] = val;
+		// x = ft_findvar(name);
+		// environ[x] = val;
+		ft_setenv(val);
+		// free(val);
 		return (0);
 	}
 	else
@@ -88,9 +112,9 @@ void	ft_putenv(char *var)
 		x = 0;
 		while (environ[x])
 			x++;
-		new_env = (char **) malloc((x + 2) * sizeof(char *));
-		if (new_env)
-			return (0);
+		new_env = (char **) ft_calloc((x + 2), sizeof(char *));
+		if (!new_env)
+			return ;
 		x = -1;
 		while (environ[++x])
 			new_env[x] = environ[x];
@@ -100,8 +124,8 @@ void	ft_putenv(char *var)
 		new_env[x] = NULL;
 		environ = new_env;
 	}
-	else
-		environ[x] = ft_strdup(var);
+	// else
+	// 	environ[x] = ft_strdup(var);
 }
 
 void	ft_unputenv(char *name)

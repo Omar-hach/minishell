@@ -84,6 +84,7 @@ void	ft_putenv(char *var);
 void	ft_unputenv(char *name);
 int		replace_var(char *var, char *value);
 
+char	*get_dollar_name(char *s, int x, int z);
 int		is_money_end(char c);
 char	*is_money(char *s, int *x, int qt, int dualqt);
 char	*mint_dollars(char *s, int start, int name_len, char *val);
