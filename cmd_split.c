@@ -80,7 +80,6 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 	char	*bin;
 
 	arg = NULL;
-	bin = find_path(cmd);
 	if (ft_find(cmd, lex.l_cmd)
 		&& ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
 	{
@@ -93,13 +92,16 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
 		ft_memcpy(arg, word, ft_strlen(word) + 1);
 	}
-	else if (bin)
+	else
 	{
-		*token = 1;	
-		arg = expand_cmd(cmd, bin, word);
+		bin = find_path(cmd);
+		if (bin)
+		{
+			*token = 1;	
+			arg = expand_cmd(cmd, bin, word);
+		}
+		free(bin);
 	}
-	// if (bin)
-	free(bin);
 	return (arg);
 }
 
@@ -136,19 +138,23 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	j = 0;
 	cmd = NULL;
 	word_copy = NULL;
-	if (word && ft_find(word, lex.l_symb) != 2 && *token != 21)
+	if (word && ft_find(word, lex.l_symb) == 2)
+		word_copy = ft_strdup(word);
+	else if (word && *token != 21)
 		word_copy = replace_dollars(word);
 	if (ft_find(word, lex.l_symb))
 		cmd = fill_symb(word_copy, &i, token, ft_find(word_copy, lex.l_symb));
 	else
 		cmd = fill_cmd(word_copy, j, &i);
-	if (!cmd || *token == 21)
+	// printf("AAAAAAAAAA word = %s, cmd = %s\n", word_copy, cmd);
+	if (!word_copy || !cmd || *token == 21)
 	{
 		free(cmd);
 		free(word_copy);
 		return (NULL);
 	}
 	arg = set_cmd(word_copy, token, cmd, lex);
+	// printf("word_copy = %s, cmd = %s, arg= %s\n", word_copy, cmd, arg);
 	if (*token < 1)
 	{
 		*g_error = 127;
@@ -156,7 +162,6 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	}
 	if (!arg && *token > 1)
 		arg = fill_arg(word_copy, i);
-	// printf("word_copy = %s, cmd = %s, arg= %s\n", word_copy, cmd, arg);
 	free(cmd);
 	free(word_copy);
 	return (arg);

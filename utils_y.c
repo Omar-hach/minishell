@@ -58,7 +58,9 @@ char	*find_path(char *file)
 	// 	ft_printf(" .. : filename argument required\n");
 	// 	return (0);
 	// }
-	// printf("file=%s\n",file);
+	// printf("file=%s,\n",file);
+	if (!file[0])
+		return (NULL);
 	all_paths = ft_split(getenv("PATH"), ':');
 	if (!all_paths)
 		return (NULL);

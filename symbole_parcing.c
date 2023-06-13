@@ -76,9 +76,9 @@ char	*rearrange_input(char *s, char **sym, int i)
 		}
 	}
 	put_inderect(s, i, re);
-	ft_memcpy(s, re, ft_strlen(re));
-	free(re);
-	return (s);
+	// ft_memcpy(s, re, ft_strlen(re));
+	// free(re);
+	return (re);
 }
 
 int	get_token_len(char *s, char **sym)
@@ -160,11 +160,12 @@ char	**expr_split(char *input, char **sym, int part)
 {
 	char	**array;
 	int		*len_array;
+	char	*s;
 	int		i;
 
 	array = NULL;
-	input = rearrange_input(input, sym, -1);
-	if (detect_sym_error(input, sym, &part, 0))
+	s = rearrange_input(input, sym, -1);
+	if (detect_sym_error(s, sym, &part, 0))
 	{
 		*g_error = 2;
 		return (NULL);
@@ -172,16 +173,16 @@ char	**expr_split(char *input, char **sym, int part)
 	array = (char **)ft_calloc(part + 2, sizeof(char *));
 	if (!array)
 		return (NULL);
-	len_array = words_len(input + count_space(input), sym, part, array);
+	len_array = words_len(s + count_space(s), sym, part, array);
 	if (!len_array)
 		return (NULL);
 	i = -1;
 	while (++i < part)
 		array[i] = (char *)ft_calloc(len_array[i] + 1, sizeof(char));
-	array = words_cutter(input + count_space(input), len_array, array, part);
+	array = words_cutter(s + count_space(s), len_array, array, part);
 	array[part] = NULL;
 	free(len_array);
-	// free(input);
+	// free(s);
 	// printf("array=%s.\n",array[0]);
 	return (array);
 }

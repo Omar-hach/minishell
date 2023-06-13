@@ -47,6 +47,7 @@ int	here_file(char *s, int qt)
 	int		tmp;
 	char	*input;
 
+	// printf("s=%s\n", s);
 	tmp = open(s, O_WRONLY | O_CREAT | O_EXCL| O_TRUNC, 0644);
 	if (tmp < 0)
 		return (-1);

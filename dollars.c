@@ -48,7 +48,7 @@ char	*tax_dollars(char *s, int start, int name_len)
 	int		x;
 	int		y;
 
-	size = start + name_len + 1;
+	size = ft_strlen(s) - name_len + 1;
 	no_money = (char *) malloc ((size + 1) * sizeof(char));
 	if (!no_money)
 		return (s);
@@ -56,7 +56,7 @@ char	*tax_dollars(char *s, int start, int name_len)
 	while (++y <= start && s[y])
 		no_money[y] = s[y];
 	x = start;
-	y = size;
+	y = start + name_len + 1;
 	while (s[y])
 		no_money[x++] = s[y++];
 	no_money[x] = '\0';
