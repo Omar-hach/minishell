@@ -107,6 +107,8 @@ int	ft_minishell()
 	nodes = NULL;
 	shvlvl();
 	*g_error = 0;
+	if (handle_signals())
+		return (1);
 	while (ex)
 	{
 		input = readline(">>> MiniShell $> ");
