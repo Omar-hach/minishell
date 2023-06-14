@@ -141,19 +141,24 @@ char	**words_cutter(char *s, int *len_array, char **array, int part)
 	k = 0;
 	while (i < part)// || s[k])
 	{
-		if (len_array[i] == 0)
+		if (len_array[i] == 0)     ///  LEAK HERE 
 			array[i++] = NULL;
 		if (l != 0 && len_array[i])
 			array[i][++j] = s[k++];
 		if (--l < 1 && len_array[i])
 		{
 			array[i][++j] = '\0';
+			++j;
 			i++;
 			j = -1;
 			l += len_array[i];
 		}
 	}
 	// array[i] = NULL;
+	// i = -1;
+	// while (array[++i])
+		// printf("[%d]a=%s\n",i, array[i]);
+		// system("leaks minishell");
 	return (array);
 }
 

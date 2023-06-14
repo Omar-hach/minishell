@@ -135,11 +135,12 @@ void	ft_putenv(char *var)
 		return ;
 	x = -1;
 	while (environ[++x])
-		new_env[x] = environ[x];
+		new_env[x] = ft_strdup(environ[x]);
 	var_ = environ[--x];
 	new_env[x++] = var;
-	new_env[x++] = var_;
+	new_env[x++] = ft_strdup(var_);
 	new_env[x] = NULL;
+	free_env();
 	environ = new_env;
 }
 
@@ -148,6 +149,7 @@ void	ft_setenv(char *var)
 	extern char	**environ;
 	int			x;
 	char		*old;
+
 
 	x = ft_findvar(var);
 	if (x >= 0)

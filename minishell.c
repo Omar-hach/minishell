@@ -76,17 +76,6 @@ void shvlvl(void)
 	free(shlvl);
 }
 
-void	free_env(void)
-{
-	extern char	**environ;
-	int			x;
-
-	x = -1;
-	while (environ[++x])
-		free(environ[x]);
-	free(environ);
-}
-
 // int	ft_minishell_valgrind()
 // {
 // 	char	*input;
@@ -116,7 +105,9 @@ void	free_env(void)
 // 				//treeprint(tree, 0, nodes);
 // 				// ft_printf("\n------EXEC-----\n");
 // 				exec_tree(tree, nodes);
-// 				free_struct_array(NULL, NULL, nodes, ex - 1);
+//				free_tree(tree, nodes);
+//				free(nodes);
+//				// free_struct_array(NULL, NULL, nodes, ex);
 // 				ex = 1;
 // 			}
 // 		}
@@ -134,7 +125,7 @@ int	ft_minishell()
 	t_tree	*tree;
 	int		x;
 
-x = 0;
+	x = 0;
 	ex = 1;
 	tree = NULL;
 	nodes = NULL;
@@ -158,6 +149,7 @@ x = 0;
 				// ft_printf("\n------EXEC-----\n");
 				exec_tree(tree, nodes);
 				free_tree(tree, nodes);
+				free(nodes);
 				ex = 1;
 			}
 		}

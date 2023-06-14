@@ -77,6 +77,7 @@ char	**arg_split(char *s, char *c);
 void	ft_skip(t_token *tokens, int i);
 int		is_quote_skip(char c, int *qt, int *dualqt, int *qted);
 
+void	free_env(void);
 void	ft_setenv(char *var);
 char	*make_var(char *name, char *value);
 int		is_varname(char *var);

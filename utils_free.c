@@ -32,6 +32,17 @@ void	*free_aray(char	**words)
 // 		free_aray(tokens[tree->token_index].args);
 // }
 
+void	free_env(void)
+{
+	extern char	**environ;
+	int			x;
+
+	x = -1;
+	while (environ[++x])
+		free(environ[x]);
+	free(environ);
+}
+
 void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
 {
 	int	i;
