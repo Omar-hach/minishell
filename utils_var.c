@@ -12,25 +12,6 @@
 
 #include"minishell.h"
 
-int	ft_findvar(char *var)
-{
-	int			x;
-	int			size;
-	extern char	**environ;
-
-	x = 0;
-	while (environ[x])
-	{
-		size = 0;
-		while (var[size] && var[size] != '=')
-			size++;
-		if (environ[x][size] == '=' && ft_strncmp(environ[x], var, size) == 0)
-			return (x);
-		x++;
-	}
-	return (-1);
-}
-
 // int	replace_var(char *name, char *value)
 // {
 // 	extern char	**environ;
@@ -98,9 +79,27 @@ int	ft_findvar(char *var)
 // 		environ[x] = var;
 // }
 
+int	ft_findvar(char *var)
+{
+	int			x;
+	int			size;
+	extern char	**environ;
+
+	x = 0;
+	while (environ[x])
+	{
+		size = 0;
+		while (var[size] && var[size] != '=')
+			size++;
+		if (environ[x][size] == '=' && ft_strncmp(environ[x], var, size) == 0)
+			return (x);
+		x++;
+	}
+	return (-1);
+}
+
 char	*make_var(char *name, char *value)
 {
-	extern char	**environ;
 	int			x;
 	int			y;
 	int			size;
@@ -144,18 +143,17 @@ void	ft_putenv(char *var)
 	environ = new_env;
 }
 
-	// variable = get_variable(var);
 void	ft_setenv(char *var)
 {
 	extern char	**environ;
 	int			x;
-	char		*old;
+	// char		*old;
 	// static int	malloced;
 
 	x = ft_findvar(var);
 	if (x >= 0)
 	{
-		old = environ[x];
+		// old = environ[x];
 		environ[x] = var;
 		// printf("var = %s, old = %s\n", var, old);
 		// if (malloced == 1)

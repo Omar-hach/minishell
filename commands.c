@@ -73,7 +73,7 @@ int	ft_export(int ac, char **av)
 			else if (r == 3 || r == 2)
 				return (0);
 			else
-				ft_setenv(av[x]);
+				ft_setenv(ft_strdup(av[x]));
 		}
 	}
 	return (0);

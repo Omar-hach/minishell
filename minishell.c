@@ -53,7 +53,7 @@ void shvlvl()
 	shvlv = make_var("SHLVL", shlvl);
 	ft_setenv(shvlv);
 	ft_setenv("OLDPWD=");
-	free(shvlv);
+	// free(shvlv);
 	free(shlvl);
 }
 
@@ -162,7 +162,8 @@ int	main(int ac, char **av)
 				//treeprint(tree, 0, nodes);
 				// ft_printf("\n------EXEC-----\n");
 				exec_tree(tree, nodes);
-				free_struct_array(NULL, NULL, nodes, ex - 1);
+				free_tree(tree, nodes);
+				// free_struct_array(NULL, NULL, nodes, ex);
 				ex = 1;
 			}
 		}
