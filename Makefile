@@ -16,7 +16,7 @@ CC = gcc
 
 CFLAGS = -Werror -Wall -Wextra #-L/Users/yhachami/.brew/opt/readline/include
 
-FLAGS = -lreadline -lcurses  -ggdb3 #-L/Users/yhachami/.brew/opt/readline/lib
+FLAGS = -lreadline -lcurses -ggdb3 #-L/Users/ohachami/.brew/opt/readline/lib
 #-fsanitize=address
 
 SRC = 	minishell.c\
