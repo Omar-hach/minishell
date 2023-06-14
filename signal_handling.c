@@ -19,11 +19,7 @@ void	handler(int sig, siginfo_t *info, void *n)
 	(void)n;
 	if(sig == SIGINT)
 	{
-<<<<<<< HEAD
 		*g_error = 1;
-=======
-		error = 1;
->>>>>>> fbd9d4fbcef0fb6c92e25959365619fd3c037921
 		ft_printf("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
@@ -31,11 +27,7 @@ void	handler(int sig, siginfo_t *info, void *n)
 	}
 	if(sig == SIGQUIT)
 	{
-<<<<<<< HEAD
 		*g_error = 0;
-=======
-		error = 0;
->>>>>>> fbd9d4fbcef0fb6c92e25959365619fd3c037921
 	}
 }
 

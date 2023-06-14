@@ -69,7 +69,7 @@ lexixe{
 
 int		fork1(void);
 int		ft_dup(int fd, int new_fd);
-char	*get_path(char **all_paths, char *file, int x);
+char	*get_path(char *dir, char *file);
 char	*find_path(char *file);
 int		check_file(char *file);
 
@@ -77,7 +77,7 @@ char	**arg_split(char *s, char *c);
 void	ft_skip(t_token *tokens, int i);
 int		is_quote_skip(char c, int *qt, int *dualqt, int *qted);
 
-void	ft_setenv(char *var, int maloced);
+void	ft_setenv(char *var);
 char	*make_var(char *name, char *value);
 int		is_varname(char *var);
 int		is_var(char *var);

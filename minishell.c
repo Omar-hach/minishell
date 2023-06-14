@@ -41,18 +41,38 @@ t_token	*split_input(char *input, int *len)
 	return (nodes);
 }
 
-void shvlvl()
+void	re_env(void)
+{
+	extern char	**environ;
+	char		**new_env;
+	int			x;
+
+	x = 0;
+	while (environ[x])
+		x++;
+	new_env = (char **) ft_calloc((x + 1), sizeof(char *));
+	if (!new_env)
+		return ;
+	x = -1;
+	while (environ[++x])
+		new_env[x] = ft_strdup(environ[x]);
+	new_env[x] = NULL;
+	environ = new_env;
+}
+
+void shvlvl(void)
 {
 	char	*shlvl;
 	char	*shvlv;
 	int		vlvl;
 
+	re_env();
 	shlvl = getenv("SHLVL");
 	vlvl = ft_atoi(shlvl);
 	shlvl = ft_itoa(++vlvl);
 	shvlv = make_var("SHLVL", shlvl);
-	ft_setenv(shvlv, 0);
-	ft_setenv("OLDPWD=", 0);
+	ft_setenv(shvlv);
+	ft_setenv(ft_strdup("OLDPWD="));
 	free(shlvl);
 }
 

@@ -143,7 +143,7 @@ void	ft_putenv(char *var)
 	environ = new_env;
 }
 
-void	ft_setenv(char *var, int is_malolced)
+void	ft_setenv(char *var)
 {
 	extern char	**environ;
 	int			x;
@@ -154,9 +154,8 @@ void	ft_setenv(char *var, int is_malolced)
 	{
 		old = environ[x];
 		environ[x] = var;
-		printf("var = %s, old = %s\n", var, old);
-		if (is_malolced)
-			free(old);
+		// printf("var = %s, old = %s\n", var, old);
+		free(old);
 	}
 	else
 		ft_putenv(var);
@@ -164,13 +163,16 @@ void	ft_setenv(char *var, int is_malolced)
 
 void	ft_unsetenv(char *name)
 {
-	int			x;
 	extern char	**environ;
+	int			x;
+	int			lul;
 
-	x = ft_findvar(name);
-	if (x > -1)
+	lul = ft_findvar(name);
+	x = lul;
+	if (lul > -1)
 	{
-		while (environ[x])
+		free(environ[lul]);
+		while (lul == x || environ[x])
 		{
 			if (environ[x + 1])
 				environ[x] = environ[x + 1];

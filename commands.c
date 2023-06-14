@@ -73,7 +73,7 @@ int	ft_export(int ac, char **av)
 			else if (r == 3 || r == 2)
 				return (0);
 			else
-				ft_setenv(ft_strdup(av[x]), 1);
+				ft_setenv(ft_strdup(av[x]));
 		}
 	}
 	return (0);
@@ -95,7 +95,7 @@ int	ft_exit(int ac, char **av)
 	if (ac == 1)
 	{
 		x = (char) ft_atoi(av[0]);
-		if (x == 0 && av[0][1] != '0' && av[0][0] != '0')
+		if (x == 0 && av[0][0] != '0' && av[0][1] != '0')
 			exit(255);
 		exit(x);
 	}

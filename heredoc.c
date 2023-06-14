@@ -42,6 +42,23 @@ int	remove_heredocs(t_tree *tree, t_token *tokens)
 	return (out);
 }
 
+int	get_min_len(char *s1, char *s2)
+{
+	if (ft_strlen(s1) > ft_strlen(s2))
+		return (ft_strlen(s1));
+	else
+		return (ft_strlen(s2));
+}
+
+char	*quick(char *input)
+{
+	char *s;
+
+	s = replace_dollars(input);
+	free(input);
+	return (s);
+}
+
 int	here_file(char *s, int qt)
 {
 	int		tmp;
@@ -51,11 +68,10 @@ int	here_file(char *s, int qt)
 	tmp = open(s, O_WRONLY | O_CREAT | O_EXCL| O_TRUNC, 0644);
 	if (tmp < 0)
 		return (-1);
-
 	while (1)
 	{
 		input = readline("> ");
-		if (!input[0] || !s || ft_strncmp(input, s, ft_strlen(s)) == 0)
+		if (!input[0] || !s || ft_strncmp(input, s, get_min_len(s, input)) == 0)
 		{
 			free(input);
 			break ;
@@ -63,7 +79,7 @@ int	here_file(char *s, int qt)
 		if (*(input + count_space(input)))
 		{
 			if (qt == 0)
-				input = replace_dollars(input);
+				input = quick(input);
 			write(tmp, input, ft_strlen(input));
 			write(tmp, "\n", 1);
 		}

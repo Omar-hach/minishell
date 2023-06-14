@@ -59,7 +59,7 @@ t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes,  int *len)
 		if (!arg && nodes[j].type == 0)
 			return (NULL);
 		free(arg);
-		// if (nodes[j].args[0])
+		// if (nodes[j].args[0] && nodes[j].type != 21)
 			// printf("@ word = %s, args = %s, type = %d\n",words[i], nodes[j].args[0], nodes[j].type);
 		j++;
 	}

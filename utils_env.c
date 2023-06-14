@@ -16,16 +16,14 @@ int	change_pwd(void)
 {
 	char	*dir;
 	char	*pwd;
-	static int	malloced;
 
 	dir = (char *)malloc(PATH_MAX);
 	if (!dir)
 		return (1);
 	getcwd(dir, PATH_MAX);
 	pwd = make_var("PWD", dir);
-	ft_setenv(pwd, malloced);
+	ft_setenv(pwd);
 	free(dir);
-	malloced = 1;
 	return (0);
 }
 
@@ -33,16 +31,14 @@ int	change_oldpwd(void)
 {
 	char	*dir;
 	char	*oldpwd;
-	static int	malloced;
 
 	dir = (char *)malloc(PATH_MAX);
 	if (!dir)
 		return (1);
 	getcwd(dir, PATH_MAX);
 	oldpwd = make_var("OLDPWD", dir);
-	ft_setenv(oldpwd, malloced);
+	ft_setenv(oldpwd);
 	free(dir);
-	malloced = 1;
 	return (0);
 }
 
