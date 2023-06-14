@@ -14,10 +14,12 @@
 
 void	handler(int sig, siginfo_t *info, void *n)
 {
-	int i=info->si_pid;
-	i=0;
-	(void)n;
-	if(sig == SIGINT)
+	int	i;
+
+	i = info->si_pid;
+	i = 0;
+	(void)(n);
+	if (sig == SIGINT)
 	{
 		*g_error = 1;
 		ft_printf("\n");
@@ -25,19 +27,21 @@ void	handler(int sig, siginfo_t *info, void *n)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
-	if(sig == SIGQUIT)
+	if (sig == SIGQUIT)
 	{
 		*g_error = 0;
 	}
 }
 
-int handle_signals(void)
+int	handle_signals(void)
 {
-	struct sigaction sign;
+	struct sigaction	sign;
 
 	sign.sa_flags = SA_SIGINFO;
 	sign.sa_sigaction = &handler;
-	if(sigaction(SIGINT, &sign, NULL) &&/*ctr-C*/ sigaction(SIGUSR1, &sign, NULL))//ctr-/
-		return(1);
-	return(0);
+	if (sigaction(SIGINT, &sign, NULL)
+		&& sigaction(SIGUSR1, &sign, NULL))//ctr-C
+		//ctr-/
+		return (1);
+	return (0);
 }

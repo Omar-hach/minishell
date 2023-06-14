@@ -76,6 +76,17 @@ void shvlvl(void)
 	free(shlvl);
 }
 
+void	free_env(void)
+{
+	extern char	**environ;
+	int			x;
+
+	x = -1;
+	while (environ[++x])
+		free(environ[x]);
+	free(environ);
+}
+
 // int	ft_minishell_valgrind()
 // {
 // 	char	*input;
@@ -121,7 +132,9 @@ int	ft_minishell()
 	int		ex;
 	t_token	*nodes;
 	t_tree	*tree;
+	int		x;
 
+x = 0;
 	ex = 1;
 	tree = NULL;
 	nodes = NULL;
@@ -151,6 +164,7 @@ int	ft_minishell()
 		free(input);
 		// system("leaks minishell");
 	}
+	free_env();
 	return(*g_error);
 }
 

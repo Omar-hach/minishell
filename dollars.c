@@ -98,9 +98,14 @@ char	*get_dollars(char *s, int *x, int qt)
 char	*is_money(char *s, int *x, int qt, int dualqt)
 {
 	char	*home;
+	char	*hmm;
 
 	if (s[*x] == '$' && s[(*x) + 1] == '?' && !(qt % 2))
-		s = mint_dollars(s, *x, 1, ft_itoa(*g_error));
+	{
+		hmm = ft_itoa(*g_error);
+		s = mint_dollars(s, *x, 1, hmm);
+		free(hmm);
+	}
 	else if (s[*x] == '$' && !(qt % 2))
 		s = get_dollars(s, x, !(dualqt % 2));
 	else if (s[*x] == '~' && !(qt % 2) && !(dualqt % 2)
