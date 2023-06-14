@@ -51,9 +51,8 @@ void shvlvl()
 	vlvl = ft_atoi(shlvl);
 	shlvl = ft_itoa(++vlvl);
 	shvlv = make_var("SHLVL", shlvl);
-	ft_setenv(shvlv);
-	ft_setenv("OLDPWD=");
-	// free(shvlv);
+	ft_setenv(shvlv, 0);
+	ft_setenv("OLDPWD=", 0);
 	free(shlvl);
 }
 
