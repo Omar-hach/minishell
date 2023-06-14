@@ -101,9 +101,9 @@ char	*is_money(char *s, int *x, int qt, int dualqt)
 
 	if (s[*x] == '$' && s[(*x) + 1] == '?' && !(qt % 2))
 		s = mint_dollars(s, *x, 1, ft_itoa(*g_error));
-	if (s[*x] == '$' && !(qt % 2))
+	else if (s[*x] == '$' && !(qt % 2))
 		s = get_dollars(s, x, !(dualqt % 2));
-	if (s[*x] == '~' && !(qt % 2) && !(dualqt % 2)
+	else if (s[*x] == '~' && !(qt % 2) && !(dualqt % 2)
 		&& ft_isdigit(s[(*x) + 1]) == 0 && ft_isdigit(s[(*x) - 1]) == 0)
 	{
 		home = getenv("HOME");

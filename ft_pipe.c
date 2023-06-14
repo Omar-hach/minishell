@@ -58,6 +58,7 @@ int	pipe_out(int *bibe, t_tree *tree, t_token *tokens)
 			exit (1);
 		out = exec_node(tree, tokens);
 		close(bibe[0]);
+		free(bibe);
 		exit(out);
 	}
 	return (pid);
@@ -76,6 +77,7 @@ int	pipe_in(int *bibe, t_tree *tree, t_token *tokens)
 			exit (1);
 		out = exec_node(tree, tokens);
 		close(bibe[1]);
+		free(bibe);
 		exit(out);
 	}
 	return (pid);
@@ -86,25 +88,24 @@ int	pipe_in(int *bibe, t_tree *tree, t_token *tokens)
 
 int	ft_pipe(t_tree *tree, t_token *tokens)
 {
-	int		*pid;
+	int		pid1;
+	int		pid2;
 	int		*bibe;
 	int		out;
 	int		out2;
 
 	out = 0;
 	out2 = 0;
-	pid = (int *) malloc(2 * sizeof(int));
 	bibe = (int *) malloc(2 * sizeof(int));
 	if (pipe(bibe) < 0)
 		return (1);
-	pid[2] = pipe_in(bibe, tree->right_son, tokens);
-	pid[1] = pipe_out(bibe, tree->left_son, tokens);
+	pid2 = pipe_in(bibe, tree->right_son, tokens);
+	pid1 = pipe_out(bibe, tree->left_son, tokens);
 	close(bibe[1]);
 	close(bibe[0]);
-	waitpid(pid[2], &out2, 0);
-	waitpid(pid[1], &out, 0);
+	waitpid(pid2, &out2, 0);
+	waitpid(pid1, &out, 0);
 	free(bibe);
-	free(pid);
 	return (out >> 8);
 }
 	// printf("\n out = %d | out2 = %d \n", out, out2);

@@ -55,7 +55,7 @@ int	here_file(char *s, int qt)
 	while (1)
 	{
 		input = readline("> ");
-		if (!input[0] || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
+		if (!input[0] || !s || ft_strncmp(input, s, ft_strlen(s)) == 0)
 		{
 			free(input);
 			break ;

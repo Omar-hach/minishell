@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohachami <ohachami@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yhachami <yhachami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/26 23:14:18 by ohachami          #+#    #+#             */
-/*   Updated: 2023/03/26 23:14:59 by ohachami         ###   ########.fr       */
+/*   Updated: 2023/06/13 21:36:44 by yhachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ t_token	*split_input(char *input, int *len)
 	if (!fill_nodes(words, &lex, nodes, len))
 	{
 		*g_error = 127;
-		return (free_struct_array(NULL, &lex, nodes, *len - 1));
+		return (free_struct_array(words, &lex, nodes, *len));
 	}
 	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
@@ -44,17 +44,18 @@ t_token	*split_input(char *input, int *len)
 void shvlvl()
 {
 	char	*shlvl;
-	int		lvlv;
+	char	*shvlv;
+	int		vlvl;
 
 	shlvl = getenv("SHLVL");
-	lvlv = ft_atoi(shlvl);
-	lvlv++;
-	shlvl = ft_itoa(lvlv);
-	replace_var("SHLVL", shlvl);
-	ft_putenv("OLDPWD=");
+	vlvl = ft_atoi(shlvl);
+	shlvl = ft_itoa(++vlvl);
+	shvlv = make_var("SHLVL", shlvl);
+	ft_setenv(shvlv);
+	ft_setenv("OLDPWD=");
+	free(shvlv);
 	free(shlvl);
 }
-
 
 // int	ft_minishell_valgrind()
 // {
@@ -107,6 +108,8 @@ int	ft_minishell()
 	nodes = NULL;
 	shvlvl();
 	*g_error = 0;
+	//if(handle_signals())
+	//	return(1);
 	while (ex)
 	{
 		input = readline(">>> MiniShell $> ");
@@ -122,7 +125,7 @@ int	ft_minishell()
 				// treeprint(tree, 0, nodes);
 				// ft_printf("\n------EXEC-----\n");
 				exec_tree(tree, nodes);
-				free_struct_array(NULL, NULL, nodes, ex - 1);
+				free_tree(tree, nodes);
 				ex = 1;
 			}
 		}

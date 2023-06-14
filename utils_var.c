@@ -9,20 +9,8 @@
 /*   Updated: 2023/05/01 19:38:46 by yhachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include"minishell.h"
-
-int	change_oldpwd(void)
-{
-	char	*dir;
-
-	dir = (char *)malloc(PATH_MAX);
-	if (!dir)
-		return (1);
-	getcwd(dir, PATH_MAX);
-	replace_var("OLDPWD", dir);
-	free(dir);
-	return (0);
-}
 
 int	ft_findvar(char *var)
 {
@@ -43,30 +31,74 @@ int	ft_findvar(char *var)
 	return (-1);
 }
 
-void	ft_setenv(char *var)
-{
-	extern char	**environ;
-	char		**new_env;
-	int			x;
+// int	replace_var(char *name, char *value)
+// {
+// 	extern char	**environ;
+// 	int			x;
+// 	int			y;
+// 	int			size;
+// 	char		*val;
+// 	static int	malloced;
+// 	char		*old;
 
-	x = ft_findvar(var);
-	if (x >= 0)
-	{
-		x = 0;
-		while (environ[x])
-			x++;
-		new_env = (char **) ft_calloc((x + 2), sizeof(char *));
-		if (new_env)
-			return ;
-		x = ft_findvar(var);
-		new_env[x] = var;
-		environ = new_env;	
-	}
-	else
-		ft_putenv(var);
-}
+// 	x = ft_findvar(name);
+// 	if (x >= 0)
+// 	{
+// 		size = ft_strlen(name) + ft_strlen(value) + 2;
+// 		val = (char *) malloc(size * sizeof(char));
+// 		if (!val)
+// 			return (0);
+// 		y = -1;
+// 		while (name[++y])
+// 			val[y] = name[y];
+// 		val[y] = '=';
+// 		x = -1;
+// 		while (value[++x])
+// 			val[++y] = value[x];
+// 		val[++y] = '\0';
+// 		x = ft_findvar(name);
+// 		old = environ[x];
+// 		environ[x] = val;
+// 		if (malloced == 1)
+// 			free(old);
+// 		else
+// 			malloced = 1;
+// 		// ft_setenv(val);
+// 		return (0);
+// 	}
+// 	else
+// 		return (-1);
+// }
+// void	ft_putenv(char *var)
+// {
+// 	extern char	**environ;
+// 	char		**new_env;
+// 	char		*var_;
+// 	int			x;
 
-int	replace_var(char *name, char *value)
+// 	x = ft_findvar(var);
+// 	if (x == -1)
+// 	{
+// 		x = 0;
+// 		while (environ[x])
+// 			x++;
+// 		new_env = (char **) ft_calloc((x + 2), sizeof(char *));
+// 		if (!new_env)
+// 			return ;
+// 		x = -1;
+// 		while (environ[++x])
+// 			new_env[x] = environ[x];
+// 		var_ = environ[--x];
+// 		new_env[x++] = var;
+// 		new_env[x++] = var_;
+// 		new_env[x] = NULL;
+// 		environ = new_env;
+// 	}
+// 	else
+// 		environ[x] = var;
+// }
+
+char	*make_var(char *name, char *value)
 {
 	extern char	**environ;
 	int			x;
@@ -74,29 +106,19 @@ int	replace_var(char *name, char *value)
 	int			size;
 	char		*val;
 
-	x = ft_findvar(name);
-	if (x >= 0)
-	{
-		size = ft_strlen(name) + ft_strlen(value) + 1;
-		val = (char *) malloc(size * sizeof(char));
-		if (!val)
-			return (0);
-		y = -1;
-		while (name[++y])
-			val[y] = name[y];
-		val[y] = '=';
-		x = 0;
-		while (value[x])
-			val[y] = value[x++];
-		val[y] = '\0';
-		// x = ft_findvar(name);
-		// environ[x] = val;
-		ft_setenv(val);
-		// free(val);
+	size = ft_strlen(name) + ft_strlen(value) + 2;
+	val = (char *) malloc(size * sizeof(char));
+	if (!val)
 		return (0);
-	}
-	else
-		return (-1);
+	y = -1;
+	while (name[++y])
+		val[y] = name[y];
+	val[y] = '=';
+	x = -1;
+	while (value[++x])
+		val[++y] = value[x];
+	val[++y] = '\0';
+	return (val);
 }
 
 void	ft_putenv(char *var)
@@ -106,29 +128,46 @@ void	ft_putenv(char *var)
 	char		*var_;
 	int			x;
 
-	x = ft_findvar(var);
-	if (x == -1)
-	{
-		x = 0;
-		while (environ[x])
-			x++;
-		new_env = (char **) ft_calloc((x + 2), sizeof(char *));
-		if (!new_env)
-			return ;
-		x = -1;
-		while (environ[++x])
-			new_env[x] = environ[x];
-		var_ = environ[--x];
-		new_env[x++] = ft_strdup(var);
-		new_env[x++] = var_;
-		new_env[x] = NULL;
-		environ = new_env;
-	}
-	// else
-	// 	environ[x] = ft_strdup(var);
+	x = 0;
+	while (environ[x])
+		x++;
+	new_env = (char **) ft_calloc((x + 2), sizeof(char *));
+	if (!new_env)
+		return ;
+	x = -1;
+	while (environ[++x])
+		new_env[x] = environ[x];
+	var_ = environ[--x];
+	new_env[x++] = var;
+	new_env[x++] = var_;
+	new_env[x] = NULL;
+	environ = new_env;
 }
 
-void	ft_unputenv(char *name)
+	// variable = get_variable(var);
+void	ft_setenv(char *var)
+{
+	extern char	**environ;
+	int			x;
+	char		*old;
+	// static int	malloced;
+
+	x = ft_findvar(var);
+	if (x >= 0)
+	{
+		old = environ[x];
+		environ[x] = var;
+		// printf("var = %s, old = %s\n", var, old);
+		// if (malloced == 1)
+		// 	free(old);
+		// else
+		// 	malloced = 1;
+	}
+	else
+		ft_putenv(var);
+}
+
+void	ft_unsetenv(char *name)
 {
 	int			x;
 	extern char	**environ;

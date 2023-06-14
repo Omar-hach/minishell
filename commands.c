@@ -44,7 +44,7 @@ int	ft_unset(int ac, char **av)
 				return (ft_printf("unset: '%s': not a valid identifier\n",
 						av[x]), 2);
 			else
-				ft_unputenv(av[x]);
+				ft_unsetenv(av[x]);
 		}
 	}
 	return (0);
@@ -73,7 +73,7 @@ int	ft_export(int ac, char **av)
 			else if (r == 3 || r == 2)
 				return (0);
 			else
-				ft_putenv(av[x]);
+				ft_setenv(av[x]);
 		}
 	}
 	return (0);

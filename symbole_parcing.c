@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   symbole_parcing.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohachami <ohachami@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yhachami <yhachami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 07:46:34 by ohachami          #+#    #+#             */
-/*   Updated: 2023/04/25 07:46:36 by ohachami         ###   ########.fr       */
+/*   Updated: 2023/06/13 21:27:25 by yhachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "minishell.h"
+
+#include"minishell.h"
 
 int	get_symb_len(int sym_type, char *s, char **sym)
 {
@@ -76,9 +77,9 @@ char	*rearrange_input(char *s, char **sym, int i)
 		}
 	}
 	put_inderect(s, i, re);
-	// ft_memcpy(s, re, ft_strlen(re));
-	// free(re);
-	return (re);
+	ft_memcpy(s, re, ft_strlen(s));
+	free(re);
+	return (s);
 }
 
 int	get_token_len(char *s, char **sym)
@@ -182,7 +183,6 @@ char	**expr_split(char *input, char **sym, int part)
 	array = words_cutter(s + count_space(s), len_array, array, part);
 	array[part] = NULL;
 	free(len_array);
-	// free(s);
 	// printf("array=%s.\n",array[0]);
 	return (array);
 }

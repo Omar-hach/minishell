@@ -45,19 +45,7 @@ char	*find_path(char *file)
 {
 	char	*path;
 	char	**all_paths;
-	// int		len;
 
-	// len = ft_strlen(file) - 1;
-	// if (file[len] == '.' && file[len + 1])
-	// {
-	// 	ft_printf(" . : filename argument required\n");
-	// 	return (0);
-	// }
-	// if (len >1 && file[len] == '.' && file[len - 1] == '.' && file[len + 1])
-	// {
-	// 	ft_printf(" .. : filename argument required\n");
-	// 	return (0);
-	// }
 	// printf("file=%s,\n",file);
 	if (!file[0])
 		return (NULL);
@@ -95,35 +83,6 @@ int	check_file(char *file)
 	{
 		ft_printf(" %s: No such file or directory\n", file);
 		return (127);
-	}
-	return (0);
-}
-
-int	ft_env_declare(void)
-{
-	int			x;
-	int			y;
-	int			z;
-	extern char	**environ;
-
-	x = -1;
-	while (environ[++x])
-	{
-		printf("declare -x ");
-		y = -1;
-		z = 0;
-		while (environ[x][++y])
-		{
-			printf("%c", environ[x][y]);
-			if (environ[x][y] == '=')
-			{
-				printf("\"");
-				z = 1;
-			}
-		}
-		if (z)
-			printf("\"");
-		printf("\n");
 	}
 	return (0);
 }

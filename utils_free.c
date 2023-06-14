@@ -50,11 +50,13 @@ void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
 	return (NULL);
 }
 
-void	free_tree(t_tree *root)
+void	free_tree(t_tree *root, t_token *nodes)
 {
 	if (root == NULL)
 		return ;
-	free_tree(root->right_son);
-	free_tree(root->left_son);
+	free_tree(root->right_son, nodes);
+	free_tree(root->left_son, nodes);
+	if (nodes[root->token_index].args)
+		free_aray(nodes[root->token_index].args);
 	free(root);
 }
