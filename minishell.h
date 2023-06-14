@@ -35,7 +35,7 @@
 
 // # define ERROR 0
 
-int		*error;
+int		error;
 
 typedef struct s_token
 {
@@ -126,5 +126,6 @@ char		*cmd_split(char *word, int *token, t_lexic lex);
 void		free_tree(t_tree *root);
 void		treeprint(t_tree *root, int level, t_token *nodes);
 
-
+int		handle_signals(void);
+int			ft_minishell(void);
 #endif

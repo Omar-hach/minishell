@@ -14,7 +14,7 @@ NAME = minishell
 
 CC = gcc 
 
-CFLAGS = -Werror -Wall -Wextra
+CFLAGS = -Werror -Wall -Wextra -I/Users/ohachami/.brew/opt/readline/include 
 
 FLAGS = -lreadline -lcurses 
 #-fsanitize=address
@@ -23,10 +23,11 @@ SRC = 	minishell.c\
 		symbole_parcing.c\
 		detect_sym_error.c\
 		create_tree.c\
-		nodes_utils.c trim_word.c\
+		nodes_utils.c\
 		exec_tree.c symbol.c commands.c dollars.c\
 		ft_cd.c ft_echo.c ft_pipe.c arg_split.c\
-		utils_y.c utils_o.c utils_var.c utils_free.c utils_check.c
+		utils_y.c utils_o.c utils_var.c utils_free.c utils_check.c\
+		signal_handling.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -36,7 +37,7 @@ all:$(NAME)
 
 $(NAME):$(OBJ)
 	make -C libft
-	$(CC) $(FLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
+	$(CC) $(FLAGS) $(OBJ) $(LIBFT) -L/Users/ohachami/.brew/opt/readline/lib -o $(NAME) 
 
 clean:
 	make -C libft clean

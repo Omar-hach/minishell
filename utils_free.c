@@ -30,7 +30,7 @@ void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
 	int	i;
 
 	i = -1;
-	while (nodes && nodes[++i].arg && i < len)
+	while (i < len && nodes && nodes[++i].arg)
 		free(nodes[i].arg);
 	if (nodes)
 		free(nodes);

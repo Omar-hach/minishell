@@ -28,7 +28,7 @@ char	*fill_cmd(char *word, int j, int *i)
 		while (word[k] == 34 || word[k] == 39)
 			k++;
 		if(k < (*i))
-			cmd[j++] = word[k];
+			cmd[j++] = ft_tolower(word[k]);
 	}
 	return (cmd);
 }
@@ -76,8 +76,8 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 	char	*arg;
 	char	*bin;
 
-	if(ft_strncmp(cmd, "..", 2))//{
-		bin = find_path(cmd, -1, -1, -1);
+	bin = find_path(cmd, -1, -1, -1);
+	arg = NULL;
 	//ft_printf(" ,cmd=%s , %p. word=%s , %p\n", cmd, cmd, word , word);}
 	if (ft_find(cmd, lex.l_cmd)
 		&& ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
@@ -87,18 +87,15 @@ char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
 		*token = 1;
 		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
 		ft_memcpy(arg, word, ft_strlen(word) + 1);
-		return (arg);
 	}
 	else if (bin)
 	{
 		*token = 1;	
 		arg = expand_cmd(cmd, bin, word);
-		free(bin);
-		return (arg);
 	}
-	if (bin)
-		free(bin);
-	return (NULL);
+	//if(bin)
+	free(bin);
+	return (arg);
 }
 
 //handle arg to **arg with no ""
@@ -133,29 +130,28 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	i = 0;
 	j = 0;
 	cmd = NULL;
-	word_copy = word;
-	word_copy += count_space(word);
-	word_copy = replace_dollars(word_copy);
-	//ft_printf("word=%s , %p\n", word_copy , word_copy);
+	word_copy = replace_dollars(word);
+	//ft_printf("word=%s , %p\n", word , word_copy);
 	if (ft_find(word, lex.l_symb))
 		cmd = fill_symb(word_copy, &i, token, ft_find(word, lex.l_symb));
 	else
 		cmd = fill_cmd(word_copy, j, &i);
 	if (!cmd || *token == 21)
+	{
+		free(word_copy);
 		return (NULL);
+	}
 	arg = set_cmd(word_copy, token, cmd, lex);
 	if (*token < 1)
 	{
-		*error = 127;
+		error = 127;
 		ft_printf("minshell: %s:command not found\n", cmd);
-		free(cmd);
-		return (NULL);
 	}
-	if (!arg)
+	if (!arg && *token > 1)
 		arg = fill_arg(word_copy, i);
-	//printf("-word[%p]=%s -word_copy[%p]=%s\n",word, word, word_copy, word_copy);
+	//ft_printf("minshell: %s:%p\n", cmd, cmd);
 	free(cmd);
-	free(word);
+	free(word_copy);
 	return (arg);
 }
 
@@ -172,28 +168,26 @@ t_token	*split_input(char *input, int *len)
 	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
 	if (!words)
 	{
-		*error = 2;
+		error = 2;
 		return (free_struct_array(NULL, &lex, NULL, -1));
 	}
-	*len = nodes_count(words);
-	nodes = NULL;
-	nodes = malloc_nodes(nodes, *len, &lex);
+	*len = nodes_count(words) + 1;
+	nodes = malloc_nodes(NULL, *len, &lex);
 	if (!fill_nodes(words, &lex, nodes, len))
 	{
-		*error = 127;
-		return (free_struct_array(NULL, &lex, nodes, *len));
+		error = 127;
+		return (free_struct_array(words, &lex, nodes, *len));
 	}
-	/*
 	i = -1;
 	while (++i < (*len))
-		printf("word[%p]=%s=%p\ni =%d type=%d <%s>\n", words, words[i], words[i], i, nodes[i].type, nodes[i].arg);*/
-	free_struct_array(NULL, &lex, NULL, -1);
+		printf("word[%p]=%s=%p\ni =%d type=%d <%s>\n\n", words, words[i], words[i], i, nodes[i].type, nodes[i].arg);
+	free_struct_array(words, &lex, NULL, -1);
 	return (nodes);
 }
 
 //<cmd><|><exp>
 
-void shvlvl()
+void shvlvl(void)
 {
 	char	*shlvl;
 	int		lvlv;
@@ -207,7 +201,7 @@ void shvlvl()
 	free(shlvl);
 }
 
-int	ft_minishell()
+int	ft_minishell(void)
 {
 	char	*input;
 	int		ex;
@@ -218,10 +212,13 @@ int	ft_minishell()
 	tree = NULL;
 	nodes = NULL;
 	shvlvl();
-	*error = 0;
+	error = 0;
+	if (handle_signals())
+		return (1);
 	while (ex)
 	{
 		input = readline(">>> MiniShell $> ");
+		//printf("step\n");
 		if (!input)
 			break ;
 		if (input[count_space(input)])
@@ -231,7 +228,7 @@ int	ft_minishell()
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
-				// treeprint(tree, 0, nodes);
+				//treeprint(tree, 0, nodes);
 				// ft_printf("\n------EXEC-----\n");
 				exec_node(tree, nodes);
 				free_struct_array(NULL, NULL, nodes, ex);
@@ -239,9 +236,9 @@ int	ft_minishell()
 			}
 		}
 		// free(input);
-		// system("leaks minishell");
+		//system("leaks minishell");
 	}
-	return(*error);
+	return(error);
 }
 
 int	main(int ac, char **av)
@@ -256,7 +253,7 @@ int	main(int ac, char **av)
 	tree = NULL;
 	nodes = NULL;
 	out = 0;
-	error = (int *) malloc(1 * sizeof(int));
+	error = 0;
 	if (ac >= 3 && !ft_strncmp(av[1], "-c", 3))
 	{
 		in = av[2];
@@ -265,7 +262,7 @@ int	main(int ac, char **av)
 			shvlvl();
 			nodes = split_input(in, &ex);
 			if (!nodes)
-				return (*error);
+				return (error);
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
@@ -276,7 +273,7 @@ int	main(int ac, char **av)
 				ex = 1;
 			}
 		}
-		return (*error);
+		return (error);
 	}
 	else
 	{

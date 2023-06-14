@@ -69,15 +69,11 @@ int	skip_quote(char *s, int y, int z)
 void	ft_skip(t_token *token, int i)
 {
 	int		x;
-	int		y;
-	int		z;
 
 	x = 0;
 	while (token[i].args[x])
 	{
 		// ft_printf("so SQiping %d = ", x); 
-		z = 0;
-		y = 0;
 		token[i].qt = 0;
 		token[i].qt = skip_quote(token[i].args[x], 0, 0);
 		// ft_printf("\n");

@@ -104,7 +104,7 @@ char	*is_money(char *s, int *x, int qt, int dualqt)
 	char	*home;
 
 	if (s[*x] == '$' && s[(*x) + 1] == '?' && !(qt % 2))
-		s = mint_dollars(s, *x, 1, ft_itoa(*error));
+		s = mint_dollars(s, *x, 1, ft_itoa(error));
 	if (s[*x] == '$' && !(qt % 2))
 		s = get_dollars(s, x, !(dualqt % 2));
 	if (s[*x] == '~' && !(qt % 2) && !(dualqt % 2)

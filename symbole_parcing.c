@@ -47,7 +47,6 @@ int put_inderect(char *s, int end, char *re)
 	{
 		if(count_space(s + k) == ft_strlen(s))
 			return (0);
-
 		k += count_space(s + k);
 		re[j++] = s[k];
 		s[k] = ' ';
@@ -80,7 +79,9 @@ char	*rearrange_input(char *s, char **sym, int i)
 		}
 	}
 	put_inderect(s, i, re);
-	return (re);
+	ft_memcpy(s, re, ft_strlen(re));
+	free(re);
+	return (s);
 }
 
 int	get_token_len(char *s, char **sym)
@@ -170,7 +171,7 @@ char	**expr_split(char *input, char **sym, int part)
 	s = rearrange_input(input, sym, -1);//  printf("s=%s.\n",s);
 	if (detect_sym_error(s, sym, &part, 0))
 	{
-		*error = 2;
+		error = 2;
 		return (NULL);
 	}
 	array = (char **)ft_calloc(part + 2, sizeof(char *));
@@ -183,9 +184,9 @@ char	**expr_split(char *input, char **sym, int part)
 	while (++i < part)
 		array[i] = (char *)ft_calloc(len_array[i] + 1, sizeof(char));
 	array = words_cutter(s + count_space(s), len_array, array, part);
-	array[part] = NULL;
-	if (s)
-		free(s);
+	// array[part] = NULL;
+	// if (s)
+	// 	free(s);
 	free(len_array);
 	return (array);
 }

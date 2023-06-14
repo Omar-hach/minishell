@@ -24,7 +24,7 @@ int	exec_prog(t_token token)
 	if (fork1() == 0)
 		out = execve(token.args[0], token.args, prog_envp);
 	wait(&out);
-	// printf("ooo %d %d\n", out, *error);
+	// printf("ooo %d %d\n", out, error);
 	return (out >> 8);
 }
 
@@ -102,25 +102,25 @@ int	exec_node(t_tree *tree, t_token *tokens)
 	}
 	else
 		out = exec_token(tree, tokens);
-	*error = out;
+	error = out;
 	// if (tokens[x].arg)
 	// 	free(tokens[x].arg);
 	if (tokens[x].args)
 		free_aray(tokens[x].args);
 	// ft_printf("node %d finished = %d error = %d\n",x,out, *error);
-	return (*error);
+	return (error);
 }
 // ls | grep a < file1 > file2
 //
 //           4   file2    
-//            \
-//             \
+//            |
+//             |
 //              0    
-//             / \
-//            /   \
+//             / |
+//            /   |
 //      ls   1     3  file1
-//                  \
-//                   \
+//                  |
+//                   |
 //                    2  grep
 //                 
 //   
@@ -129,14 +129,14 @@ int	exec_node(t_tree *tree, t_token *tokens)
 // ls | grep a < file1 < file2
 //
 //              0       
-//             / \
-//            /   \
+//             / |
+//            /   |
 //    file1  3     2
-//            \
-//             \
+//            |
+//             |
 //      file2   4
-//               \
-//                \
+//               |
+//                |
 //                 1 
 //
 //
@@ -145,11 +145,11 @@ int	exec_node(t_tree *tree, t_token *tokens)
 // /bin/ls | /usr/bin/grep c | /usr/bin/grep o
 //
 //              0 
-//             / \
-//            /   \
+//             / |
+//            /   |
 //           1     2
-//                / \
-//               /   \
+//                / |
+//               /   |
 //              3     4   ls
 //
 

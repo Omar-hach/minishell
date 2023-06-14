@@ -101,14 +101,16 @@ char	*get_dollars(char *s, int *x, int qt)
 }
 
 // search for all  dolar var
-char	*replace_dollars(char *s)
+char	*replace_dollars(char *word)
 {
 	int		x;
 	int		qt;
 	int		dualqt;
+	char	*s;
 
 	qt = 0;
 	dualqt = 0;
+	s = ft_strdup(word + count_space(word));
 	x = 0;
 	while (s[x] && s[x] != '$' && s[x] != '~')
 		x++;
@@ -123,4 +125,4 @@ char	*replace_dollars(char *s)
 	}
 	return (s);
 }
-		// ft_printf("[%d] s = %s\n",x ,s);
+
