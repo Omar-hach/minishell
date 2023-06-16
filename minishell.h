@@ -127,7 +127,7 @@ char	**expr_split(char *s, char **sym);
 int		creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);
-int		error_print(char *mes, char *prob, int n);
+int		error_print(char *message, char *prob, int n, int error);
 t_tree	*create_tree(t_token *nodes, int len);
 int		detect_sym_error(char *s, char **sym, int *part, int type);
 void	*free_aray(char	**words);

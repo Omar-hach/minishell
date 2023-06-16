@@ -67,9 +67,12 @@ int	ft_find(char *s, char **token)
 	return (0);
 }
 
-int	error_print(char *message, char *prob, int n)
+int	error_print(char *message, char *prob, int n, int error)
 {
-	*g_error = 258;
+	if (!error)
+		*g_error = 258;
+	else
+		*g_error = error;
 	ft_printf("%s '", message);
 	while (*prob && n--)
 	{
