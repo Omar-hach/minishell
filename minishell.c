@@ -77,11 +77,12 @@ void	shvlvl(void)
 // treeprint(tree, 0, nodes);
 // ft_printf("\n------EXEC-----\n");
 // system("leaks minishell");
-int	ft_minishell(t_tree *tree, t_token *nodes, int ex)
+int	ft_minishell(t_tree *tree, t_token *nodes)
 {
 	char	*input;
+	int		len;
 
-	while (ex)
+	while (1)
 	{
 		input = readline(">>> MiniShell $> ");
 		if (!input)
@@ -89,14 +90,14 @@ int	ft_minishell(t_tree *tree, t_token *nodes, int ex)
 		if (input[count_space(input)])
 		{
 			add_history(input);
-			nodes = split_input(input, &ex);
+			len = 1;
+			nodes = split_input(input, &len);
 			if (nodes)
 			{
-				tree = create_tree(nodes, ex);
+				tree = create_tree(nodes, len);
 				exec_tree(tree, nodes);
 				free_tree(tree, nodes);
 				free(nodes);
-				ex = 1;
 			}
 		}
 		free(input);
@@ -109,17 +110,15 @@ int	ft_minishell(t_tree *tree, t_token *nodes, int ex)
 int	main(void)
 {
 	int		out;
-	int		ex;
 	t_token	*nodes;
 	t_tree	*tree;
 
 	g_error = (int *) malloc(1 * sizeof(int));
 	*g_error = 0;
 	shvlvl();
-	ex = 1;
 	tree = NULL;
 	nodes = NULL;
-	ft_minishell(tree, nodes, ex);
+	ft_minishell(tree, nodes);
 	free_env();
 	out = *g_error;
 	free(g_error);
