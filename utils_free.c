@@ -17,12 +17,30 @@ void	*free_aray(char	**words)
 
 	i = -1;
 	while (words[++i])
-	{
-		// printf("[%d] words = %p, %s\n",i, words[i], words[i]);
 		free(words[i]);
-	}
 	free(words);
 	return (NULL);
+}
+
+// void	free_args(t_tree *tree, t_token *tokens)
+// {
+// 	if (tree == NULL)
+// 		return ;
+// 	free_args(tree->right_son, tokens);
+// 	free_args(tree->left_son, tokens);
+// 	if (tokens[tree->token_index].args)
+// 		free_aray(tokens[tree->token_index].args);
+// }
+
+void	free_env(void)
+{
+	extern char	**environ;
+	int			x;
+
+	x = -1;
+	while (environ[++x])
+		free(environ[x]);
+	free(environ);
 }
 
 void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
@@ -30,24 +48,26 @@ void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
 	int	i;
 
 	i = -1;
-	while (i < len && nodes && nodes[++i].arg)
-		free(nodes[i].arg);
-	if (nodes)
-		free(nodes);
-	if (words){
-		free_aray(words);}
+	while (nodes && nodes[++i].args && i < len)
+		free_aray(nodes[i].args);
+	if (words)
+		free_aray(words);
 	if (lex && lex->l_cmd)
 		free_aray(lex->l_cmd);
+	if (nodes)
+		free(nodes);
 	if (lex && lex->l_symb)
 		free_aray(lex->l_symb);
 	return (NULL);
 }
 
-void	free_tree(t_tree *root)
+void	free_tree(t_tree *root, t_token *nodes)
 {
 	if (root == NULL)
 		return ;
-	free_tree(root->right_son);
-	free_tree(root->left_son);
+	free_tree(root->right_son, nodes);
+	free_tree(root->left_son, nodes);
+	if (nodes[root->token_index].args)
+		free_aray(nodes[root->token_index].args);
 	free(root);
 }

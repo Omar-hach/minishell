@@ -36,13 +36,15 @@ int	ft_unset(int ac, char **av)
 		x = -1;
 		while (av[++x])
 		{
-			r = ft_isvar(av[x]);
+			r = is_var(av[x]);
 			if (r == -1 || r == 1 || r == 0)
-				return (ft_printf("unset: '%s': not a valid identifier\n", av[x]), 1);
+				return (ft_printf("unset: '%s': not a valid identifier\n",
+						av[x]), 1);
 			if (r == -3)
-				return (ft_printf("unset: '%s': not a valid identifier\n", av[x]), 2);
+				return (ft_printf("unset: '%s': not a valid identifier\n",
+						av[x]), 2);
 			else
-				ft_unputenv(av[x]);
+				ft_unsetenv(av[x]);
 		}
 	}
 	return (0);
@@ -61,15 +63,17 @@ int	ft_export(int ac, char **av)
 		x = -1;
 		while (av[++x])
 		{
-			r = ft_isvar(av[x]);
+			r = is_var(av[x]);
 			if (r == -1 || r == -2 || r == 0)
-				return (ft_printf("export: '%s': not a valid identifier\n", av[x]), 1);
+				return (ft_printf("export: '%s': not a valid identifier\n",
+						av[x]), 1);
 			else if (r == -3 || r == -4)
-				return (ft_printf("export: '%s': not a valid identifier\n", av[x]), 2);
+				return (ft_printf("export: '%s': not a valid identifier\n",
+						av[x]), 2);
 			else if (r == 3 || r == 2)
 				return (0);
 			else
-				ft_putenv(av[x]);
+				ft_setenv(ft_strdup(av[x]));
 		}
 	}
 	return (0);
@@ -82,16 +86,18 @@ int	ft_exit(int ac, char **av)
 	if (av[0])
 	{
 		x = (char) ft_atoi(av[0]);
-		if (x == 0 && av[0][0] != '0' && av[0][1] != '0')
+		if (x == 0 && av[0][0] != '0')
 		{
 			ft_printf("exit: %s: numeric argument required\n", av[0]);
 			exit(255);
 		}
 	}
+	if (ac == 0)
+		exit(0);
 	if (ac == 1)
 	{
 		x = (char) ft_atoi(av[0]);
-		if (x == 0 && av[0][1] != '0' && av[0][0] != '0')
+		if (x == 0 && av[0][0] != '0')
 			exit(255);
 		exit(x);
 	}

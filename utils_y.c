@@ -12,91 +12,98 @@
 
 #include"minishell.h"
 
-// find path of executable in $PATH (/bin : /usr/bin)
-char	*find_path(char *file, int x, int y, int z)
+char	*check_path(char *dir, char *file)
+{
+	char	*path;
+	int		y;
+	int		z;
+
+	y = -1;
+	z = -1;
+	path = (char *)malloc(ft_strlen(dir) + ft_strlen(file) + 2);
+	if (!path)
+		return (NULL);
+	while (dir[++y])
+		path[y] = dir[y];
+	path[y++] = '/';
+	while (file[++z])
+		path[y + z] = file[z];
+	path[y + z] = '\0';
+	if (access(path, F_OK) == 0)
+		return (path);
+	free(path);
+	path = NULL;
+	return (NULL);
+}
+
+char	*get_path(char *dir, char *file)
 {
 	char	*path;
 	char	**all_paths;
+	int		x;
 
-	all_paths = ft_split(getenv("PATH"), ':');
+	all_paths = ft_split(dir, ':');
 	if (!all_paths)
 		return (NULL);
 	path = NULL;
-	//ft_printf("ok \n");
+	x = -1;
 	while (all_paths[++x] && !path)
-	{
-		y = -1;
-		z = -1;
-		path = (char *)malloc(ft_strlen(all_paths[x]) + ft_strlen(file) + 2);
-		while (all_paths[x][++y])
-			path[y] = all_paths[x][y];
-		path[y++] = '/';
-		while (file[++z])
-			path[y + z] = file[z];
-		path[y + z] = '\0';
-		if (access(path, F_OK) == 0)
-			break ;
-		free(path);
-		path = NULL;
-	}
+		path = check_path(all_paths[x], file);
 	free_aray(all_paths);
 	return (path);
 }
 
-int	ft_env_declare(void)
+// find path of executable in $PATH (/bin : /usr/bin)
+char	*find_path(char *file)
 {
-	int			x;
-	int			y;
-	int			z;
-	extern char	**environ;
+	char	*path;
+	char	*dir;
 
-	x = -1;
-	while (environ[++x])
+	if (!file[0])
+		return (NULL);
+	dir = getenv("PATH");
+	if (dir)
+		path = get_path(dir, file);
+	else
 	{
-		printf("declare -x ");
-		y = -1;
-		z = 0;
-		while (environ[x][++y])
+		dir = (char *)malloc(PATH_MAX);
+		if (!dir)
+			return (NULL);
+		getcwd(dir, PATH_MAX);
+		path = check_path(dir, file);
+		free(dir);
+	}
+	return (path);
+}
+
+int	check_file(char *file)
+{
+	int		len;
+	DIR		*dir;
+
+	len = ft_strlen(file) - 1;
+	if (file[len] == '.')
+	{
+		ft_printf(" .: filename argument required\n");
+		return (2);
+	}
+	else
+	{
+		dir = opendir(file);
+		if (dir)
 		{
-			printf("%c", environ[x][y]);
-			if (environ[x][y] == '=')
-			{
-				printf("\"");
-				z = 1;
-			}
+			closedir(dir);
+			ft_printf(" %s: is a directory\n", file);
+			return (126);
 		}
-		if (z)
-			printf("\"");
-		printf("\n");
+	}
+	if (access(file, X_OK) != 0)
+	{
+		ft_printf(" %s: No such file or directory\n", file);
+		return (127);
 	}
 	return (0);
 }
-
-// int	here_doc(char *s, int qt)
-// {
-// 	int		*bibe;
-// 	char	*input;
-
-// 	bibe = (int *) malloc(2 * sizeof(int));
-// 	if (pipe(bibe) < -1)
-// 		return (0);
-// 	while (1)
-// 	{
-// 		input = readline("> ");
-// 		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-// 			break ;
-// 		if (*(input + count_space(input)))
-// 		{
-// 			if (qt == 0)
-// 				input = replace_dollars(input);
-// 	        write(bibe[1], input, ft_strlen(input));
-// 	        write(bibe[1], "\n", 1);
-// 		}
-// 		free(input);
-// 	}
-// 	close(bibe[1]);
-// 	return (bibe[0]);
-// }
 
 int	fork1(void)
 {

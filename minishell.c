@@ -3,158 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohachami <ohachami@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yhachami <yhachami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/26 23:14:18 by ohachami          #+#    #+#             */
-/*   Updated: 2023/03/26 23:14:59 by ohachami         ###   ########.fr       */
+/*   Updated: 2023/06/13 21:36:44 by yhachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "minishell.h"
 
-char	*fill_cmd(char *word, int j, int *i)
-{
-	char	*cmd;
-	int		k;
-
-	while ((((word[(*i)] != ' ' && word[(*i)] != '\t'))
-		|| !is_outside_quoet(word, *i)) && word[(*i)])
-		(*i)++;
-	cmd = (char *)ft_calloc((*i) + 1, sizeof(char));
-	if (!cmd)
-		return (NULL);
-	k = -1;
-	while (++k < (*i))
-	{
-		while (word[k] == 34 || word[k] == 39)
-			k++;
-		if(k < (*i))
-			cmd[j++] = ft_tolower(word[k]);
-	}
-	return (cmd);
-}
-
-char	*fill_symb(char *word, int *i, int *token, int type)
-{
-	char	*sym;
-	int		j;
-
-	(*i) = -1;
-	j = 1;
-	if ((word[0] == '>' && word[1] == '>')
-		|| (word[0] == '<' && word[1] == '<'))
-		j = 2;
-	sym = (char *)ft_calloc(j + 1, sizeof(char));
-	while (++(*i) < j)
-		sym[(*i)] = word[(*i)];
-	sym[j] = '\0';
-	*token = type + 20;
-	return (sym);
-}
-
-char	*expand_cmd(char *cmd, char *bin, char *word)
-{
-	int		i;
-	int		j;
-	char	*arg;
-
-	arg = (char *)ft_calloc(ft_strlen(bin) + ft_strlen(word) + 1, sizeof(char));
-	i = ft_strlen(bin) - ft_strlen(cmd);
-	j = -1;
-	while (++j < i)
-		arg[j] = bin[j];
-	i = 0;
-	while(j <  word[i])
-		arg[j++] = word[i++];
-	arg[j] = '\0';
-	// ft_memcpy(&arg[j], word, ft_strlen(word) + 1);
-	return (arg);
-}
-	// ft_printf("path=%s.  %s\n",  arg, cmd);
-
-char	*set_cmd(char *word, int *token, char *cmd, t_lexic lex)
-{
-	char	*arg;
-	char	*bin;
-
-	bin = find_path(cmd, -1, -1, -1);
-	arg = NULL;
-	//ft_printf(" ,cmd=%s , %p. word=%s , %p\n", cmd, cmd, word , word);}
-	if (ft_find(cmd, lex.l_cmd)
-		&& ft_strlen(lex.l_cmd[ft_find(cmd, lex.l_cmd) - 1]) == ft_strlen(cmd))
-		*token = ft_find(cmd, lex.l_cmd) + 10;
-	else if (ft_strchr(cmd, '/'))
-	{
-		*token = 1;
-		arg = (char *)ft_calloc(ft_strlen(word) + 1, sizeof(char));
-		ft_memcpy(arg, word, ft_strlen(word) + 1);
-	}
-	else if (bin)
-	{
-		*token = 1;	
-		arg = expand_cmd(cmd, bin, word);
-	}
-	//if(bin)
-	free(bin);
-	return (arg);
-}
-
-//handle arg to **arg with no ""
-char	*fill_arg(char *word, int i)
-{
-	char	*arg;
-	int		shift;
-
-	arg = (char *)ft_calloc(ft_strlen(word + i) - count_space(word + i) + 1,
-			sizeof(char));
-	if (!arg)
-		return (NULL);
-	shift = count_space(word + i) + i;
-	word += shift;
-	i = -1;
-	while (word[++i]) 
-		arg[i] = word[i];
-	arg[i] = '\0';
-	word -= shift;
-	return (arg);
-}
-
-//echo "hello    ">a   b   c --> cat a : helo b c
-char	*cmd_split(char *word, int *token, t_lexic lex)
-{
-	int		i;
-	int		j;
-	char	*word_copy;
-	char	*cmd;
-	char	*arg;
-
-	i = 0;
-	j = 0;
-	cmd = NULL;
-	word_copy = replace_dollars(word);
-	//ft_printf("word=%s , %p\n", word , word_copy);
-	if (ft_find(word, lex.l_symb))
-		cmd = fill_symb(word_copy, &i, token, ft_find(word, lex.l_symb));
-	else
-		cmd = fill_cmd(word_copy, j, &i);
-	if (!cmd || *token == 21)
-	{
-		free(word_copy);
-		return (NULL);
-	}
-	arg = set_cmd(word_copy, token, cmd, lex);
-	if (*token < 1)
-	{
-		error = 127;
-		ft_printf("minshell: %s:command not found\n", cmd);
-	}
-	if (!arg && *token > 1)
-		arg = fill_arg(word_copy, i);
-	//ft_printf("minshell: %s:%p\n", cmd, cmd);
-	free(cmd);
-	free(word_copy);
-	return (arg);
-}
-
+//<cmd><|><exp>
 t_token	*split_input(char *input, int *len)
 {
 	int		i;
@@ -165,95 +23,163 @@ t_token	*split_input(char *input, int *len)
 	if (creat_lexic(&lex))
 		return (NULL);
 	i = 1;
-	words = expr_split(input, lex.l_symb, i); // use this for splition the args.
+	words = expr_split(input, lex.l_symb, i);
 	if (!words)
 	{
-		error = 2;
+		*g_error = 2;
 		return (free_struct_array(NULL, &lex, NULL, -1));
 	}
 	*len = nodes_count(words) + 1;
 	nodes = malloc_nodes(NULL, *len, &lex);
+
 	if (!fill_nodes(words, &lex, nodes, len))
 	{
-		error = 127;
+		*g_error = 127;
 		return (free_struct_array(words, &lex, nodes, *len));
-	}
+	}/*
 	i = -1;
-	while (++i < (*len))
-		printf("word[%p]=%s=%p\ni =%d type=%d <%s>\n\n", words, words[i], words[i], i, nodes[i].type, nodes[i].arg);
-	free_struct_array(words, &lex, NULL, -1);
+	while(nodes[++i].type)
+		ft_printf("args=%s type=%d",nodes[i].args[0], nodes[i].type);
+	ft_printf("\n");
+	free_struct_array(words, &lex, NULL, -1);*/
 	return (nodes);
 }
 
-//<cmd><|><exp>
+void	re_env(void)
+{
+	extern char	**environ;
+	char		**new_env;
+	int			x;
 
-void shvlvl(void)
+	x = 0;
+	while (environ[x])
+		x++;
+	new_env = (char **) ft_calloc((x + 1), sizeof(char *));
+	if (!new_env)
+		return ;
+	x = -1;
+	while (environ[++x])
+		new_env[x] = ft_strdup(environ[x]);
+	new_env[x] = NULL;
+	environ = new_env;
+}
+
+void	shvlvl(void)
 {
 	char	*shlvl;
-	int		lvlv;
+	char	*shvlv;
+	int		vlvl;
 
+	re_env();
 	shlvl = getenv("SHLVL");
-	lvlv = ft_atoi(shlvl);
-	lvlv++;
-	shlvl = ft_itoa(lvlv); 
-	replace_var("SHLVL", shlvl);
-	ft_putenv("OLDPWD=");
+	vlvl = ft_atoi(shlvl);
+	shlvl = ft_itoa(++vlvl);
+	shvlv = make_var("SHLVL", shlvl);
+	ft_setenv(shvlv);
+	ft_setenv(ft_strdup("OLDPWD="));
 	free(shlvl);
 }
 
-int	ft_minishell(void)
+// int	ft_minishell_valgrind()
+// {
+// 	char	*input;
+// 	int		ex;
+// 	int fd = open("AAAAA", O_RDONLY);
+// 	t_token	*nodes;
+// 	t_tree	*tree;
+
+// 	ex = 1;
+// 	tree = NULL;
+// 	nodes = NULL;
+// 	shvlvl();
+// 	*g_error = 0;
+// 	while (ex)
+// 	{
+// 		input = get_next_line(fd);
+// 		if (!input)
+// 			break ;
+// 		ft_printf(">>> MiniShell $> %s", input);
+// 		if (input[count_space(input)])
+// 		{
+// 			input[ft_strlen(input) - 1] = '\0';
+// 			nodes = split_input(input, &ex);
+// 			if (nodes)
+// 			{
+// 				tree = create_tree(nodes, ex);
+// 				//treeprint(tree, 0, nodes);
+// 				// ft_printf("\n------EXEC-----\n");
+// 				exec_tree(tree, nodes);
+//				free_tree(tree, nodes);
+//				free(nodes);
+//				// free_struct_array(NULL, NULL, nodes, ex);
+// 				ex = 1;
+// 			}
+// 		}
+// 		free(input);
+// 		// system("leaks minishell");
+// 	}
+// 	return(*g_error);
+// }
+
+void	lunch_prumpt(t_token *nodes, t_tree *tree, int *ex)
 {
 	char	*input;
-	int		ex;
-	t_token	*nodes;
-	t_tree	*tree;
 
-	ex = 1;
-	tree = NULL;
-	nodes = NULL;
-	shvlvl();
-	error = 0;
-	if (handle_signals())
-		return (1);
-	while (ex)
+	while (*ex)
 	{
 		input = readline(">>> MiniShell $> ");
-		//printf("step\n");
 		if (!input)
 			break ;
 		if (input[count_space(input)])
 		{
 			add_history(input);
-			nodes = split_input(input, &ex);
+			nodes = split_input(input, ex);
 			if (nodes)
 			{
-				tree = create_tree(nodes, ex);
-				//treeprint(tree, 0, nodes);
-				// ft_printf("\n------EXEC-----\n");
-				exec_node(tree, nodes);
-				free_struct_array(NULL, NULL, nodes, ex);
-				ex = 1;
-			}
+				tree = create_tree(nodes, *ex);
+				exec_tree(tree, nodes);
+				free_tree(tree, nodes);
+				free(nodes);
+				*ex = 1;
+			}		
 		}
-		// free(input);
-		//system("leaks minishell");
 	}
-	return(error);
+	free(input);
+}
+
+int	ft_minishell(void)
+{
+	int		ex;
+	t_token	*nodes;
+	t_tree	*tree;
+	int		x;
+
+	x = 0;
+	ex = 1;
+	tree = NULL;
+	nodes = NULL;
+	shvlvl();
+	*g_error = 0;
+	//if(handle_signals())
+	//	return(1);
+	ft_printf("minshell: probleme in detect_error\n");
+	lunch_prumpt(nodes, tree, &ex);
+	free_env();
+	return (*g_error);
 }
 
 int	main(int ac, char **av)
 {
 	char	*in;
-	int		out;
 	t_token	*nodes;
 	t_tree	*tree;
 	int		ex;
+	int		out;
 
 	ex = 1;
 	tree = NULL;
 	nodes = NULL;
-	out = 0;
-	error = 0;
+	g_error = (int *) malloc(1 * sizeof(int));
 	if (ac >= 3 && !ft_strncmp(av[1], "-c", 3))
 	{
 		in = av[2];
@@ -262,26 +188,26 @@ int	main(int ac, char **av)
 			shvlvl();
 			nodes = split_input(in, &ex);
 			if (!nodes)
-				return (error);
+				return (*g_error);
 			if (nodes)
 			{
 				tree = create_tree(nodes, ex);
-				//treeprint(tree, 0, nodes);
-				// ft_printf("\n------EXEC-----\n");
-				exec_node(tree, nodes);
-				free_struct_array(NULL, NULL, nodes, ex);
+				exec_tree(tree, nodes);
+				free_tree(tree, nodes);
 				ex = 1;
 			}
 		}
-		return (error);
+		return (*g_error);
 	}
 	else
 	{
-		int exit_status = ft_minishell();
-		exit(exit_status);
+		ft_minishell();
+		out = *g_error;
+		free(g_error);
 	}
-	return (0);
+	return (out);
 }
+
 //"e""c""h""o" hello need to work,// DONE
 // error file name too long > 256
 /*

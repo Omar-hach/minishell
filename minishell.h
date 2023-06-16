@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohachami <ohachami@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yhachami <yhachami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/26 23:17:17 by ohachami          #+#    #+#             */
-/*   Updated: 2023/03/26 23:17:23 by ohachami         ###   ########.fr       */
+/*   Updated: 2023/06/13 21:30:58 by yhachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,10 @@
 # include <errno.h>
 # include <string.h>
 
-// # define ERROR 0
-
-int		error;
-
 typedef struct s_token
 {
 	int		type;
-	char	*arg;
 	char	**args;
-	int		in;
-	int		out;
 	int		qt;
 }t_token;
 
@@ -61,71 +54,75 @@ typedef struct s_lexic
 	char	**l_symb;
 }t_lexic;
 
-/*
-lexixe{
-	 pape | ::= priority lv.2 --> cmd | cmd
-	 in derect > >> ::= priority lv.1 -->  cmd > file
-	 out derect < ::= priority lv.0 --> cmd < file
-	 $() ::= --> $cmd || $var
-	 
-	 << ? 
-}
-*/
+int		*g_error;
 
-int		fork1();
+int		fork1(void);
 int		ft_dup(int fd, int new_fd);
-// char		*find_path(char *file);
-char		*find_path(char *file, int x, int y, int z);
-char		**arg_split(char *s, char *c);
-void		ft_skip(t_token *tokens, int i);
+char	*get_path(char *dir, char *file);
+char	*find_path(char *file);
 int		check_file(char *file);
 
-int		ft_isvarname(char *var);
-int 		ft_isvar(char *var);
-int		ft_findvar(char *var);
-void		ft_putenv(char *var);
-void		ft_unputenv(char *name);
-int		replace_var(char *var, char *value);
-char		*mint_dollars(char *s, int start, int name_len, char *val);
-char		*get_dollars(char *s, int *x, int qt);
-char		*replace_dollars(char *s);
-int		money_end(char c);
-char		*is_money(char *s, int *x, int qt, int dualqt);
+char	**arg_split(char *s, char *c);
+void	ft_skip(t_token *tokens, int i);
+int		is_quote_skip(char c, int *qt, int *dualqt, int *qted);
 
+void	free_env(void);
+void	ft_setenv(char *var);
+char	*make_var(char *name, char *value);
+int		is_varname(char *var);
+int		is_var(char *var);
+int		ft_findvar(char *var);
+void	ft_putenv(char *var);
+void	ft_unsetenv(char *name);
+// int		replace_var(char *var, char *value);
+
+char	*get_dollar_name(char *s, int x, int z);
+int		is_money_end(char c);
+char	*is_money(char *s, int *x, int qt, int dualqt);
+char	*mint_dollars(char *s, int start, int name_len, char *val);
+char	*get_dollars(char *s, int *x, int qt);
+char	*replace_dollars(char *s);
+
+int		here_doc(char *s, int qt);
+int		here_file(char *s, int qt);
+int		here_file(char *s, int qt);
+int		make_heredocs(t_tree *tree, t_token *tokens);
+int		remove_heredocs(t_tree *tree, t_token *tokens);
+
+int		change_pwd(void);
 int		change_oldpwd(void);
-char		*extra_cd(char *path);
+char	*extra_cd(char *path);
 int		ft_cd(int ac, char **av);
 int		ft_echo(int ac, char **av);
-int		ft_pwd();
+int		ft_pwd(void);
 int		ft_pipe(t_tree *tree, t_token *tokens);
-int		here_doc(char *s, int qt);
 int		ft_env_declare(void);
 
+int		exec_tree(t_tree *tree, t_token *tokens);
+int		exec_node(t_tree *tree, t_token *tokens);
 int		exec_token(t_tree *tree, t_token *tokens);
-int		exec_redir(t_tree *tree, t_token *tokens, int xcmd, int xredir);
+int		exec_redir(t_tree *tree, t_token *tokens);
 int		exec_cmd(t_token token);
 int		exec_symbol(t_tree *tree, t_token *tokens);
-int		exec_node(t_tree *tree, t_token *tokens);
 
 int		is_outside_quoet(char *s, int end);
-char		**trim_word(char *words, int type);
-char		**expr_split(char *s, char **sym, int parct);
+char	**trim_word(char *words, int type);
+char	**expr_split(char *s, char **sym, int parct);
 int		creat_lexic(t_lexic *lex);
 int		count_space(char *s);
 int		ft_find(char *s, char **token);
 int		error_print(char *mes, char *prob, int n);
 t_tree	*create_tree(t_token *nodes, int len);
-int		detect_sym_error(char *s, char **sym, int *part, int type);
-void		*free_aray(char	**words);
+int		detect_sym_error(char *s, char **sym, int *part);
+void	*free_aray(char	**words);
 t_token	*malloc_nodes(t_token *nodes, int len, t_lexic *lex);
-void		*free_struct_array(char **words, t_lexic *lex, t_token *nodes,  int len);
+void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len);
 int		nodes_count(char **word);
 t_token	*fill_nodes(char **words, t_lexic *lex, t_token *nodes, int *len);
-char		*cmd_split(char *word, int *token, t_lexic lex);
-
-void		free_tree(t_tree *root);
-void		treeprint(t_tree *root, int level, t_token *nodes);
+char	*cmd_split(char *word, int *token, t_lexic lex);
+void	free_tree(t_tree *root, t_token *nodes);
+void	treeprint(t_tree *root, int level, t_token *nodes);
 
 int		handle_signals(void);
-int			ft_minishell(void);
+
 #endif
