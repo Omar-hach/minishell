@@ -12,92 +12,64 @@
 
 #include"minishell.h"
 
-// find path of executable in $PATH (/bin : /usr/bin)
-char	*find_path(char *file, int x, int y, int z)
+// AAAMMMBBIIGGUUUS
+int	ambiguous(char *word, char *word_copy, int type, int *token)
 {
-	char	*path;
-	char	**all_paths;
-
-	all_paths = ft_split(getenv("PATH"), ':');
-	if (!all_paths)
-		return (NULL);
-	path = NULL;
-	//ft_printf("ok \n");
-	while (all_paths[++x] && !path)
+	if (!word_copy || *token == 21)
+		return (0);
+	if (word_copy && (type == 1 || type == 3) && !word_copy[1])
 	{
-		y = -1;
-		z = -1;
-		path = (char *)malloc(ft_strlen(all_paths[x]) + ft_strlen(file) + 2);
-		while (all_paths[x][++y])
-			path[y] = all_paths[x][y];
-		path[y++] = '/';
-		while (file[++z])
-			path[y + z] = file[z];
-		path[y + z] = '\0';
-		if (access(path, F_OK) == 0)
-			break ;
-		free(path);
-		path = NULL;
+		*g_error = 127;
+		ft_printf("minshell: %s: ambiguous redirect\n", word + 1);
+		return (0);
 	}
-	free_aray(all_paths);
-	return (path);
+	if (word_copy && (type == 2 || type == 4) && !word_copy[2])
+	{
+		*g_error = 127;
+		ft_printf("minshell: %s: ambiguous redirect\n", word + 2);
+		return (0);
+	}
+	return (1);
 }
 
-int	ft_env_declare(void)
+// check if exit command has numbre argument
+void	exit_check_num(char *av)
 {
-	int			x;
-	int			y;
-	int			z;
-	extern char	**environ;
+	int	x;
 
-	x = -1;
-	while (environ[++x])
+	if (av)
 	{
-		printf("declare -x ");
-		y = -1;
-		z = 0;
-		while (environ[x][++y])
+		x = (char) ft_atoi(av);
+		if (x == 0 && av[0] != '0')
 		{
-			printf("%c", environ[x][y]);
-			if (environ[x][y] == '=')
-			{
-				printf("\"");
-				z = 1;
-			}
+			ft_printf("exit: %s: numeric argument required\n", av);
+			exit(255);
 		}
-		if (z)
-			printf("\"");
-		printf("\n");
 	}
-	return (0);
 }
 
-// int	here_doc(char *s, int qt)
-// {
-// 	int		*bibe;
-// 	char	*input;
+// get the VAR name in $VAR
+char	*get_dollar_name(char *s, int x, int z)
+{
+	int		y;
+	char	*name;
 
-// 	bibe = (int *) malloc(2 * sizeof(int));
-// 	if (pipe(bibe) < -1)
-// 		return (0);
-// 	while (1)
-// 	{
-// 		input = readline("> ");
-// 		if (!input || !s || ft_strncmp(input, s, ft_strlen(input)) == 0)
-// 			break ;
-// 		if (*(input + count_space(input)))
-// 		{
-// 			if (qt == 0)
-// 				input = replace_dollars(input);
-// 	        write(bibe[1], input, ft_strlen(input));
-// 	        write(bibe[1], "\n", 1);
-// 		}
-// 		free(input);
-// 	}
-// 	close(bibe[1]);
-// 	return (bibe[0]);
-// }
+	name = (char *) malloc ((z + 1) * sizeof(char));
+	if (!name)
+		return (NULL);
+	y = x;
+	z = 0;
+	while (s[++y] && is_money_end(s[y]))
+	{
+		name[z++] = s[y];
+		if (y == x + 1 && ft_isdigit(s[y]))
+			break ;
+	}
+	name[z] = '\0';
+	return (name);
+}
 
+// error check for fork
 int	fork1(void)
 {
 	int	pid;
@@ -111,7 +83,7 @@ int	fork1(void)
 	return (pid);
 }
 
-	// ft_printf("fd=%d | %d\n",fd,fd2replace);
+// error check for dup2
 int	ft_dup(int fd, int fd2replace)
 {
 	if (dup2(fd, fd2replace) < 0)

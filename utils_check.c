@@ -12,36 +12,29 @@
 
 #include"minishell.h"
 
-int	check_file(char *file)
+// check if quote is inside another quote
+int	is_quote_skip(char c, int *qt, int *dualqt, int *qted)
 {
-	int	len;
-	DIR		*dir;
+	int		skip;
 
-	len = ft_strlen(file) - 1;
-	if (file[len] == '.')
+	skip = 0;
+	if ((c == '\'') && !(*dualqt % 2))
 	{
-		ft_printf(" .: filename argument required\n");
-		return (2);
+		*qt += 1;
+		skip = 1;
+		*qted = 1;
 	}
-	else
+	if ((c == '\"') && !(*qt % 2))
 	{
-		dir = opendir(file);
-		if (dir)
-		{
-			closedir(dir);
-			ft_printf(" %s: is a directory\n", file);
-			return (126);
-		}
+		*dualqt += 1;
+		skip = 1;
+		*qted = 1;
 	}
-	if (access(file, X_OK) != 0)
-	{
-		ft_printf(" %s: No such file or directory\n", file);
-		return (127);
-	}
-	return (0);
+	return (skip);
 }
 
-int	ft_isvarname(char *var)
+// check if variable has valide name 2
+int	is_varname(char *var)
 {
 	int	x;
 
@@ -63,12 +56,13 @@ int	ft_isvarname(char *var)
 	return (0);
 }
 
-int	ft_isvar(char *var)
+// check if variable has valide name
+int	is_var(char *var)
 {
 	int	x;
 	int	val;
 
-	val = ft_isvarname(var);
+	val = is_varname(var);
 	if (val != 0)
 		return (val);
 	x = 0;
@@ -90,31 +84,32 @@ int	ft_isvar(char *var)
 	return (0);
 }
 
-int	money_end(char c)
+//check if executable file is valid file and is not a directory
+int	check_file(char *file)
+{
+	DIR		*dir;
+
+	dir = opendir(file);
+	if (dir)
+	{
+		closedir(dir);
+		ft_printf(" %s: is a directory\n", file);
+		return (126);
+	}
+	if (access(file, X_OK) != 0)
+	{
+		ft_printf(" %s: No such file or directory\n", file);
+		return (127);
+	}
+	return (0);
+}
+
+//check if $VAR has ended
+int	is_money_end(char c)
 {
 	if (c != ' ' && c != '$' && c != '\''
 		&& c != '\"' && c != '/' && c != '=' && c != '?')
 		return (1);
 	else
 		return (0);
-}
-
-char	*is_money(char *s, int *x, int qt, int dualqt)
-{
-	char	*home;
-
-	if (s[*x] == '$' && s[(*x) + 1] == '?' && !(qt % 2))
-		s = mint_dollars(s, *x, 1, ft_itoa(error));
-	if (s[*x] == '$' && !(qt % 2))
-		s = get_dollars(s, x, !(dualqt % 2));
-	if (s[*x] == '~' && !(qt % 2) && !(dualqt % 2)
-		&& ft_isdigit(s[(*x) + 1]) == 0 && ft_isdigit(s[(*x) - 1]) == 0)
-	{
-		home = getenv("HOME");
-		if (home)
-			s = mint_dollars(s, *x, 0, home);
-		else
-			ft_printf("~: HOME not set\n");
-	}
-	return (s);
 }

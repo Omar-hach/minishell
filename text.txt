@@ -1,5 +1,0 @@
-ls -a
-ls
-env 
-export q=1
-env

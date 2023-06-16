@@ -25,19 +25,6 @@ int	ft_pwd(void)
 	return (0);
 }
 
-int	change_pwd(void)
-{
-	char	*dir;
-
-	dir = (char *)malloc(PATH_MAX);
-	if (!dir)
-		return (1);
-	getcwd(dir, PATH_MAX);
-	replace_var("PWD", dir);
-	free(dir);
-	return (0);
-}
-
 char	*extra_cd(char *path)
 {
 	if (path[0] == '-' && !path[1])
