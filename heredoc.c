@@ -64,11 +64,11 @@ char	*quick_replace(char *input)
 // creat file and open prompt for the heredoc files
 int	here_file(char *s, int qt)
 {
-	int		tmp;
+	int		fd;
 	char	*input;
 
-	tmp = open(s, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0644);
-	if (tmp < 0)
+	fd = open(s, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0644);
+	if (fd < 0)
 		return (-1);
 	while (1)
 	{
@@ -82,11 +82,11 @@ int	here_file(char *s, int qt)
 		{
 			if (qt == 0)
 				input = quick_replace(input);
-			write(tmp, input, ft_strlen(input));
-			write(tmp, "\n", 1);
+			write(fd, input, ft_strlen(input));
+			write(fd, "\n", 1);
 		}
 		free(input);
 	}
-	close(tmp);
+	close(fd);
 	return (0);
 }

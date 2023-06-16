@@ -12,13 +12,9 @@
 
 #include"minishell.h"
 
-void	handler(int sig, siginfo_t *info, void *n)
-{
-	int	i;
 
-	i = info->si_pid;
-	i = 0;
-	(void)(n);
+void	handler(int sig)
+{
 	if (sig == SIGINT)
 	{
 		*g_error = 1;
@@ -35,12 +31,10 @@ void	handler(int sig, siginfo_t *info, void *n)
 
 int	handle_signals(void)
 {
-	struct sigaction	sign;
 
-	sign.sa_flags = SA_SIGINFO;
-	sign.sa_sigaction = &handler;
-	if (sigaction(SIGINT, &sign, NULL)
-		&& sigaction(SIGUSR1, &sign, NULL))
+	if (signal(SIGQUIT, handler))
+		return (1);
+	if (signal(SIGINT, handler))
 		return (1);
 	return (0);
 }

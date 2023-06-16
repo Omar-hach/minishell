@@ -74,6 +74,7 @@ void	ft_putenv(char *var)
 	new_env[x++] = var;
 	new_env[x] = NULL;
 	free_env();
+	
 	environ = new_env;
 }
 

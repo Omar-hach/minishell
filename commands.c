@@ -91,6 +91,8 @@ int	ft_exit(int ac, char **av)
 		x = (char) ft_atoi(av[0]);
 		if (x == 0 && av[0][0] != '0')
 			exit(255);
+				// free_tree(tree, nodes);
+				// free(nodes);
 		exit(x);
 	}
 	else if (ac > 1)

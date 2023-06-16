@@ -97,7 +97,7 @@ int	ft_pipe(t_tree *tree, t_token *tokens)
 	out = 0;
 	out2 = 0;
 	bibe = (int *) malloc(2 * sizeof(int));
-	if (pipe(bibe) < 0)
+	if (!bibe || pipe(bibe) < 0)
 		return (1);
 	pid2 = pipe_in(bibe, tree->right_son, tokens);
 	pid1 = pipe_out(bibe, tree->left_son, tokens);

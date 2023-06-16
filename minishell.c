@@ -105,8 +105,6 @@ int	ft_minishell(t_tree *tree, t_token *nodes)
 	return (*g_error);
 }
 
-// if(handle_signals())
-// 	return(1);
 int	main(void)
 {
 	int		out;
@@ -118,6 +116,8 @@ int	main(void)
 	shvlvl();
 	tree = NULL;
 	nodes = NULL;
+	if(handle_signals())
+		return(1);
 	ft_minishell(tree, nodes);
 	free_env();
 	out = *g_error;
