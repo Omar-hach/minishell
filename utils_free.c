@@ -9,6 +9,7 @@
 /*   Updated: 2023/05/13 01:49:48 by ohachami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "minishell.h"
 
 void	*free_aray(char	**words)
@@ -22,15 +23,21 @@ void	*free_aray(char	**words)
 	return (NULL);
 }
 
-void	free_env(void)
+void	exit_outside(int x, t_tree *tree, t_token *tokens)
 {
-	extern char	**environ;
+	free_tree(tree, tokens);
+	free(tokens);
+	free(g_error);
+	exit(x);
+}
+
+void	free_env(char **env)
+{
 	int			x;
 
 	x = -1;
-	while (environ[++x])
-		free(environ[x]);
-	free(environ);
+	while (env[++x])
+		free(env[x]);
 }
 
 void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
@@ -51,13 +58,13 @@ void	*free_struct_array(char **words, t_lexic *lex, t_token *nodes, int len)
 	return (NULL);
 }
 
-void	free_tree(t_tree *root, t_token *nodes)
+void	free_tree(t_tree *tree, t_token *nodes)
 {
-	if (root == NULL)
+	if (tree == NULL)
 		return ;
-	free_tree(root->right_son, nodes);
-	free_tree(root->left_son, nodes);
-	if (nodes[root->token_index].args)
-		free_aray(nodes[root->token_index].args);
-	free(root);
+	free_tree(tree->right_son, nodes);
+	free_tree(tree->left_son, nodes);
+	if (nodes[tree->token_index].args)
+		free_aray(nodes[tree->token_index].args);
+	free(tree);
 }

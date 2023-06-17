@@ -13,19 +13,18 @@
 #include"minishell.h"
 
 //look for variable in environment
-int	ft_findvar(char *var)
+int	ft_findvar(char **env, char *var)
 {
-	extern char	**environ;
 	int			size;
 	int			x;
 
 	x = 0;
-	while (environ[x])
+	while (env[x])
 	{
 		size = 0;
 		while (var[size] && var[size] != '=')
 			size++;
-		if (environ[x][size] == '=' && ft_strncmp(environ[x], var, size) == 0)
+		if (env[x][size] == '=' && ft_strncmp(env[x], var, size) == 0)
 			return (x);
 		x++;
 	}
@@ -55,64 +54,46 @@ char	*make_var(char *name, char *value)
 	return (val);
 }
 
-//add new variable in environment
-void	ft_putenv(char *var)
-{
-	extern char	**environ;
-	char		**new_env;
-	int			x;
-
-	x = 0;
-	while (environ[x])
-		x++;
-	new_env = (char **) ft_calloc((x + 2), sizeof(char *));
-	if (!new_env)
-		return ;
-	x = -1;
-	while (environ[++x])
-		new_env[x] = ft_strdup(environ[x]);
-	new_env[x++] = var;
-	new_env[x] = NULL;
-	free_env();
-	environ = new_env;
-}
-
 //add or replace variable in environment
-void	ft_setenv(char *var)
+void	ft_setenv(char **env, char *var)
 {
-	extern char	**environ;
 	int			x;
 	char		*old;
 
-	x = ft_findvar(var);
+	x = ft_findvar(env, var);
 	if (x >= 0)
 	{
-		old = environ[x];
-		environ[x] = var;
+		old = env[x];
+		env[x] = var;
 		free(old);
 	}
 	else
-		ft_putenv(var);
+	{
+		x = 0;
+		while (env[x])
+			x++;
+		env[x++] = var;
+		env[x] = NULL;
+	}
 }
 
 //remove from variable from environment
-void	ft_unsetenv(char *name)
+void	ft_unsetenv(char **env, char *name)
 {
-	extern char	**environ;
 	int			x;
 	int			lul;
 
-	lul = ft_findvar(name);
+	lul = ft_findvar(env, name);
 	x = lul;
 	if (lul > -1)
 	{
-		free(environ[lul]);
-		while (lul == x || environ[x])
+		free(env[lul]);
+		while (lul == x || env[x])
 		{
-			if (environ[x + 1])
-				environ[x] = environ[x + 1];
+			if (env[x + 1])
+				env[x] = env[x + 1];
 			x++;
 		}
-		environ[--x] = NULL;
+		env[--x] = NULL;
 	}
 }

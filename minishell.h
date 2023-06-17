@@ -68,7 +68,7 @@ lexixe{
 
 int		fork1(void);
 int		ft_dup(int fd, int new_fd);
-void	exit_check_num(char *av);
+void	exit_check_num(char *av, t_tree *tree, t_token *tokens);
 int		ambiguous(char *word, char *word_copy, int type, int *token);
 char	*get_path(char *dir, char *file);
 char	*find_path(char *file);
@@ -78,14 +78,14 @@ char	**arg_split(char *s, char *c);
 void	skip_quotes(t_token *tokens, int i);
 int		is_quote_skip(char c, int *qt, int *dualqt, int *qted);
 
-void	free_env(void);
-void	ft_setenv(char *var);
+void	free_env(char **env);
+void	ft_setenv(char **env, char *var);
 char	*make_var(char *name, char *value);
 int		is_varname(char *var);
 int		is_var(char *var);
-int		ft_findvar(char *var);
-void	ft_putenv(char *var);
-void	ft_unsetenv(char *name);
+int		ft_findvar(char **env, char *var);
+void	ft_putenv(char **env, char *var);
+void	ft_unsetenv(char **env, char *name);
 
 char	*get_dollar_name(char *s, int x, int z);
 int		is_money_end(char c);
@@ -100,27 +100,28 @@ int		here_file(char *s, int qt);
 int		make_heredocs(t_tree *tree, t_token *tokens);
 int		remove_heredocs(t_tree *tree, t_token *tokens);
 
-int		change_pwd(void);
-int		change_oldpwd(void);
+int		change_pwd(char **env);
+int		change_oldpwd(char **env);
+int		ft_env_declare(char **env);
 char	*extra_cd(char *path);
-int		ft_cd(int ac, char **av);
+int		ft_cd(int ac, char **av, char **env);
 int		ft_echo(int ac, char **av);
 int		ft_pwd(void);
-int		ft_pipe(t_tree *tree, t_token *tokens);
-int		ft_env_declare(void);
+int		ft_pipe(t_tree *tree, t_token *tokens, char **env);
 
-int		exec_tree(t_tree *tree, t_token *tokens);
-int		exec_node(t_tree *tree, t_token *tokens);
-int		exec_token(t_tree *tree, t_token *tokens);
-int		exec_redir(t_tree *tree, t_token *tokens);
-int		exec_cmd(t_token token);
-int		exec_symbol(t_tree *tree, t_token *tokens);
+int		exec_tree(t_tree *tree, t_token *tokens, char **env);
+int		exec_node(t_tree *tree, t_token *tokens, char **env);
+int		exec_token(t_tree *tree, t_token *tokens, char **env);
+int		exec_redir(t_tree *tree, t_token *tokens, char **env);
+int		exec_cmd(t_tree *tree, t_token *tokens, int x, char **env);
+int		exec_symbol(t_tree *tree, t_token *tokens, char **env);
 
 int		get_token_len(char *s, char **sym);
 int		get_symb_len(int sym_type, char *s, char **sym);
 char	*fill_arg(char *word, int i);
 char	*set_arg_type(char *word, int *token, char *cmd, t_lexic lex);
 
+int		ft_minishell(t_tree *tree, t_token *nodes, char **env);
 int		is_outside_quotes(char *s, int end);
 char	**trim_word(char *words, int type);
 char	**expr_split(char *s, char **sym);
@@ -139,5 +140,9 @@ char	*cmd_split(char *word, int *token, t_lexic lex);
 void	free_tree(t_tree *root, t_token *nodes);
 void	treeprint(t_tree *root, int level, t_token *nodes);
 int		handle_signals(void);
+void	exit_outside(int x, t_tree *tree, t_token *tokens);
+// int		handle_heredoc_signals(void);
+void	start_shell(void);
+int		handle_heredoc_signals(void);
 
 #endif

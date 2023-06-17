@@ -55,7 +55,6 @@ char	get_flag(char **s, int *x)
 	return (flag);
 }
 
-		// ft_printf("%s = %c\n",av[x] , flag);
 int	ft_echo(int ac, char **av)
 {
 	char	flag;

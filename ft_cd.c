@@ -41,7 +41,7 @@ char	*extra_cd(char *path)
 	return (path);
 }
 
-int	change_dir(char *path)
+int	change_dir(char *path, char **env)
 {
 	DIR	*dir;
 
@@ -49,7 +49,7 @@ int	change_dir(char *path)
 	if (dir)
 	{
 		closedir(dir);
-		change_oldpwd();
+		change_oldpwd(env);
 		if (chdir(path) < 0)
 		{
 			ft_printf("cd: couldnt change working directory\n");
@@ -64,7 +64,7 @@ int	change_dir(char *path)
 	return (0);
 }
 
-int	ft_cd(int ac, char **av)
+int	ft_cd(int ac, char **av, char **env)
 {
 	char	*path;
 	int		out;
@@ -84,7 +84,7 @@ int	ft_cd(int ac, char **av)
 		if (!path)
 			return (1);
 	}
-	out = change_dir(path);
-	change_pwd();
+	out = change_dir(path, env);
+	change_pwd(env);
 	return (out);
 }

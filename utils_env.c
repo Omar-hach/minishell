@@ -12,7 +12,7 @@
 
 #include"minishell.h"
 
-int	change_pwd(void)
+int	change_pwd(char **env)
 {
 	char	*dir;
 	char	*pwd;
@@ -22,12 +22,12 @@ int	change_pwd(void)
 		return (1);
 	getcwd(dir, PATH_MAX);
 	pwd = make_var("PWD", dir);
-	ft_setenv(pwd);
+	ft_setenv(env, pwd);
 	free(dir);
 	return (0);
 }
 
-int	change_oldpwd(void)
+int	change_oldpwd(char **env)
 {
 	char	*dir;
 	char	*oldpwd;
@@ -37,28 +37,27 @@ int	change_oldpwd(void)
 		return (1);
 	getcwd(dir, PATH_MAX);
 	oldpwd = make_var("OLDPWD", dir);
-	ft_setenv(oldpwd);
+	ft_setenv(env, oldpwd);
 	free(dir);
 	return (0);
 }
 
-int	ft_env_declare(void)
+int	ft_env_declare(char **env)
 {
 	int			x;
 	int			y;
 	int			z;
-	extern char	**environ;
 
 	x = -1;
-	while (environ[++x])
+	while (env[++x])
 	{
 		printf("declare -x ");
 		y = -1;
 		z = 0;
-		while (environ[x][++y])
+		while (env[x][++y])
 		{
-			printf("%c", environ[x][y]);
-			if (environ[x][y] == '=')
+			printf("%c", env[x][y]);
+			if (env[x][y] == '=')
 			{
 				printf("\"");
 				z = 1;

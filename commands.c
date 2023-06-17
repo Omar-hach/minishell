@@ -12,20 +12,18 @@
 
 #include"minishell.h"
 
-int	ft_env(void)
+int	ft_env(char **env)
 {
 	int			x;
-	extern char	**environ;
 
 	x = -1;
-	while (environ[++x])
-		printf("%s\n", environ[x]);
+	while (env[++x])
+		printf("%s\n", env[x]);
 	return (0);
 }
 
-int	ft_unset(int ac, char **av)
+int	ft_unset(int ac, char **av, char **env)
 {
-	extern char	**environ;
 	int			x;
 	int			r;
 
@@ -44,20 +42,19 @@ int	ft_unset(int ac, char **av)
 				return (ft_printf("unset: '%s': not a valid identifier\n",
 						av[x]), 2);
 			else
-				ft_unsetenv(av[x]);
+				ft_unsetenv(env, av[x]);
 		}
 	}
 	return (0);
 }
 
-int	ft_export(int ac, char **av)
+int	ft_export(int ac, char **av, char **env)
 {
-	extern char	**environ;
 	int			x;
 	int			r;
 
 	if (ac == 0)
-		ft_env_declare();
+		ft_env_declare(env);
 	else
 	{
 		x = -1;
@@ -73,25 +70,25 @@ int	ft_export(int ac, char **av)
 			else if (r == 3 || r == 2)
 				return (0);
 			else
-				ft_setenv(ft_strdup(av[x]));
+				ft_setenv(env, ft_strdup(av[x]));
 		}
 	}
 	return (0);
 }
 
-int	ft_exit(int ac, char **av)
+int	ft_exit(int ac, char **av, t_tree *tree, t_token *tokens)
 {
 	char	x;
 
-	exit_check_num(av[0]);
+	exit_check_num(av[0], tree, tokens);
 	if (ac == 0)
-		exit(0);
-	if (ac == 1 || ac == 0)
+		exit_outside(0, tree, tokens);
+	else if (ac == 1)
 	{
 		x = (char) ft_atoi(av[0]);
-		if (x == 0 && av[0][0] != '0')
-			exit(255);
-		exit(x);
+		if (x == 0 && av[0][0] != '0' && av[0][1] != '0')
+			exit_outside(255, tree, tokens);
+		exit_outside(x, tree, tokens);
 	}
 	else if (ac > 1)
 	{
@@ -101,28 +98,28 @@ int	ft_exit(int ac, char **av)
 	return (0);
 }
 
-int	exec_cmd(t_token token)
+int	exec_cmd(t_tree *tree, t_token *tokens, int x, char **env)
 {
 	int		out;
 	int		ac;
 
 	ac = 0;
-	while (token.args[ac])
+	while (tokens[x].args[ac])
 		ac++;
 	out = -1;
-	if (token.type == 11)
-		out = ft_env();
-	else if (token.type == 12)
+	if (tokens[x].type == 11)
+		out = ft_env(env);
+	else if (tokens[x].type == 12)
 		out = ft_pwd();
-	else if (token.type == 13)
-		out = ft_cd(ac, token.args);
-	else if (token.type == 15)
-		out = ft_export(ac, token.args);
-	else if (token.type == 16)
-		out = ft_unset(ac, token.args);
-	else if (token.type == 17)
-		out = ft_echo(ac, token.args);
-	else if (token.type == 14)
-		out = ft_exit(ac, token.args);
+	else if (tokens[x].type == 13)
+		out = ft_cd(ac, tokens[x].args, env);
+	else if (tokens[x].type == 15)
+		out = ft_export(ac, tokens[x].args, env);
+	else if (tokens[x].type == 16)
+		out = ft_unset(ac, tokens[x].args, env);
+	else if (tokens[x].type == 17)
+		out = ft_echo(ac, tokens[x].args);
+	else if (tokens[x].type == 14)
+		out = ft_exit(ac, tokens[x].args, tree, tokens);
 	return (out);
 }

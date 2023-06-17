@@ -52,41 +52,52 @@ int	get_min_len(char *s1, char *s2)
 		return (ft_strlen(s2));
 }
 
-char	*quick_replace(char *input)
+int	heredoc_prompt(int fd, char *input, char *s, int qt)
 {
-	char	*s;
+	char	*tmp;
 
-	s = replace_dollars(input);
+	input = readline("> ");
+	if (!input[0] || !s || ft_strncmp(input, s, get_min_len(s, input)) == 0)
+	{
+		free(input);
+		return (0);
+	}
+	if (*(input + count_space(input)))
+	{
+		if (qt == 0)
+		{
+			tmp = replace_dollars(input);
+			free(input);
+			input = tmp;
+		}
+		write(fd, input, ft_strlen(input));
+		write(fd, "\n", 1);
+	}
 	free(input);
-	return (s);
+	return (1);
 }
 
 // creat file and open prompt for the heredoc files
 int	here_file(char *s, int qt)
 {
-	int		tmp;
+	int		fd;
 	char	*input;
+	int		x;
 
-	tmp = open(s, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0644);
-	if (tmp < 0)
-		return (-1);
-	while (1)
+	if (fork1() == 0)
 	{
-		input = readline("> ");
-		if (!input[0] || !s || ft_strncmp(input, s, get_min_len(s, input)) == 0)
-		{
-			free(input);
-			break ;
-		}
-		if (*(input + count_space(input)))
-		{
-			if (qt == 0)
-				input = quick_replace(input);
-			write(tmp, input, ft_strlen(input));
-			write(tmp, "\n", 1);
-		}
-		free(input);
+		handle_heredoc_signals();
+		unlink(s);
+		fd = open(s, O_WRONLY | O_CREAT, 0644);
+		if (fd < 0)
+			return (-1);
+		input = NULL;
+		x = 1;
+		while (x)
+			x = heredoc_prompt(fd, input, s, qt);
+		close(fd);
+		exit(0);
 	}
-	close(tmp);
+	wait(NULL);
 	return (0);
 }

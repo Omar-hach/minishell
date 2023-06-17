@@ -14,19 +14,19 @@ NAME = minishell
 
 CC = gcc 
 
-CFLAGS = -Werror -Wall -Wextra
+CFLAGS = -Werror -Wall -Wextra -I/Users/yhachami/.brew/opt/readline/include
 
-FLAGS = -lreadline -lcurses
+FLAGS = -lreadline -lcurses -L/Users/yhachami/.brew/opt/readline/lib
 #-fsanitize=address
 
-SRC = 	minishell.c\
+SRC = 	minishell.c \
 		symbole_parcing.c nodes_utils.c cmd_split.c\
 		detect_sym_error.c create_tree.c\
+		utils_o.c utils_free.c utils_arg.c\
 		exec_tree.c symbol.c commands.c dollars.c heredoc.c\
 		ft_cd.c ft_echo.c ft_pipe.c arg_split.c path_finder.c\
 		utils_y.c  utils_var.c utils_check.c utils_env.c\
-		utils_o.c utils_free.c utils_arg.c
-#signal_handling.c
+		signal_handling.c
 
 OBJ = $(SRC:.c=.o)
 

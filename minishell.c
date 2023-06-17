@@ -39,52 +39,41 @@ t_token	*split_input(char *input, int *len)
 	return (nodes);
 }
 
-void	re_env(void)
-{
-	extern char	**environ;
-	char		**new_env;
-	int			x;
-
-	x = 0;
-	while (environ[x])
-		x++;
-	new_env = (char **) ft_calloc((x + 1), sizeof(char *));
-	if (!new_env)
-		return ;
-	x = -1;
-	while (environ[++x])
-		new_env[x] = ft_strdup(environ[x]);
-	new_env[x] = NULL;
-	environ = new_env;
-}
-
-void	shvlvl(void)
+void	shvlvl(char **env)
 {
 	char	*shlvl;
 	char	*shvlv;
 	int		vlvl;
+	int		x;
 
-	re_env();
+	x = -1;
+	while (env[++x])
+		env[x] = ft_strdup(env[x]);
 	shlvl = getenv("SHLVL");
-	vlvl = ft_atoi(shlvl);
-	shlvl = ft_itoa(++vlvl);
-	shvlv = make_var("SHLVL", shlvl);
-	ft_setenv(shvlv);
-	ft_setenv(ft_strdup("OLDPWD="));
-	free(shlvl);
+	if (shlvl)
+	{
+		vlvl = ft_atoi(shlvl);
+		shlvl = ft_itoa(++vlvl);
+		shvlv = make_var("SHLVL", shlvl);
+		free(shlvl);
+		ft_setenv(env, shvlv);
+	}
+	else
+		ft_setenv(env, ft_strdup("SHLVL=1"));
+	ft_setenv(env, ft_strdup("OLDPWD="));
 }
 
 // treeprint(tree, 0, nodes);
 // ft_printf("\n------EXEC-----\n");
 // system("leaks minishell");
-int	ft_minishell(t_tree *tree, t_token *nodes)
+int	ft_minishell(t_tree *tree, t_token *nodes, char **env)
 {
 	char	*input;
 	int		len;
 
 	while (1)
 	{
-		input = readline(">>> MiniShell $> ");
+		input = readline("\033[32m>>> MiniShell $>\033[0m ");
 		if (!input)
 			break ;
 		if (input[count_space(input)])
@@ -92,34 +81,36 @@ int	ft_minishell(t_tree *tree, t_token *nodes)
 			add_history(input);
 			len = 1;
 			nodes = split_input(input, &len);
+			free(input);
 			if (nodes)
 			{
 				tree = create_tree(nodes, len);
-				exec_tree(tree, nodes);
-				free_tree(tree, nodes);
-				free(nodes);
+				exec_tree(tree, nodes, env);
 			}
 		}
-		free(input);
+		else
+			free(input);
 	}
 	return (*g_error);
 }
 
-// if(handle_signals())
-// 	return(1);
-int	main(void)
+int	main(int ac, char **av, char **env)
 {
 	int		out;
 	t_token	*nodes;
 	t_tree	*tree;
 
+	(void)(av);
+	(void)(ac);
 	g_error = (int *) malloc(1 * sizeof(int));
 	*g_error = 0;
-	shvlvl();
+	shvlvl(env);
 	tree = NULL;
 	nodes = NULL;
-	ft_minishell(tree, nodes);
-	free_env();
+	if (handle_signals())
+		return (1);
+	ft_minishell(tree, nodes, env);
+	free_env(env);
 	out = *g_error;
 	free(g_error);
 	return (out);

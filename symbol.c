@@ -84,7 +84,7 @@ int	ft_redirect_out_append(t_tree *tree, t_token *tokens)
 	return (0);
 }
 
-int	exec_symbol(t_tree *tree, t_token *tokens)
+int	exec_symbol(t_tree *tree, t_token *tokens, char **env)
 {
 	int	x;
 	int	out;
@@ -92,7 +92,7 @@ int	exec_symbol(t_tree *tree, t_token *tokens)
 	out = 0;
 	x = tree->token_index;
 	if (tokens[x].type == 21)
-		out = ft_pipe(tree, tokens);
+		out = ft_pipe(tree, tokens, env);
 	else if (tokens[x].type == 22)
 		out = ft_redirect_in_append(tree, tokens);
 	else if (tokens[x].type == 23)

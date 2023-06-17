@@ -12,22 +12,20 @@
 
 #include"minishell.h"
 
-int	exec_prog(t_token token)
+int	exec_prog(t_token token, char **env)
 {
-	int		out;
-	char	**prog_envp;
+	int			out;
 
-	prog_envp = NULL;
 	out = check_file(token.args[0]);
 	if (out)
 		return (out);
 	if (fork1() == 0)
-		out = execve(token.args[0], token.args, prog_envp);
+		out = execve(token.args[0], token.args, env);
 	wait(&out);
 	return (out >> 8);
 }
 
-int	exec_token(t_tree *tree, t_token *tokens)
+int	exec_token(t_tree *tree, t_token *tokens, char **env)
 {
 	int	x;
 	int	out;
@@ -35,15 +33,15 @@ int	exec_token(t_tree *tree, t_token *tokens)
 	out = 0;
 	x = tree->token_index;
 	if (tokens[x].type == 1)
-		out = exec_prog(tokens[x]);
+		out = exec_prog(tokens[x], env);
 	else if (tokens[x].type / 10 == 1)
-		out = exec_cmd(tokens[x]);
+		out = exec_cmd(tree, tokens, x, env);
 	else if (tokens[x].type / 10 == 2)
-		out = exec_symbol(tree, tokens);
+		out = exec_symbol(tree, tokens, env);
 	return (out);
 }
 
-int	exec_redir(t_tree *tree, t_token *tokens)
+int	exec_redir(t_tree *tree, t_token *tokens, char **env)
 {
 	t_tree	*cmd;
 	t_tree	*redir;
@@ -62,17 +60,17 @@ int	exec_redir(t_tree *tree, t_token *tokens)
 	}
 	while (redir && tokens[redir->token_index].type > 21)
 	{
-		out = exec_token(redir, tokens);
+		out = exec_token(redir, tokens, env);
 		if (out)
 			exit(out);
 		redir = redir->father;
 	}
 	if (cmd)
-		out = exec_token(cmd, tokens);
+		out = exec_token(cmd, tokens, env);
 	return (out);
 }
 
-int	exec_node(t_tree *tree, t_token *tokens)
+int	exec_node(t_tree *tree, t_token *tokens, char **env)
 {
 	int		x;
 	int		out;
@@ -83,25 +81,34 @@ int	exec_node(t_tree *tree, t_token *tokens)
 	{
 		if (fork1() == 0)
 		{
-			out = exec_redir(tree, tokens);
+			out = exec_redir(tree, tokens, env);
 			exit(out);
 		}
 		wait(&out);
 		out = out >> 8;
 	}
 	else
-		out = exec_token(tree, tokens);
+		out = exec_token(tree, tokens, env);
 	return (out);
 }
 
-int	exec_tree(t_tree *tree, t_token *tokens)
+int	exec_tree(t_tree *tree, t_token *tokens, char **env)
 {
 	make_heredocs(tree, tokens);
-	*g_error = exec_node(tree, tokens);
+	*g_error = exec_node(tree, tokens, env);
 	remove_heredocs(tree, tokens);
+	free_tree(tree, tokens);
+	free(tokens);
 	return (*g_error);
 }
 /*
+//    ls | grep a 
+//
+//              0   |
+//             / \
+//            /   \
+//     grep  3     2  ls
+
 //
 // ls | grep a < file1 > file2
 //
@@ -133,7 +140,7 @@ int	exec_tree(t_tree *tree, t_token *tokens)
 //
 
 //
-// /bin/ls | /usr/bin/grep c | /usr/bin/grep o
+// ls | grep c | grep o
 //
 //              0 
 //             / \

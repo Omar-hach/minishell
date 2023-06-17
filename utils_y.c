@@ -33,17 +33,17 @@ int	ambiguous(char *word, char *word_copy, int type, int *token)
 }
 
 // check if exit command has numbre argument
-void	exit_check_num(char *av)
+void	exit_check_num(char *av, t_tree *tree, t_token *tokens)
 {
 	int	x;
 
 	if (av)
 	{
 		x = (char) ft_atoi(av);
-		if (x == 0 && av[0] != '0')
+		if (x == 0 && av[0] != '0' && av[1] != '0')
 		{
 			ft_printf("exit: %s: numeric argument required\n", av);
-			exit(255);
+			exit_outside(255, tree, tokens);
 		}
 	}
 }

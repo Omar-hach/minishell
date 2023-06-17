@@ -32,7 +32,7 @@ char	*fill_cmd(char *word, int *i)
 		while (word[k] == 34 || word[k] == 39)
 			k++;
 		if (k < (*i))
-			cmd[j++] = word[k];
+			cmd[j++] = ft_tolower(word[k]);
 	}
 	return (cmd);
 }
@@ -55,14 +55,14 @@ char	*fill_symb(char *word, int *i, int *token, int type)
 	return (sym);
 }
 
-char	*word_def(char *word, int *token, t_lexic lex)
+char	*word_def(char *word, t_lexic lex)
 {
 	char	*word_copy;
 
 	word_copy = NULL;
 	if (word && ft_find(word, lex.l_symb) == 2)
 		word_copy = ft_strdup(word);
-	else if (word && *token != 21)
+	else if (word)
 		word_copy = replace_dollars(word);
 	return (word_copy);
 }
@@ -87,14 +87,10 @@ char	*cmd_split(char *word, int *token, t_lexic lex)
 	char	*arg;
 
 	i = 0;
-	word_copy = word_def(word, token, lex);
+	word_copy = word_def(word, lex);
 	cmd = cmd_def(word_copy, &i, token, ft_find(word, lex.l_symb));
 	if (!cmd || !ambiguous(word, word_copy, ft_find(word, lex.l_symb), token))
-	{
-		free(cmd);
-		free(word_copy);
-		return (NULL);
-	}
+		return (free(cmd), free(word_copy), NULL);
 	arg = set_arg_type(word_copy, token, cmd, lex);
 	if (*token < 1)
 	{
