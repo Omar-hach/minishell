@@ -95,7 +95,8 @@ int	exec_node(t_tree *tree, t_token *tokens, char **env)
 int	exec_tree(t_tree *tree, t_token *tokens, char **env)
 {
 	make_heredocs(tree, tokens);
-	*g_error = exec_node(tree, tokens, env);
+	if (*g_error != 130)
+		*g_error = exec_node(tree, tokens, env);
 	remove_heredocs(tree, tokens);
 	free_tree(tree, tokens);
 	free(tokens);

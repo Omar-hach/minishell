@@ -52,12 +52,13 @@ int	get_min_len(char *s1, char *s2)
 		return (ft_strlen(s2));
 }
 
-int	heredoc_prompt(int fd, char *input, char *s, int qt)
+int	heredoc_prompt(int fd, char *s, int qt)
 {
 	char	*tmp;
+	char	*input;
 
 	input = readline("> ");
-	if (!input[0] || !s || ft_strncmp(input, s, get_min_len(s, input)) == 0)
+	if (!input || !s || ft_strncmp(input, s, get_min_len(s, input)) == 0)
 	{
 		free(input);
 		return (0);
@@ -81,23 +82,28 @@ int	heredoc_prompt(int fd, char *input, char *s, int qt)
 int	here_file(char *s, int qt)
 {
 	int		fd;
-	char	*input;
 	int		x;
+	int		out;
 
+	out = 0;
+	signal(SIGINT, SIG_IGN);
 	if (fork1() == 0)
 	{
-		handle_heredoc_signals();
+		signal(SIGINT, SIG_DFL);
 		unlink(s);
 		fd = open(s, O_WRONLY | O_CREAT, 0644);
 		if (fd < 0)
 			return (-1);
-		input = NULL;
 		x = 1;
 		while (x)
-			x = heredoc_prompt(fd, input, s, qt);
+			x = heredoc_prompt(fd, s, qt);
 		close(fd);
 		exit(0);
 	}
-	wait(NULL);
-	return (0);
+	wait(&out);
+	*g_error = WEXITSTATUS(out);
+	if (WTERMSIG(out) == SIGINT)
+		*g_error = 130;
+	handle_signals();
+	return (*g_error);
 }
