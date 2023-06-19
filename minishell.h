@@ -141,7 +141,7 @@ void	free_tree(t_tree *root, t_token *nodes);
 void	treeprint(t_tree *root, int level, t_token *nodes);
 int		handle_signals(void);
 void	exit_outside(int x, t_tree *tree, t_token *tokens);
-// int		handle_heredoc_signals(void);
+
 void	start_shell(void);
 int		handle_heredoc_signals(void);
 

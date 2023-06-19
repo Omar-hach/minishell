@@ -12,12 +12,13 @@
 
 NAME = minishell
 
-CC = gcc 
+CC = gcc
+
+HEADER = minishell.h
 
 CFLAGS = -Werror -Wall -Wextra -I/Users/yhachami/.brew/opt/readline/include
 
 FLAGS = -lreadline -lcurses -L/Users/yhachami/.brew/opt/readline/lib
-#-fsanitize=address
 
 SRC = 	minishell.c \
 		symbole_parcing.c nodes_utils.c cmd_split.c\
@@ -34,7 +35,7 @@ LIBFT = libft/libft.a
 
 all:$(NAME)
 
-$(NAME):$(OBJ)
+$(NAME): $(OBJ) $(HEADER)
 	make -C libft
 	$(CC) $(FLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 

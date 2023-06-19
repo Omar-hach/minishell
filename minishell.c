@@ -63,9 +63,6 @@ void	shvlvl(char **env)
 	ft_setenv(env, ft_strdup("OLDPWD="));
 }
 
-// treeprint(tree, 0, nodes);
-// ft_printf("\n------EXEC-----\n");
-// system("leaks minishell");
 int	ft_minishell(t_tree *tree, t_token *nodes, char **env)
 {
 	char	*input;
@@ -103,12 +100,13 @@ int	main(int ac, char **av, char **env)
 	(void)(av);
 	(void)(ac);
 	g_error = (int *) malloc(1 * sizeof(int));
+	if (!g_error)
+		return (1);
 	*g_error = 0;
 	shvlvl(env);
 	tree = NULL;
 	nodes = NULL;
-	if (handle_signals())
-		return (1);
+	handle_signals();
 	ft_minishell(tree, nodes, env);
 	free_env(env);
 	out = *g_error;

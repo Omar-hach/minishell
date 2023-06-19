@@ -20,7 +20,10 @@ int	exec_prog(t_token token, char **env)
 	if (out)
 		return (out);
 	if (fork1() == 0)
+	{
+		handle_signals();
 		out = execve(token.args[0], token.args, env);
+	}
 	wait(&out);
 	return (out >> 8);
 }
@@ -95,7 +98,10 @@ int	exec_node(t_tree *tree, t_token *tokens, char **env)
 int	exec_tree(t_tree *tree, t_token *tokens, char **env)
 {
 	make_heredocs(tree, tokens);
-	*g_error = exec_node(tree, tokens, env);
+	signal(SIGINT, SIG_IGN);
+	if (*g_error != 130)
+		*g_error = exec_node(tree, tokens, env);
+	handle_signals();
 	remove_heredocs(tree, tokens);
 	free_tree(tree, tokens);
 	free(tokens);

@@ -16,22 +16,19 @@ void	handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		*g_error = 1;
 		printf("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
+		*g_error = 1;
 	}
-	// if (sig == SIGQUIT)
-	// 	*g_error = 0;
 }
 
 int	handle_signals(void)
 {
-	if (signal(SIGQUIT, SIG_IGN))
-		return (1);
 	if (signal(SIGINT, handler))
+		return (1);
+	if (signal(SIGQUIT, SIG_IGN))
 		return (1);
 	return (0);
 }
-
