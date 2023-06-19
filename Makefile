@@ -16,9 +16,9 @@ CC = gcc
 
 HEADER = minishell.h
 
-CFLAGS = -Werror -Wall -Wextra -I/Users/yhachami/.brew/opt/readline/include
+CFLAGS = -Werror -Wall -Wextra -I/Users/$(USER)/.brew/opt/readline/include
 
-FLAGS = -lreadline -lcurses -L/Users/yhachami/.brew/opt/readline/lib
+FLAGS = -lreadline -lcurses -L/Users/$(USER)/.brew/opt/readline/lib
 
 SRC = 	minishell.c \
 		symbole_parcing.c nodes_utils.c cmd_split.c\
